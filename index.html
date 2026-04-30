@@ -1,0 +1,2590 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aether Tarot — Цифровой Оракул</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0C0C0F;
+      --bg2:      #111114;
+      --bg3:      #18181D;
+      --bg4:      #1F1F26;
+      --gold:     #C9A84C;
+      --gold-l:   #E2C97E;
+      --gold-d:   #8B6B20;
+      --gold-glow: rgba(201,168,76,.14);
+      --text:     #EDE8DC;
+      --muted:    #7A7870;
+      --border:   rgba(201,168,76,.18);
+      --radius:   14px;
+      --nav-h:    68px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ───── Scrollbar ───── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg2); }
+    ::-webkit-scrollbar-thumb { background: var(--gold-d); border-radius: 3px; }
+
+    /* ───── NAV ───── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: var(--nav-h);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 48px;
+      background: rgba(12,12,15,.85);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem; font-weight: 500; letter-spacing: .18em;
+      color: var(--gold); text-decoration: none;
+    }
+    .nav-links {
+      display: flex; gap: 36px; list-style: none;
+    }
+    .nav-links a {
+      font-size: .7rem; letter-spacing: .14em; font-weight: 500;
+      text-decoration: none; color: var(--text);
+      opacity: .7; transition: opacity .2s, color .2s;
+      padding-bottom: 2px;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -2px; left: 0; right: 100%;
+      height: 1px; background: var(--gold);
+      transition: right .25s;
+    }
+    .nav-links a:hover { opacity: 1; color: var(--gold-l); }
+    .nav-links a:hover::after { right: 0; }
+    .nav-links a.active { opacity: 1; color: var(--gold); }
+    .nav-links a.active::after { right: 0; }
+
+    .nav-cta {
+      font-size: .68rem; letter-spacing: .12em; font-weight: 600;
+      padding: 10px 22px; border-radius: 4px;
+      background: var(--gold); color: var(--bg);
+      text-decoration: none; transition: background .2s, transform .15s;
+    }
+    .nav-cta:hover { background: var(--gold-l); transform: translateY(-1px); }
+
+    .burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .burger span { width: 24px; height: 1.5px; background: var(--gold); transition: .3s; }
+
+    /* ───── SECTIONS ───── */
+    section { scroll-margin-top: var(--nav-h); }
+
+    /* ───── HERO ───── */
+    #home {
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: calc(var(--nav-h) + 40px) 80px 80px;
+      position: relative; overflow: hidden;
+    }
+    #home::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 65% 50%, rgba(201,168,76,.06) 0%, transparent 70%),
+                  radial-gradient(ellipse 50% 80% at 10% 20%, rgba(120,80,200,.05) 0%, transparent 60%);
+    }
+
+    .hero-left { position: relative; z-index: 1; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid var(--border);
+      border-radius: 30px; padding: 6px 16px;
+      font-size: .65rem; letter-spacing: .16em; color: var(--gold);
+      margin-bottom: 32px; backdrop-filter: blur(8px);
+      background: rgba(201,168,76,.07);
+    }
+    .hero-badge svg { width: 12px; height: 12px; }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.8rem, 5vw, 4.4rem);
+      font-weight: 400; line-height: 1.1;
+      color: var(--gold); margin-bottom: 24px;
+    }
+    .hero-desc {
+      font-size: .82rem; line-height: 1.8;
+      color: var(--muted); max-width: 400px; margin-bottom: 44px;
+    }
+    .hero-desc strong { color: var(--text); font-weight: 400; }
+    .btn-tg {
+      display: inline-flex; align-items: center; gap: 12px;
+      background: var(--gold); color: var(--bg);
+      font-size: .68rem; letter-spacing: .14em; font-weight: 700;
+      padding: 15px 32px; border-radius: 4px; text-decoration: none;
+      transition: background .2s, transform .15s, box-shadow .2s;
+      box-shadow: 0 4px 24px rgba(201,168,76,.25);
+    }
+    .btn-tg:hover {
+      background: var(--gold-l);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(201,168,76,.35);
+    }
+    .btn-tg svg { width: 16px; height: 16px; }
+
+    .hero-right {
+      display: flex; justify-content: center; align-items: center;
+      position: relative; z-index: 1;
+    }
+    .tarot-card {
+      width: 280px; height: 460px;
+      border-radius: 16px;
+      border: 1px solid rgba(201,168,76,.35);
+      background: linear-gradient(165deg, #0E1020 0%, #1A1530 40%, #0C0C18 100%);
+      position: relative; overflow: hidden;
+      box-shadow: 0 0 60px rgba(201,168,76,.12), 0 30px 80px rgba(0,0,0,.7);
+    }
+    .tarot-card::before {
+      content: '';
+      position: absolute; inset: 8px;
+      border: 1px solid rgba(201,168,76,.2);
+      border-radius: 10px;
+    }
+    .tarot-card-inner {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 0;
+    }
+    .card-label-top, .card-label-bottom {
+      position: absolute;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: .65rem; letter-spacing: .22em;
+      color: rgba(201,168,76,.5);
+    }
+    .card-label-top { top: 22px; }
+    .card-label-bottom { bottom: 22px; }
+
+    /* Mandala-style SVG icon */
+    .card-mandala {
+      width: 180px; height: 180px; opacity: .9;
+    }
+
+    .card-glow {
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(201,168,76,.12) 0%, transparent 65%);
+      animation: pulse-glow 4s ease-in-out infinite;
+    }
+    @keyframes pulse-glow {
+      0%,100% { opacity: .6; }
+      50% { opacity: 1; }
+    }
+
+    .hero-stars {
+      position: absolute;
+      width: 100%; height: 100%;
+      overflow: hidden; top: 0; left: 0; pointer-events: none;
+    }
+
+    /* ───── FEATURES ───── */
+    #readings {
+      padding: 100px 80px;
+      background: var(--bg2);
+      position: relative;
+    }
+    .section-icon {
+      display: flex; justify-content: center; margin-bottom: 20px;
+    }
+    .section-icon svg { color: var(--gold); }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 400;
+      text-align: center; color: var(--text);
+      margin-bottom: 12px;
+    }
+    .section-divider {
+      width: 48px; height: 1px; background: var(--gold);
+      margin: 0 auto 20px;
+    }
+    .section-desc {
+      font-size: .82rem; line-height: 1.85;
+      color: var(--muted); text-align: center;
+      max-width: 580px; margin: 0 auto 64px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px; max-width: 900px; margin: 0 auto;
+    }
+    .feature-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 32px;
+      position: relative; overflow: hidden;
+      transition: border-color .3s, transform .25s, box-shadow .3s;
+    }
+    .feature-card:hover {
+      border-color: rgba(201,168,76,.4);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(0,0,0,.4);
+    }
+    .feature-card.highlight {
+      background: linear-gradient(135deg, #1A1E2A 0%, #1E1A2E 100%);
+      border-color: rgba(201,168,76,.3);
+    }
+    .feature-card.highlight .feature-title { color: var(--gold); }
+    .feature-bg-icon {
+      position: absolute; right: 20px; bottom: 16px;
+      opacity: .06;
+    }
+    .feature-bg-icon svg { width: 80px; height: 80px; }
+    .feature-icon {
+      width: 36px; height: 36px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+      background: var(--gold-glow);
+    }
+    .feature-icon svg { color: var(--gold); width: 16px; height: 16px; }
+    .feature-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem; font-weight: 500;
+      color: var(--text); margin-bottom: 10px;
+    }
+    .feature-desc { font-size: .78rem; line-height: 1.75; color: var(--muted); }
+    .feature-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: .7rem; letter-spacing: .1em;
+      color: var(--gold); text-decoration: none;
+      margin-top: 18px;
+      transition: gap .2s;
+    }
+    .feature-link:hover { gap: 10px; }
+
+    /* ───── PROCESS ───── */
+    #process {
+      padding: 110px 80px;
+      background: var(--bg);
+    }
+    .process-head {
+      text-align: center; margin-bottom: 80px;
+    }
+
+    .steps-container {
+      max-width: 1000px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .step-row {
+      display: grid;
+      grid-template-columns: 1fr 60px 1fr;
+      gap: 0; align-items: center;
+      min-height: 260px;
+    }
+    .step-row.reverse .step-card { order: 3; }
+    .step-row.reverse .step-image { order: 1; }
+    .step-row.reverse .step-timeline { order: 2; }
+
+    .step-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 32px;
+      transition: border-color .3s, box-shadow .3s;
+    }
+    .step-card:hover {
+      border-color: rgba(201,168,76,.35);
+      box-shadow: 0 8px 32px rgba(0,0,0,.35);
+    }
+    .step-number-icon {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 18px;
+    }
+    .step-icon-wrap {
+      width: 42px; height: 42px; border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--gold-glow);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .step-icon-wrap svg { color: var(--gold); width: 18px; height: 18px; }
+    .step-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; font-weight: 400; color: var(--muted);
+    }
+    .step-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.45rem; font-weight: 500;
+      color: var(--text); margin-bottom: 12px;
+    }
+    .step-desc { font-size: .79rem; line-height: 1.8; color: var(--muted); }
+
+    .step-timeline {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      height: 100%; gap: 0;
+      padding: 20px 0;
+    }
+    .tl-line { width: 1px; flex: 1; background: var(--border); }
+    .tl-dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 12px rgba(201,168,76,.5);
+      flex-shrink: 0;
+    }
+
+    .step-image {
+      display: flex; align-items: center; justify-content: center;
+      padding: 10px;
+    }
+    .step-img-box {
+      width: 100%; max-width: 280px;
+      aspect-ratio: 4/3;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden; position: relative;
+    }
+    .step-img-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .step-img-placeholder svg { width: 60px; height: 60px; opacity: .25; color: var(--gold); }
+
+    /* image styles for steps */
+    .step-img-1 { background: linear-gradient(135deg, #0D1520 0%, #1A2535 50%, #0F1825 100%); }
+    .step-img-2 { background: radial-gradient(circle at 50% 50%, #1C1528 0%, #0E0D12 100%); }
+    .step-img-3 { background: linear-gradient(160deg, #121820 0%, #0D1218 100%); }
+
+    /* oracle card for step 3 */
+    .oracle-card {
+      background: var(--bg4);
+      border: 1px solid rgba(201,168,76,.22);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      max-width: 300px;
+    }
+    .oracle-label {
+      font-size: .58rem; letter-spacing: .18em;
+      color: var(--gold); margin-bottom: 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .oracle-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--gold); display: inline-block;
+    }
+    .oracle-text {
+      font-size: .8rem; line-height: 1.7;
+      color: var(--muted); font-style: italic;
+    }
+
+    /* ───── GALLERY ───── */
+    #gallery {
+      padding: 110px 80px;
+      background: var(--bg2);
+    }
+    .gallery-head {
+      text-align: center; margin-bottom: 64px;
+    }
+    .spreads-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px; max-width: 1020px; margin: 0 auto;
+    }
+    .spread-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color .3s, transform .25s, box-shadow .3s;
+      cursor: pointer;
+    }
+    .spread-card:hover {
+      border-color: rgba(201,168,76,.4);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(0,0,0,.5);
+    }
+    .spread-card.featured { border-color: rgba(201,168,76,.3); }
+    .spread-img {
+      height: 200px; position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .spread-img-daily  { background: linear-gradient(160deg, #080C14 0%, #121C2E 50%, #0A0E18 100%); }
+    .spread-img-love   { background: radial-gradient(ellipse at 50% 60%, #1A0D20 0%, #0D0810 100%); }
+    .spread-img-career { background: linear-gradient(170deg, #040810 0%, #0A1020 50%, #060C18 100%); }
+    .spread-img-celtic { background: radial-gradient(circle at 50% 50%, #1A1020 0%, #0C080C 100%); }
+
+    .spread-img-visual {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .spread-img-visual svg { opacity: .2; color: var(--gold); }
+    .spread-img-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, transparent 50%, var(--bg3) 100%);
+    }
+
+    .spread-badges {
+      position: absolute; top: 12px;
+      left: 12px; right: 12px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .spread-badge {
+      font-size: .62rem; letter-spacing: .1em; font-weight: 600;
+      background: rgba(12,12,15,.8);
+      border: 1px solid var(--border);
+      border-radius: 20px; padding: 4px 12px;
+      color: var(--text);
+      backdrop-filter: blur(8px);
+    }
+    .spread-fav {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: rgba(12,12,15,.8);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(8px);
+    }
+    .spread-fav svg { color: var(--gold); width: 14px; height: 14px; }
+
+    .spread-body { padding: 22px 24px 28px; }
+    .spread-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem; font-weight: 500;
+      color: var(--text); margin-bottom: 10px;
+    }
+    .spread-desc { font-size: .77rem; line-height: 1.75; color: var(--muted); margin-bottom: 20px; }
+    .btn-try {
+      display: block; width: 100%;
+      text-align: center; text-decoration: none;
+      font-size: .68rem; letter-spacing: .12em; font-weight: 600;
+      padding: 13px; border-radius: 6px;
+      border: 1px solid rgba(201,168,76,.35);
+      color: var(--text); background: transparent;
+      transition: background .2s, border-color .2s, color .2s;
+      cursor: pointer;
+    }
+    .btn-try:hover, .spread-card.featured .btn-try {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--bg);
+    }
+
+    /* ───── WISDOM ───── */
+    #wisdom {
+      padding: 110px 80px;
+      background: var(--bg);
+    }
+    .wisdom-head {
+      text-align: center; margin-bottom: 72px;
+    }
+
+    /* Testimonials */
+    .testimonials-label {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 28px;
+    }
+    .testimonials-label svg { color: var(--gold); }
+    .testimonials-label h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem; font-weight: 500; color: var(--text);
+    }
+    .testimonials-label-line {
+      flex: 1; height: 1px;
+      background: linear-gradient(to right, var(--border), transparent);
+    }
+    .testimonials-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 20px; max-width: 1040px; margin: 0 auto 80px;
+    }
+    .testi-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 26px;
+      transition: border-color .3s;
+    }
+    .testi-card:hover { border-color: rgba(201,168,76,.3); }
+    .testi-header {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 16px;
+    }
+    .testi-avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--bg4);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; color: var(--gold);
+      flex-shrink: 0;
+    }
+    .testi-info { flex: 1; }
+    .testi-name {
+      font-size: .82rem; font-weight: 500;
+      color: var(--text); margin-bottom: 5px;
+    }
+    .stars { display: flex; gap: 3px; }
+    .star { color: var(--gold); font-size: .75rem; }
+    .star.empty { color: var(--muted); }
+    .testi-quote {
+      font-size: .79rem; line-height: 1.78;
+      color: var(--muted); font-style: italic;
+    }
+
+    /* FAQ */
+    .faq-section { max-width: 620px; margin: 0 auto 80px; }
+    .faq-label {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 28px;
+    }
+    .faq-label svg { color: var(--gold); }
+    .faq-label h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem; font-weight: 500; color: var(--text);
+    }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+    }
+    .faq-q {
+      width: 100%; background: none; border: none; color: var(--text);
+      font-family: 'Montserrat', sans-serif;
+      font-size: .82rem; font-weight: 400;
+      padding: 20px 0;
+      display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer; text-align: left; gap: 20px;
+      transition: color .2s;
+    }
+    .faq-q:hover { color: var(--gold-l); }
+    .faq-chevron {
+      flex-shrink: 0; transition: transform .3s;
+      color: var(--muted);
+    }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+    .faq-a {
+      font-size: .79rem; line-height: 1.78;
+      color: var(--muted);
+      max-height: 0; overflow: hidden;
+      transition: max-height .35s ease, padding .3s;
+      padding-bottom: 0;
+    }
+    .faq-item.open .faq-a {
+      max-height: 200px;
+      padding-bottom: 20px;
+    }
+
+    /* CTA */
+    .cta-block {
+      text-align: center; padding: 64px 32px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(201,168,76,.05) 0%, transparent 100%);
+      max-width: 600px; margin: 0 auto;
+    }
+    .cta-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 400;
+      color: var(--text); margin-bottom: 32px;
+    }
+    .btn-cta {
+      display: inline-flex; align-items: center; gap: 12px;
+      background: var(--gold); color: var(--bg);
+      font-size: .68rem; letter-spacing: .14em; font-weight: 700;
+      padding: 15px 36px; border-radius: 4px; text-decoration: none;
+      transition: background .2s, transform .15s, box-shadow .2s;
+      box-shadow: 0 4px 24px rgba(201,168,76,.3);
+    }
+    .btn-cta:hover {
+      background: var(--gold-l);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(201,168,76,.4);
+    }
+    .btn-cta svg { width: 14px; height: 14px; }
+
+    /* ───── FOOTER ───── */
+    footer {
+      padding: 40px 80px;
+      border-top: 1px solid var(--border);
+      background: var(--bg2);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 20px;
+    }
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; letter-spacing: .15em;
+      color: var(--gold); text-decoration: none;
+    }
+    .footer-links {
+      display: flex; gap: 28px; list-style: none;
+    }
+    .footer-links a {
+      font-size: .63rem; letter-spacing: .1em;
+      color: var(--muted); text-decoration: none;
+      transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--gold-l); }
+    .footer-copy {
+      font-size: .63rem; letter-spacing: .08em;
+      color: var(--muted);
+    }
+
+    /* ───── MOBILE NAV ───── */
+    .mobile-menu {
+      display: none;
+      position: fixed; top: var(--nav-h); left: 0; right: 0;
+      background: rgba(12,12,15,.97);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+      padding: 24px 32px;
+      flex-direction: column; gap: 20px;
+      z-index: 99;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-size: .78rem; letter-spacing: .12em;
+      color: var(--text); text-decoration: none;
+      opacity: .8; transition: opacity .2s, color .2s;
+    }
+    .mobile-menu a:hover { opacity: 1; color: var(--gold); }
+
+    /* ═══════════════════════════════════════
+       АДАПТИВ — все устройства
+       1200px  широкий ноутбук
+        960px  планшет / узкий ноутбук
+        768px  маленький планшет
+        640px  большой телефон
+        480px  стандартный телефон
+        375px  маленький телефон (iPhone SE)
+    ═══════════════════════════════════════ */
+
+    /* ── Широкий ноутбук ── */
+    @media (max-width: 1200px) {
+      #home { padding: calc(var(--nav-h) + 40px) 60px 80px; }
+      #readings, #process, #gallery, #wisdom { padding: 90px 60px; }
+      #card-demo, #chat-demo, #quiz { padding: 90px 60px; }
+    }
+
+    /* ── Планшет / узкий ноутбук ── */
+    @media (max-width: 960px) {
+      nav { padding: 0 24px; }
+      .nav-links { display: none; }
+      .nav-cta { display: none; }
+      .burger { display: flex; }
+
+      #home {
+        grid-template-columns: 1fr;
+        padding: calc(var(--nav-h) + 48px) 40px 64px;
+        text-align: center;
+      }
+      .hero-left { display: flex; flex-direction: column; align-items: center; }
+      .hero-desc { max-width: 560px; }
+      .hero-right { margin-top: 48px; }
+      .tarot-card { width: 230px; height: 378px; }
+
+      #readings, #process, #gallery, #wisdom { padding: 72px 32px; }
+      #card-demo, #chat-demo, #quiz { padding: 72px 32px; }
+
+      .features-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+      .spreads-grid  { grid-template-columns: 1fr 1fr; gap: 16px; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+
+      .step-row {
+        grid-template-columns: 1fr;
+        min-height: auto; gap: 0;
+      }
+      .step-row.reverse .step-card   { order: 1; }
+      .step-row.reverse .step-image  { order: 2; }
+      .step-row.reverse .step-timeline { display: none; }
+      .step-timeline { display: none; }
+      .step-image    { margin: 16px 0; }
+      .step-img-box  { max-width: 100%; aspect-ratio: 16/9; }
+
+      .chat-cols { grid-template-columns: 1fr; gap: 40px; }
+      .chat-right .section-title,
+      .chat-right .section-divider,
+      .chat-right .section-desc { text-align: center; margin-left: auto; margin-right: auto; }
+
+      .quiz-opts { grid-template-columns: 1fr 1fr; }
+
+      footer {
+        padding: 32px 28px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      .footer-links { flex-wrap: wrap; gap: 16px; }
+    }
+
+    /* ── Маленький планшет ── */
+    @media (max-width: 768px) {
+      #home { padding: calc(var(--nav-h) + 40px) 28px 56px; }
+      .hero-title { font-size: clamp(2.4rem, 7vw, 3.2rem); }
+      .tarot-card { width: 210px; height: 345px; }
+
+      #readings, #process, #gallery, #wisdom { padding: 64px 24px; }
+      #card-demo, #chat-demo, #quiz { padding: 64px 24px; }
+
+      .features-grid { grid-template-columns: 1fr; }
+      .spreads-grid  { grid-template-columns: 1fr; }
+
+      .quiz-opts { grid-template-columns: 1fr; }
+
+      .section-title { font-size: clamp(1.65rem, 5vw, 2.2rem); }
+      .section-desc  { font-size: .78rem; }
+
+      .cards-row { gap: 12px; }
+      .card-flip { width: 110px; min-height: 160px; }
+    }
+
+    /* ── Большой телефон ── */
+    @media (max-width: 640px) {
+      #home {
+        padding: calc(var(--nav-h) + 32px) 20px 48px;
+        gap: 0;
+      }
+      .hero-badge { font-size: .6rem; padding: 5px 12px; }
+      .hero-title { font-size: 2.2rem; margin-bottom: 16px; }
+      .hero-desc  { font-size: .79rem; margin-bottom: 32px; }
+      .btn-tg     { padding: 13px 26px; font-size: .65rem; width: 100%; justify-content: center; max-width: 320px; }
+      .hero-right { margin-top: 40px; }
+      .tarot-card { width: 192px; height: 315px; }
+
+      #readings, #process, #gallery, #wisdom { padding: 56px 20px; }
+      #card-demo, #chat-demo, #quiz { padding: 56px 20px; }
+
+      .section-title { font-size: 1.75rem; }
+
+      .feature-card { padding: 28px 22px; }
+      .spread-card  { padding: 24px 20px; }
+
+      .cards-row { gap: 10px; margin-top: 36px; }
+      .card-flip { width: 100px; }
+
+      .tg-float { bottom: 20px; right: 16px; width: 52px; height: 52px; }
+
+      .proof-toast { left: 12px; max-width: calc(100vw - 24px); }
+      .moon-widget { gap: 10px; padding: 12px 16px; }
+      .moon-sep    { display: none; }
+
+      footer { padding: 28px 20px; }
+      .footer-copy { font-size: .58rem; }
+    }
+
+    /* ── Стандартный телефон (≤480px) ── */
+    @media (max-width: 480px) {
+      :root { --nav-h: 56px; }
+      nav { height: 56px; }
+
+      #home { padding: calc(var(--nav-h) + 24px) 16px 40px; }
+      .hero-title { font-size: 1.95rem; line-height: 1.12; }
+      .hero-desc  { font-size: .76rem; }
+      .tarot-card { width: 175px; height: 287px; }
+      .card-label-top  { font-size: .55rem; top: 14px; }
+      .card-label-bottom { font-size: .45rem; bottom: 18px; }
+      .card-tap-hint   { font-size: .48rem; bottom: 22px; }
+      .cback-name { font-size: 1.25rem; }
+      .cback-text { font-size: .67rem; }
+
+      #readings, #process, #gallery, #wisdom { padding: 48px 16px; }
+      #card-demo, #chat-demo, #quiz { padding: 48px 16px; }
+
+      .section-title { font-size: 1.55rem; }
+      .section-desc  { font-size: .75rem; }
+
+      .feature-card { padding: 24px 18px; }
+      .feature-title { font-size: 1.15rem; }
+
+      .cards-row { gap: 8px; margin-top: 28px; }
+      .card-flip { width: 88px; min-height: 136px; }
+
+      .quiz-wrap { padding: 28px 20px; }
+      .qopt { padding: 14px 16px; font-size: .74rem; }
+
+      .chat-window { border-radius: 14px; }
+      .cmsg { font-size: .74rem; }
+
+      .tg-float { bottom: 16px; right: 12px; width: 48px; height: 48px; }
+      .tg-float svg { width: 22px; height: 22px; }
+
+      footer { padding: 24px 16px; gap: 12px; }
+      .footer-links { gap: 12px; }
+    }
+
+    /* ── Маленький телефон (≤375px, iPhone SE) ── */
+    @media (max-width: 375px) {
+      .hero-title { font-size: 1.75rem; }
+      .tarot-card { width: 158px; height: 260px; }
+      .btn-tg     { padding: 12px 20px; }
+      .section-title { font-size: 1.4rem; }
+
+      #readings, #process, #gallery, #wisdom { padding: 40px 14px; }
+      #card-demo, #chat-demo, #quiz { padding: 40px 14px; }
+
+      .card-flip { width: 78px; }
+      .cards-row { gap: 6px; }
+    }
+
+    /* ───── STAR PARTICLES ───── */
+    .star-particle {
+      position: absolute;
+      width: 2px; height: 2px;
+      border-radius: 50%;
+      background: var(--gold);
+      opacity: 0;
+      animation: twinkle var(--dur, 3s) ease-in-out infinite var(--delay, 0s);
+    }
+    @keyframes twinkle {
+      0%,100% { opacity: 0; transform: scale(1); }
+      50% { opacity: var(--op, .5); transform: scale(1.3); }
+    }
+
+    /* ───── FADE IN ───── */
+    .fade-in {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    /* ═══ FLOAT TG BUTTON ═══ */
+    .tg-float {
+      position: fixed; bottom: 32px; right: 32px; z-index: 200;
+      width: 58px; height: 58px; border-radius: 50%;
+      background: var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 24px rgba(201,168,76,.5);
+      text-decoration: none;
+      transition: transform .25s, box-shadow .25s;
+      animation: tgpulse 3s ease-in-out infinite;
+    }
+    .tg-float:hover { transform: scale(1.13); box-shadow: 0 8px 40px rgba(201,168,76,.7); animation: none; }
+    .tg-float svg { width: 26px; height: 26px; color: var(--bg); }
+    .tg-float-tip {
+      position: absolute; right: 70px; top: 50%; transform: translateY(-50%);
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 8px; padding: 7px 13px;
+      font-size: .68rem; color: var(--text); white-space: nowrap;
+      opacity: 0; pointer-events: none; transition: opacity .2s;
+    }
+    .tg-float:hover .tg-float-tip { opacity: 1; }
+    @keyframes tgpulse {
+      0%,100% { box-shadow: 0 4px 24px rgba(201,168,76,.5); }
+      50% { box-shadow: 0 4px 40px rgba(201,168,76,.8); }
+    }
+
+    /* ═══ CARD DEMO ═══ */
+    #card-demo { padding: 110px 80px; background: var(--bg); text-align: center; }
+    .cards-row {
+      display: flex; justify-content: center; gap: 18px;
+      flex-wrap: wrap; margin-top: 56px;
+    }
+    .card-flip {
+      perspective: 1200px; width: 150px; height: 250px;
+      cursor: pointer; flex-shrink: 0;
+      transition: transform .15s;
+    }
+    .card-flip:hover:not(.flipped) { transform: translateY(-8px); }
+    .card-flip-inner {
+      position: relative; width: 100%; height: 100%;
+      transition: transform .75s cubic-bezier(.4,0,.2,1);
+      transform-style: preserve-3d;
+    }
+    .card-flip.flipped .card-flip-inner { transform: rotateY(180deg); }
+    .card-face {
+      position: absolute; inset: 0; border-radius: 13px;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    }
+    .card-front {
+      background: linear-gradient(155deg, #0E1020 0%, #1A1535 55%, #0C0C18 100%);
+      border: 1px solid rgba(201,168,76,.3);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      overflow: hidden; transition: border-color .25s;
+    }
+    .card-flip:hover:not(.flipped) .card-front { border-color: rgba(201,168,76,.7); }
+    .card-hint {
+      font-size: .53rem; letter-spacing: .18em;
+      color: rgba(201,168,76,.45); margin-top: 14px;
+    }
+    .card-back-f {
+      transform: rotateY(180deg);
+      background: linear-gradient(155deg, #0E1020 0%, #151530 65%, #0C0C18 100%);
+      border: 1px solid rgba(201,168,76,.45);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: space-between;
+      padding: 14px 12px;
+      box-shadow: 0 0 30px rgba(201,168,76,.1);
+    }
+    .crd-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: .65rem; letter-spacing: .22em; color: rgba(201,168,76,.55);
+    }
+    .crd-icon { flex: 1; display: flex; align-items: center; justify-content: center; }
+    .crd-icon svg { color: var(--gold); }
+    .crd-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: .9rem; font-weight: 500;
+      color: var(--gold-l); text-align: center; margin-bottom: 5px;
+    }
+    .crd-meaning { font-size: .61rem; line-height: 1.55; color: var(--muted); text-align: center; }
+    .cards-cta { margin-top: 44px; }
+    .cards-note { font-size: .72rem; color: var(--muted); margin-top: 14px; }
+
+    /* ═══ CHAT DEMO ═══ */
+    #chat-demo { padding: 110px 80px; background: var(--bg2); }
+    .chat-cols {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 72px; align-items: center; max-width: 1020px; margin: 0 auto;
+    }
+    .chat-phone {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 24px; overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,.6);
+    }
+    .chat-header {
+      background: var(--bg4); padding: 14px 18px;
+      display: flex; align-items: center; gap: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .chat-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-d), var(--gold));
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .chat-avatar svg { width: 16px; height: 16px; color: var(--bg); }
+    .chat-bot-name { font-size: .8rem; font-weight: 600; color: var(--text); }
+    .chat-bot-status { font-size: .62rem; color: #4CAF50; display: flex; align-items: center; gap: 4px; }
+    .status-dot { width: 5px; height: 5px; border-radius: 50%; background: #4CAF50; animation: sblink 2s infinite; }
+    @keyframes sblink { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .chat-messages { padding: 16px 14px; display: flex; flex-direction: column; gap: 8px; min-height: 280px; }
+    .cmsg { max-width: 84%; opacity: 0; transform: translateY(8px); transition: opacity .4s, transform .4s; }
+    .cmsg.vis { opacity: 1; transform: translateY(0); }
+    .cmsg.u { align-self: flex-end; }
+    .cmsg.b { align-self: flex-start; }
+    .cmsg-b { padding: 9px 13px; border-radius: 14px; font-size: .75rem; line-height: 1.5; }
+    .cmsg.u .cmsg-b { background: var(--gold); color: var(--bg); border-bottom-right-radius: 4px; }
+    .cmsg.b .cmsg-b { background: var(--bg4); color: var(--text); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+    .cmsg-card { background: var(--bg4); border: 1px solid rgba(201,168,76,.28); border-radius: 11px; padding: 12px; margin-top: 4px; }
+    .cmsg-card-name { font-family: 'Cormorant Garamond', serif; font-size: .95rem; color: var(--gold); margin-bottom: 4px; }
+    .cmsg-card-txt { font-size: .7rem; color: var(--muted); line-height: 1.5; }
+    .typing-wrap { display: flex; gap: 4px; align-items: center; padding: 9px 13px; background: var(--bg4); border: 1px solid var(--border); border-radius: 14px; border-bottom-left-radius: 4px; width: fit-content; opacity: 0; transition: opacity .3s; }
+    .typing-wrap.vis { opacity: 1; }
+    .tdot { width: 5px; height: 5px; border-radius: 50%; background: var(--muted); animation: tdb .8s ease-in-out infinite; }
+    .tdot:nth-child(2){animation-delay:.15s} .tdot:nth-child(3){animation-delay:.3s}
+    @keyframes tdb { 0%,100%{transform:translateY(0);opacity:.4} 50%{transform:translateY(-4px);opacity:1} }
+    .chat-inp { padding: 10px 14px; border-top: 1px solid var(--border); display: flex; gap: 8px; align-items: center; background: var(--bg4); }
+    .chat-inp-f { flex: 1; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 7px 12px; font-size: .72rem; color: var(--muted); font-family: 'Montserrat', sans-serif; }
+    .chat-send { width: 30px; height: 30px; border-radius: 50%; background: var(--gold); border: none; display: flex; align-items: center; justify-content: center; }
+    .chat-send svg { width: 13px; height: 13px; color: var(--bg); }
+    .chat-right .section-title { text-align: left; }
+    .chat-right .section-divider { margin: 12px 0 20px; }
+    .chat-right .section-desc { text-align: left; max-width: 100%; margin-bottom: 32px; }
+    .chat-feats { display: flex; flex-direction: column; gap: 16px; }
+    .chat-feat { display: flex; gap: 14px; align-items: flex-start; }
+    .chat-feat-ic { width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0; background: var(--gold-glow); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
+    .chat-feat-ic svg { color: var(--gold); width: 15px; height: 15px; }
+    .chat-feat-title { font-size: .81rem; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+    .chat-feat-desc { font-size: .73rem; color: var(--muted); line-height: 1.6; }
+
+    /* ═══ QUIZ ═══ */
+    #quiz { padding: 110px 80px; background: var(--bg); }
+    .quiz-container { max-width: 660px; margin: 0 auto; }
+    .quiz-prog { display: flex; gap: 6px; margin-bottom: 44px; }
+    .qpd { height: 3px; flex: 1; border-radius: 2px; background: var(--border); transition: background .4s; }
+    .qpd.done { background: var(--gold); }
+    .quiz-step { display: none; }
+    .quiz-step.active { display: block; animation: qslide .4s ease; }
+    @keyframes qslide { from{opacity:0;transform:translateX(18px)} to{opacity:1;transform:translateX(0)} }
+    .quiz-q-title { font-family: 'Cormorant Garamond', serif; font-size: 1.7rem; font-weight: 400; color: var(--text); margin-bottom: 6px; }
+    .quiz-q-sub { font-size: .77rem; color: var(--muted); margin-bottom: 30px; }
+    .quiz-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .qopt { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; cursor: pointer; text-align: left; transition: border-color .2s, background .2s, transform .15s; font-family: 'Montserrat', sans-serif; }
+    .qopt:hover { border-color: rgba(201,168,76,.45); background: var(--bg4); transform: translateY(-2px); }
+    .qopt.sel { border-color: var(--gold); background: rgba(201,168,76,.07); }
+    .qopt-em { font-size: 1.3rem; margin-bottom: 8px; }
+    .qopt-l { font-size: .8rem; font-weight: 500; color: var(--text); display: block; margin-bottom: 3px; }
+    .qopt-h { font-size: .67rem; color: var(--muted); }
+    .quiz-result-block { display: none; text-align: center; padding: 16px 0; }
+    .quiz-result-block.active { display: block; animation: qslide .5s ease; }
+    .qr-badge { display: inline-block; font-size: .6rem; letter-spacing: .14em; color: var(--gold); border: 1px solid var(--border); border-radius: 20px; padding: 5px 16px; margin-bottom: 20px; }
+    .qr-title { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--text); margin-bottom: 8px; }
+    .qr-count { font-size: .68rem; color: var(--gold); letter-spacing: .12em; margin-bottom: 14px; }
+    .qr-desc { font-size: .8rem; color: var(--muted); line-height: 1.8; max-width: 460px; margin: 0 auto 32px; }
+    .quiz-back { background: none; border: none; color: var(--muted); font-size: .7rem; cursor: pointer; letter-spacing: .1em; margin-top: 16px; font-family: 'Montserrat', sans-serif; transition: color .2s; }
+    .quiz-back:hover { color: var(--gold-l); }
+
+    /* ═══ MOON WIDGET ═══ */
+    .moon-widget {
+      display: inline-flex; align-items: center; gap: 18px;
+      margin-top: 28px;
+      background: rgba(12,12,15,.75);
+      border: 1px solid var(--border);
+      border-radius: 14px; padding: 14px 22px;
+      backdrop-filter: blur(14px);
+      transition: border-color .3s;
+    }
+    .moon-widget:hover { border-color: rgba(201,168,76,.4); }
+    .moon-icon-big { font-size: 1.9rem; line-height: 1; filter: drop-shadow(0 0 10px rgba(201,168,76,.35)); }
+    .moon-phase-name { font-size: .78rem; font-weight: 500; color: var(--text); }
+    .moon-phase-desc { font-size: .62rem; color: var(--muted); margin-top: 3px; max-width: 140px; line-height: 1.4; }
+    .moon-sep { width: 1px; height: 38px; background: var(--border); flex-shrink: 0; }
+    .moon-cd { text-align: center; min-width: 80px; }
+    .moon-cd-label { font-size: .55rem; letter-spacing: .12em; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; }
+    .moon-cd-time { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; color: var(--gold); letter-spacing: .03em; }
+
+    /* ═══ SOCIAL PROOF TOAST ═══ */
+    .proof-toast {
+      position: fixed; bottom: 106px; left: 28px; z-index: 199;
+      display: flex; align-items: center; gap: 12px;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
+      border-radius: 12px; padding: 13px 15px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.6);
+      max-width: 285px;
+      transform: translateX(-130%);
+      transition: transform .45s cubic-bezier(.34,1.4,.64,1);
+    }
+    .proof-toast.show { transform: translateX(0); }
+    .proof-em { font-size: 1.25rem; flex-shrink: 0; }
+    .proof-body { flex: 1; min-width: 0; }
+    .proof-who { font-size: .75rem; font-weight: 600; color: var(--text); }
+    .proof-what { font-size: .66rem; color: var(--muted); margin-top: 2px; line-height: 1.35; }
+    .proof-ago { font-size: .59rem; color: var(--gold); margin-top: 4px; }
+    .proof-x { background: none; border: none; color: var(--muted); font-size: 1.1rem; cursor: pointer; padding: 0; line-height: 1; flex-shrink: 0; transition: color .2s; }
+    .proof-x:hover { color: var(--text); }
+
+    /* ═══ PARALLAX ═══ */
+    .star-particle { will-change: transform; }
+
+    /* ═══ HERO CARD — 5 ЭФФЕКТОВ ═══ */
+    .hero-right { perspective: 1400px; }
+    .tarot-card-wrap { position: relative; display: flex; justify-content: center; align-items: center; }
+
+    .tarot-card {
+      transform-style: preserve-3d;
+      animation: card-float 5s ease-in-out infinite;
+      cursor: pointer;
+      will-change: transform;
+    }
+    @keyframes card-float {
+      0%,100% { transform: translateY(0px) rotateX(0deg); }
+      30%      { transform: translateY(-14px) rotateX(1.5deg); }
+      70%      { transform: translateY(-10px) rotateX(-1deg); }
+    }
+    .tarot-card.is-tilting { animation: none; transition: transform .06s linear; }
+    .tarot-card.is-flipped {
+      transform: rotateY(180deg) !important;
+      transition: transform .85s cubic-bezier(.4,0,.2,1) !important;
+      animation: none !important;
+    }
+    .tarot-card.unflipping {
+      transform: rotateY(0deg) !important;
+      transition: transform .75s cubic-bezier(.4,0,.2,1) !important;
+      animation: none !important;
+    }
+
+    /* Грани карты */
+    .card-face-front, .card-face-back {
+      position: absolute; inset: 0;
+      border-radius: 16px;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    .card-face-front {
+      background: linear-gradient(165deg, #0E1020 0%, #1A1535 40%, #0C0C18 100%);
+      border: 1px solid rgba(201,168,76,.35);
+      overflow: hidden;
+    }
+    .card-face-back {
+      transform: rotateY(180deg);
+      background: linear-gradient(160deg, #0A0E1A 0%, #131028 50%, #0C0A14 100%);
+      border: 1px solid rgba(201,168,76,.45);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 10px; padding: 28px 22px; text-align: center;
+    }
+
+    /* Подсказка "нажми" */
+    .card-tap-hint {
+      position: absolute; bottom: 30px; left: 0; right: 0;
+      text-align: center; font-size: .55rem; letter-spacing: .18em;
+      color: rgba(201,168,76,.4);
+      animation: tap-pulse 2.2s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes tap-pulse { 0%,100%{opacity:.3} 50%{opacity:.85} }
+
+    /* Обратная сторона — содержимое */
+    .cback-roman { font-family: 'Cormorant Garamond', serif; font-size: .7rem; letter-spacing: .28em; color: rgba(201,168,76,.45); }
+    .cback-star  { font-size: 1.2rem; color: var(--gold); opacity: .7; }
+    .cback-name  { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 500; color: var(--gold-l); line-height: 1.1; }
+    .cback-line  { width: 40px; height: 1px; background: var(--gold); opacity: .35; }
+    .cback-text  { font-size: .72rem; line-height: 1.72; color: var(--muted); }
+    .cback-again { font-size: .55rem; letter-spacing: .16em; color: rgba(201,168,76,.3); margin-top: 6px; animation: tap-pulse 2.2s ease-in-out infinite; }
+
+    /* Символ — смена */
+    .tarot-card-inner { transition: opacity .45s ease; }
+    .tarot-card-inner.sym-fade { opacity: 0; }
+
+    /* Зарядка перед переворотом */
+    @keyframes card-charge {
+      0%,100% { box-shadow: 0 0 20px rgba(201,168,76,.15); }
+      50%      { box-shadow: 0 0 55px rgba(201,168,76,.55), 0 0 110px rgba(201,168,76,.18); }
+    }
+    .tarot-card.is-charging { animation: card-charge .55s ease-in-out 3 !important; }
+
+    /* Оверлей "сосредоточься" */
+    .card-focus-msg {
+      position: absolute; inset: 0; border-radius: 16px; z-index: 20;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+      background: rgba(8,8,12,.88);
+      pointer-events: none;
+      animation: cfm-in .35s ease;
+    }
+    @keyframes cfm-in { from { opacity: 0; transform: scale(.95); } to { opacity: 1; transform: scale(1); } }
+    .cfm-icon  { font-size: 1.6rem; color: var(--gold); animation: tap-pulse 1.2s ease-in-out infinite; }
+    .cfm-text  { font-family: 'Cormorant Garamond', serif; font-size: .8rem; letter-spacing: .22em;
+                 color: var(--gold-l); text-align: center; line-height: 1.7; }
+    .cfm-bar   { width: 0; height: 2px; background: var(--gold); border-radius: 2px;
+                 animation: cfm-bar 1.5s ease forwards; }
+    @keyframes cfm-bar { to { width: 80px; } }
+
+    /* Вспышка при раскрытии */
+    .card-reveal-flash {
+      position: absolute; inset: 0; border-radius: 14px; z-index: 5;
+      background: radial-gradient(circle at 50% 40%, rgba(201,168,76,.55) 0%, transparent 68%);
+      animation: crf-out .9s ease-out forwards; pointer-events: none;
+    }
+    @keyframes crf-out { 0% { opacity: 1; } 100% { opacity: 0; } }
+
+    /* Курсор печатной машинки */
+    .tw-cursor {
+      display: inline-block; width: 1px; height: .85em;
+      background: var(--gold); opacity: .75;
+      animation: tw-blink .65s step-end infinite;
+      vertical-align: text-bottom; margin-left: 1px;
+    }
+    @keyframes tw-blink { 50% { opacity: 0; } }
+
+    /* Частицы */
+    .cparticle {
+      position: fixed; pointer-events: none; z-index: 500;
+      border-radius: 50%; background: #C9A84C;
+      animation: cpart-fly var(--pd,1.2s) ease-out forwards;
+    }
+    @keyframes cpart-fly {
+      0%   { opacity:1; transform: translate(0,0) scale(1); }
+      100% { opacity:0; transform: translate(var(--px,0px),var(--py,-50px)) scale(0.2); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════ NAV ═══════════════════════ -->
+<nav id="nav">
+  <a href="#home" class="nav-logo">AETHER TAROT</a>
+  <ul class="nav-links">
+    <li><a href="#card-demo">КАРТА ДНЯ</a></li>
+    <li><a href="#gallery">РАСКЛАДЫ</a></li>
+    <li><a href="#quiz">КВИЗ</a></li>
+    <li><a href="#chat-demo">БОТ</a></li>
+    <li><a href="#wisdom">ОТЗЫВЫ</a></li>
+  </ul>
+  <a href="https://t.me/Tarologfalse_bot" target="_blank" rel="noopener" class="nav-cta">КОНСУЛЬТАЦИЯ</a>
+  <div class="burger" id="burger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#card-demo" onclick="closeMobile()">КАРТА ДНЯ</a>
+  <a href="#gallery" onclick="closeMobile()">РАСКЛАДЫ</a>
+  <a href="#quiz" onclick="closeMobile()">КВИЗ</a>
+  <a href="#chat-demo" onclick="closeMobile()">БОТ</a>
+  <a href="#wisdom" onclick="closeMobile()">ОТЗЫВЫ</a>
+  <a href="https://t.me/@Tarologfalse_bot" target="_blank" rel="noopener" style="color:var(--gold)">КОНСУЛЬТАЦИЯ</a>
+</div>
+
+<!-- ═══════════════════════ HERO ═══════════════════════ -->
+<section id="home">
+  <div class="hero-stars" id="heroStars"></div>
+
+  <div class="hero-left fade-in">
+    <div class="hero-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+      </svg>
+      ЦИФРОВОЙ ОРАКУЛ
+    </div>
+    <h1 class="hero-title">Вопроси звёзды.</h1>
+    <p class="hero-desc">
+      Твой ИИ-компаньон для <strong>духовного наставничества</strong>. Открой мудрость предков сквозь завесу современных технологий. Каждая карта раскрывает истину, скрытую на виду.
+    </p>
+    <a href="https://t.me/Tarologfalse_bot" target="_blank" rel="noopener" class="btn-tg">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L8.32 13.617l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.828.942z"/>
+      </svg>
+      ЗАПУСТИТЬ БОТА В TELEGRAM
+    </a>
+
+    <!-- Виджет фазы луны -->
+    <div class="moon-widget">
+      <span class="moon-icon-big" id="moonIcon">🌕</span>
+      <div>
+        <div class="moon-phase-name" id="moonName">Полнолуние</div>
+        <div class="moon-phase-desc" id="moonDesc">Пик энергии. Лучшее время для расклада</div>
+      </div>
+      <div class="moon-sep"></div>
+      <div class="moon-cd">
+        <div class="moon-cd-label" id="moonCdLabel">До полнолуния</div>
+        <div class="moon-cd-time" id="moonTimer">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right fade-in" style="transition-delay:.15s">
+    <div class="tarot-card-wrap" id="heroCardWrap">
+      <div class="tarot-card" id="heroCard">
+
+        <!-- ПЕРЕДНЯЯ СТОРОНА -->
+        <div class="card-face-front">
+          <div class="card-glow"></div>
+          <div class="card-label-top" id="heroCardRoman">XIV</div>
+          <div class="tarot-card-inner" id="heroSymWrap"></div>
+          <div class="card-label-bottom">AETHER</div>
+          <div class="card-tap-hint">✦ &nbsp; НАЖМИ НА КАРТУ</div>
+        </div>
+
+        <!-- ОБРАТНАЯ СТОРОНА -->
+        <div class="card-face-back">
+          <div class="card-glow"></div>
+          <div class="cback-roman" id="heroBackRoman">I</div>
+          <div class="cback-star">✦</div>
+          <div class="cback-name" id="heroBackName">Маг</div>
+          <div class="cback-line"></div>
+          <div class="cback-text" id="heroBackText">Сила воли и мастерство. Все инструменты уже у тебя в руках.</div>
+          <div class="cback-again">✦ &nbsp; нажми ещё раз</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ READINGS / FEATURES ═══════════════════════ -->
+<section id="readings">
+  <div class="section-icon">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+    </svg>
+  </div>
+  <h2 class="section-title fade-in">Мудрость в каждой карте</h2>
+  <div class="section-divider"></div>
+  <p class="section-desc fade-in">
+    Aether Tarot выходит за рамки традиционных раскладов. Соединяя древние эзотерические знания с передовым искусственным интеллектом, мы создаём пространство для самопознания. Каждый расклад — зеркало твоей души, поданное с эфирной точностью.
+  </p>
+
+  <div class="features-grid">
+    <div class="feature-card fade-in">
+      <div class="feature-bg-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+          <path d="M12 6v6l4 2"/>
+        </svg>
+      </div>
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+          <path d="M12 6v6l4 2"/>
+        </svg>
+      </div>
+      <h3 class="feature-title">Доступ 24/7</h3>
+      <p class="feature-desc">Пустота никогда не спит. Ищи наставление в любое время, из любой точки мира, когда духовный порыв достигает тебя.</p>
+    </div>
+
+    <div class="feature-card fade-in" style="transition-delay:.08s">
+      <div class="feature-bg-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        </svg>
+      </div>
+      <h3 class="feature-title">Личный Путь</h3>
+      <p class="feature-desc">Расклады, адаптирующиеся к твоей уникальной энергетической подписи. Оракул учится на твоих запросах и развивается.</p>
+    </div>
+
+    <div class="feature-card fade-in" style="transition-delay:.16s">
+      <div class="feature-bg-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+      </div>
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+      </div>
+      <h3 class="feature-title">Древние Знания</h3>
+      <p class="feature-desc">Черпая из герметических традиций и глубоких эзотерических учений. Полная символика колоды из 78 карт — расшифрована.</p>
+    </div>
+
+    <div class="feature-card highlight fade-in" style="transition-delay:.24s">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+        </svg>
+      </div>
+      <h3 class="feature-title">Шагни за Завесу</h3>
+      <p class="feature-desc">Начни своё путешествие сегодня. Позволь картам раскрыть то, что скрыто на виду.</p>
+      <a href="https://t.me/Tarologfalse_bot" target="_blank" rel="noopener" class="feature-link">
+        НАЧАТЬ ПУТЬ
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ CARD DEMO ═══════════════════════ -->
+<section id="card-demo">
+  <div class="section-icon">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+    </svg>
+  </div>
+  <h2 class="section-title fade-in">Вытяни карту</h2>
+  <div class="section-divider"></div>
+  <p class="section-desc fade-in">Нажми на любую карту и получи послание прямо сейчас. Каждый раз — новый расклад.</p>
+
+  <div class="cards-row" id="cardsRow"></div>
+
+  <div class="cards-cta fade-in">
+    <a href="https://t.me/Tarologfalse_bot" target="_blank" rel="noopener" class="btn-cta">
+      ПОЛУЧИТЬ ПОЛНЫЙ РАСКЛАД
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+    <p class="cards-note">Бесплатно · Без регистрации · Прямо в Telegram</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════ CHAT DEMO ═══════════════════════ -->
+<section id="chat-demo">
+  <div class="chat-cols">
+    <div class="chat-left fade-in">
+      <div class="chat-phone">
+        <div class="chat-header">
+          <div class="chat-avatar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+            </svg>
+          </div>
+          <div>
+            <div class="chat-bot-name">Aether Oracle</div>
+            <div class="chat-bot-status"><span class="status-dot"></span>онлайн</div>
+          </div>
+        </div>
+        <div class="chat-messages" id="chatMsgs"></div>
+        <div class="chat-inp">
+          <div class="chat-inp-f">Введи свой вопрос...</div>
+          <div class="chat-send">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-right fade-in" style="transition-delay:.15s">
+      <h2 class="section-title">Бот, который понимает</h2>
+      <div class="section-divider"></div>
+      <p class="section-desc">Не просто текст — живой диалог. Задавай уточняющие вопросы, углубляйся в карты и получай персональные ответы.</p>
+      <div class="chat-feats">
+        <div class="chat-feat">
+          <div class="chat-feat-ic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="chat-feat-title">Диалоговый формат</div>
+            <div class="chat-feat-desc">Задавай вопросы, уточняй и углубляйся в расклад в режиме переписки.</div>
+          </div>
+        </div>
+        <div class="chat-feat">
+          <div class="chat-feat-ic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+            </svg>
+          </div>
+          <div>
+            <div class="chat-feat-title">Глубокое толкование</div>
+            <div class="chat-feat-desc">Каждая карта раскрывается в контексте твоего конкретного вопроса.</div>
+          </div>
+        </div>
+        <div class="chat-feat">
+          <div class="chat-feat-ic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+              <path d="M12 6v6l4 2"/>
+            </svg>
+          </div>
+          <div>
+            <div class="chat-feat-title">История раскладов</div>
+            <div class="chat-feat-desc">Все расклады сохраняются. Возвращайся и отслеживай, как меняется твой путь.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ PROCESS ═══════════════════════ -->
+<section id="process">
+  <div class="process-head">
+    <h2 class="section-title fade-in">Ритуал Раскрыт</h2>
+    <div class="section-divider"></div>
+    <p class="section-desc fade-in">Шагни за завесу. Наш эфирный оракул проведёт тебя через бесшовное единение с древними архетипами.</p>
+  </div>
+
+  <div class="steps-container">
+
+    <!-- Step 1 -->
+    <div class="step-row">
+      <div class="step-card fade-in">
+        <div class="step-number-icon">
+          <div class="step-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="2" y="2" width="20" height="20" rx="3"/>
+              <line x1="7" y1="7" x2="17" y2="7"/><line x1="7" y1="12" x2="14" y2="12"/>
+            </svg>
+          </div>
+          <span class="step-num">Шаг первый</span>
+        </div>
+        <h3 class="step-title">Выберите Расклад</h3>
+        <p class="step-desc">Выбери схему, соответствующую твоему запросу. От ясности одной карты до глубины Кельтского Креста — здесь начинается структура твоего откровения.</p>
+      </div>
+
+      <div class="step-timeline">
+        <div class="tl-line"></div>
+        <div class="tl-dot"></div>
+        <div class="tl-line"></div>
+      </div>
+
+      <div class="step-image">
+        <div class="step-img-box step-img-1">
+          <div class="step-img-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+              <rect x="3" y="3" width="7" height="10" rx="1"/>
+              <rect x="14" y="3" width="7" height="10" rx="1"/>
+              <rect x="3" y="17" width="7" height="4" rx="1"/>
+              <rect x="14" y="17" width="7" height="4" rx="1"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-row reverse">
+      <div class="step-image">
+        <div class="step-img-box step-img-2">
+          <div class="step-img-placeholder">
+            <svg viewBox="0 0 100 100" style="width:80px;height:80px;opacity:.2;color:var(--gold)">
+              <circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="2" fill="none"/>
+              <circle cx="50" cy="50" r="25" stroke="currentColor" stroke-width="1.5" fill="none"/>
+              <line x1="50" y1="10" x2="50" y2="90" stroke="currentColor" stroke-width="1"/>
+              <line x1="10" y1="50" x2="90" y2="50" stroke="currentColor" stroke-width="1"/>
+              <polygon points="50,28 55,44 72,44 59,54 63,70 50,60 37,70 41,54 28,44 45,44" fill="currentColor" opacity=".5"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-timeline">
+        <div class="tl-line"></div>
+        <div class="tl-dot"></div>
+        <div class="tl-line"></div>
+      </div>
+
+      <div class="step-card fade-in">
+        <div class="step-number-icon">
+          <div class="step-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+            </svg>
+          </div>
+          <span class="step-num">Шаг второй</span>
+        </div>
+        <h3 class="step-title">Сосредоточьте Энергию</h3>
+        <p class="step-desc">Удержи вопрос в мысленном взоре. Пока цифровая колода тасуется, твоё намерение переплетается с алгоритмом, притягивая нужные архетипы для твоего пути.</p>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step-row">
+      <div class="step-card fade-in">
+        <div class="step-number-icon">
+          <div class="step-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <span class="step-num">Шаг третий</span>
+        </div>
+        <h3 class="step-title">Получите Древнюю Мудрость</h3>
+        <p class="step-desc">Aether Бот переводит символический язык карт в глубокие, практически применимые озарения, доставляемые через плавный и захватывающий диалоговый интерфейс.</p>
+      </div>
+
+      <div class="step-timeline">
+        <div class="tl-line"></div>
+        <div class="tl-dot"></div>
+        <div class="tl-line"></div>
+      </div>
+
+      <div class="step-image">
+        <div class="oracle-card fade-in" style="transition-delay:.1s">
+          <div class="oracle-label">
+            <span class="oracle-dot"></span>
+            AETHER ORACLE
+          </div>
+          <p class="oracle-text">«Верховная Жрица выходит из пустоты. Она просит тебя доверять своей интуиции в этом деле. Ответы уже внутри тебя — скрытые лишь сомнением.»</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CTA within process -->
+  <div style="text-align:center;margin-top:64px">
+    <a href="https://t.me/Tarologfalse_bot" target="_blank" rel="noopener" class="btn-cta fade-in">
+      НАЧАТЬ РАСКЛАД
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </a>
+  </div>
+</section>
+
+<!-- ═══════════════════════ GALLERY ═══════════════════════ -->
+<section id="gallery">
+  <div class="gallery-head">
+    <h2 class="section-title fade-in">Священные Расклады</h2>
+    <div class="section-divider"></div>
+    <p class="section-desc fade-in">Выбери схему, созвучную космическим течениям. Каждый расклад предлагает уникальный взгляд на твою судьбу.</p>
+  </div>
+
+  <div class="spreads-grid">
+
+    <!-- Daily Card -->
+    <div class="spread-card fade-in">
+      <div class="spread-img spread-img-daily">
+        <div class="spread-img-visual">
+          <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        </div>
+        <div class="spread-img-overlay"></div>
+        <div class="spread-badges">
+          <span class="spread-badge">1 Карта</span>
+          <div class="spread-fav">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/>
+              <line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="1" y1="12" x2="3" y2="12"/>
+              <line x1="21" y1="12" x2="23" y2="12"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="spread-body">
+        <h3 class="spread-title">Карта дня</h3>
+        <p class="spread-desc">Одна карта, освещающая энергии, формирующие твой день. Бесплатное наставление для центрирования духа и подготовки к бодрствующему миру.</p>
+        <a href="https://t.me/Tarologfalse_bot" target="_blank" rel="noopener" class="btn-try">Попробовать</a>
+      </div>
+    </div>
+
+    <!-- Love & Connections -->
+    <div class="spread-card featured fade-in" style="transition-delay:.08s">
+      <div class="spread-img spread-img-love">
+        <div class="spread-img-visual">
+          <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </div>
+        <div class="spread-img-overlay"></div>
+        <div class="spread-badges">
+          <span class="spread-badge">3 Карты</span>
+          <div class="spread-fav">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="spread-body">
+        <h3 class="spread-title">Любовь и Связи</h3>
+        <p class="spread-desc">Глубокое понимание отношений. Исследуй динамические силы между двумя душами, раскрой скрытые препятствия и возможные пути в будущее.</p>
+        <a href="https://t.me/Tarologfalse_bot" target="_blank" rel="noopener" class="btn-try">Попробовать</a>
+      </div>
+    </div>
+
+    <!-- Career Path -->
+    <div class="spread-card fade-in" style="transition-delay:.16s">
+      <div class="spread-img spread-img-career">
+        <div class="spread-img-visual">
+          <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+        </div>
+        <div class="spread-img-overlay"></div>
+        <div class="spread-badges">
+          <span class="spread-badge">5 Карт</span>
+          <div class="spread-fav">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="spread-body">
+        <h3 class="spread-title">Карьерный Путь</h3>
+        <p class="spread-desc">Навигация в профессиональном росте и амбициях. Прокладывай путь материального развития и определяй силы, помогающие или мешающие успеху.</p>
+        <a href="https://t.me/Tarologfalse_bot" target="_blank" rel="noopener" class="btn-try">Попробовать</a>
+      </div>
+    </div>
+
+    <!-- Celtic Cross -->
+    <div class="spread-card featured fade-in" style="transition-delay:.24s">
+      <div class="spread-img spread-img-celtic">
+        <div class="spread-img-visual">
+          <svg width="80" height="80" viewBox="0 0 100 100" fill="none">
+            <circle cx="50" cy="50" r="38" stroke="rgba(201,168,76,.4)" stroke-width="1.5"/>
+            <circle cx="50" cy="50" r="24" stroke="rgba(201,168,76,.35)" stroke-width="1.5"/>
+            <circle cx="50" cy="50" r="10" stroke="rgba(201,168,76,.5)" stroke-width="1.5"/>
+            <line x1="50" y1="12" x2="50" y2="88" stroke="rgba(201,168,76,.3)" stroke-width="1"/>
+            <line x1="12" y1="50" x2="88" y2="50" stroke="rgba(201,168,76,.3)" stroke-width="1"/>
+            <line x1="23" y1="23" x2="77" y2="77" stroke="rgba(201,168,76,.2)" stroke-width="1"/>
+            <line x1="77" y1="23" x2="23" y2="77" stroke="rgba(201,168,76,.2)" stroke-width="1"/>
+            <circle cx="50" cy="50" r="4" fill="rgba(201,168,76,.7)"/>
+          </svg>
+        </div>
+        <div class="spread-img-overlay"></div>
+        <div class="spread-badges">
+          <span class="spread-badge">10 Карт</span>
+          <div class="spread-fav">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
+              <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+              <line x1="6" y1="1" x2="6" y2="4"/>
+              <line x1="10" y1="1" x2="10" y2="4"/>
+              <line x1="14" y1="1" x2="14" y2="4"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="spread-body">
+        <h3 class="spread-title">Кельтский Крест</h3>
+        <p class="spread-desc">Полный расклад жизни. Этот древний метод даёт глубокий, многоуровневый взгляд на твою текущую ситуацию и окружающие влияния.</p>
+        <a href="https://t.me/Tarologfalse_bot" target="_blank" rel="noopener" class="btn-try">Попробовать</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════ QUIZ ═══════════════════════ -->
+<section id="quiz">
+  <div style="text-align:center;margin-bottom:56px">
+    <div class="section-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+    </div>
+    <h2 class="section-title fade-in">Какой расклад тебе нужен?</h2>
+    <div class="section-divider"></div>
+    <p class="section-desc fade-in">3 вопроса — и оракул подберёт идеальный расклад под твою ситуацию.</p>
+  </div>
+
+  <div class="quiz-container">
+    <div class="quiz-prog">
+      <div class="qpd" id="qp0"></div>
+      <div class="qpd" id="qp1"></div>
+      <div class="qpd" id="qp2"></div>
+    </div>
+
+    <!-- Шаг 1 -->
+    <div class="quiz-step active" id="qs0">
+      <p class="quiz-q-title">Что тебя беспокоит прямо сейчас?</p>
+      <p class="quiz-q-sub">Выбери то, что ближе всего к твоей ситуации</p>
+      <div class="quiz-opts">
+        <div class="qopt" onclick="quizAnswer(0,0)">
+          <div class="qopt-em">❤️</div>
+          <span class="qopt-l">Любовь и отношения</span>
+          <span class="qopt-h">Партнёр, чувства, связи</span>
+        </div>
+        <div class="qopt" onclick="quizAnswer(0,1)">
+          <div class="qopt-em">💼</div>
+          <span class="qopt-l">Карьера и деньги</span>
+          <span class="qopt-h">Работа, цели, амбиции</span>
+        </div>
+        <div class="qopt" onclick="quizAnswer(0,2)">
+          <div class="qopt-em">🌟</div>
+          <span class="qopt-l">Общее направление</span>
+          <span class="qopt-h">Жизнь, путь, развитие</span>
+        </div>
+        <div class="qopt" onclick="quizAnswer(0,3)">
+          <div class="qopt-em">🌿</div>
+          <span class="qopt-l">Внутреннее состояние</span>
+          <span class="qopt-h">Самопознание, энергия</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Шаг 2 -->
+    <div class="quiz-step" id="qs1">
+      <p class="quiz-q-title">Насколько глубокий ответ тебе нужен?</p>
+      <p class="quiz-q-sub">От этого зависит количество карт в раскладе</p>
+      <div class="quiz-opts">
+        <div class="qopt" onclick="quizAnswer(1,0)">
+          <div class="qopt-em">⚡</div>
+          <span class="qopt-l">Быстрый ориентир</span>
+          <span class="qopt-h">Одна чёткая подсказка</span>
+        </div>
+        <div class="qopt" onclick="quizAnswer(1,1)">
+          <div class="qopt-em">🔮</div>
+          <span class="qopt-l">Детальный анализ</span>
+          <span class="qopt-h">Полная картина ситуации</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Шаг 3 -->
+    <div class="quiz-step" id="qs2">
+      <p class="quiz-q-title">Как давно тебя это беспокоит?</p>
+      <p class="quiz-q-sub">Поможет выбрать точный тип расклада</p>
+      <div class="quiz-opts">
+        <div class="qopt" onclick="quizAnswer(2,0)">
+          <div class="qopt-em">🔥</div>
+          <span class="qopt-l">Только что возникло</span>
+          <span class="qopt-h">Нужен ответ прямо сейчас</span>
+        </div>
+        <div class="qopt" onclick="quizAnswer(2,1)">
+          <div class="qopt-em">🌙</div>
+          <span class="qopt-l">Давно на уме</span>
+          <span class="qopt-h">Требует глубокого осмысления</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Результат -->
+    <div class="quiz-result-block" id="qresult">
+      <div class="qr-badge">РЕКОМЕНДАЦИЯ ОРАКУЛА</div>
+      <h3 class="qr-title" id="qr-title"></h3>
+      <div class="qr-count" id="qr-count"></div>
+      <p class="qr-desc" id="qr-desc"></p>
+      <a href="https://t.me/Tarologfalse_bot" target="_blank" rel="noopener" class="btn-cta">
+        НАЧАТЬ ЭТОТ РАСКЛАД
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <br>
+      <button class="quiz-back" onclick="quizReset()">← Пройти заново</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ WISDOM ═══════════════════════ -->
+<section id="wisdom">
+  <div class="wisdom-head">
+    <h2 class="section-title fade-in">Отголоски Пустоты</h2>
+    <div class="section-divider"></div>
+    <p class="section-desc fade-in">Прочти опыт тех, кто искал наставления у эфира, и найди ответы на вопросы, что таятся в тени.</p>
+  </div>
+
+  <!-- Testimonials -->
+  <div style="max-width:1040px;margin:0 auto 80px">
+    <div class="testimonials-label fade-in">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+      </svg>
+      <h3>Отзывы</h3>
+      <div class="testimonials-label-line"></div>
+    </div>
+
+    <div class="testimonials-grid">
+      <div class="testi-card fade-in">
+        <div class="testi-header">
+          <div class="testi-avatar">E</div>
+          <div class="testi-info">
+            <div class="testi-name">Elena R.</div>
+            <div class="stars">
+              <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+            </div>
+          </div>
+        </div>
+        <p class="testi-quote">«Предоставленные инсайты были поразительно точными. Это ощущалось не как алгоритм, а как настоящий разговор с неведомым. По-настоящему изысканный опыт.»</p>
+      </div>
+
+      <div class="testi-card fade-in" style="transition-delay:.08s">
+        <div class="testi-header">
+          <div class="testi-avatar">M</div>
+          <div class="testi-info">
+            <div class="testi-name">Marcus V.</div>
+            <div class="stars">
+              <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star empty">★</span>
+            </div>
+          </div>
+        </div>
+        <p class="testi-quote">«Я подходил к этому скептически, но глубина полученного расклада была поразительной. Сам интерфейс настраивает разум на самопознание.»</p>
+      </div>
+
+      <div class="testi-card fade-in" style="transition-delay:.16s">
+        <div class="testi-header">
+          <div class="testi-avatar">S</div>
+          <div class="testi-info">
+            <div class="testi-name">Sarah J.</div>
+            <div class="stars">
+              <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star empty">★</span>
+            </div>
+          </div>
+        </div>
+        <p class="testi-quote">«Красиво оформлено. Выпавшие карты идеально отразили мою текущую ситуацию. Очень заземляющий опыт в хаотичном цифровом мире.»</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq-section fade-in">
+    <div class="faq-label">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+      </svg>
+      <h3>Часто задаваемые вопросы</h3>
+    </div>
+
+    <div class="faq-item open">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Как работает цифровой расклад?
+        <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+      <div class="faq-a">Наш движок использует сложную алгоритмическую интерпретацию традиционных раскладов таро в сочетании с пониманием архетипической символики для вытягивания и толкования карт на основе твоего намерения.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Расклады действительно случайны?
+        <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+      <div class="faq-a">Выбор карт использует криптографически защищённую случайность, обеспечивая подлинную непредсказуемость. Слой интерпретации затем вплетает смысл из выбранных архетипов в контексте твоего заявленного намерения.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Можно ли сохранить расклады для последующего осмысления?
+        <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+      <div class="faq-a">Да. Все расклады в Telegram-боте сохраняются в истории переписки, позволяя возвращаться к прошлым раскладам, отслеживать повторяющиеся темы и наблюдать, как наставления оракула проявляются со временем.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Сервис бесплатный?
+        <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+      <div class="faq-a">Расклад «Карта дня» полностью бесплатен. Более глубокие расклады — «Любовь и Связи», «Карьерный Путь» и «Кельтский Крест» — доступны по премиум-подписке, открывающей безлимитный доступ ко всей глубине оракула.</div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-block fade-in">
+    <h2 class="cta-title">Твоя судьба ждёт.</h2>
+    <a href="https://t.me/Tarologfalse_bot" target="_blank" rel="noopener" class="btn-cta">
+      НАЧАТЬ РАСКЛАД СЕЙЧАС
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </a>
+  </div>
+</section>
+
+<!-- Попап социального доказательства -->
+<div class="proof-toast" id="proofToast">
+  <span class="proof-em">🃏</span>
+  <div class="proof-body">
+    <div class="proof-who" id="proofWho">Анна из Москвы</div>
+    <div class="proof-what" id="proofWhat">получила расклад «Кельтский крест»</div>
+    <div class="proof-ago" id="proofAgo">только что</div>
+  </div>
+  <button class="proof-x" onclick="closeProof()">×</button>
+</div>
+
+<!-- Плавающая кнопка Telegram -->
+<a href="https://t.me/Tarologfalse_bot" target="_blank" rel="noopener" class="tg-float" aria-label="Открыть бота в Telegram">
+  <svg viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L8.32 13.617l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.828.942z"/>
+  </svg>
+  <span class="tg-float-tip">Открыть в Telegram</span>
+</a>
+
+<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+<footer>
+  <a href="#home" class="footer-logo">AETHER TAROT</a>
+  <ul class="footer-links">
+    <li><a href="#">ПУТЬ ОТШЕЛЬНИКА</a></li>
+    <li><a href="#">НЕБЕСНЫЕ УСЛОВИЯ</a></li>
+    <li><a href="#">ПОКРОВ ТАЙНЫ</a></li>
+    <li><a href="#">ПОДДЕРЖКА ОРАКУЛА</a></li>
+  </ul>
+  <span class="footer-copy">© 2024 AETHER TAROT. КАК ВВЕРХУ, ТАК И ВНИЗУ.</span>
+</footer>
+
+<!-- ═══════════════════════ SCRIPTS ═══════════════════════ -->
+<script>
+  /* ── Burger menu ── */
+  const burger = document.getElementById('burger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  burger.addEventListener('click', () => {
+    mobileMenu.classList.toggle('open');
+  });
+  function closeMobile() { mobileMenu.classList.remove('open'); }
+
+  /* ── FAQ accordion ── */
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  /* ── Active nav link ── */
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id);
+        });
+      }
+    });
+  }, { threshold: 0.4 });
+  sections.forEach(s => observer.observe(s));
+
+  /* ── Fade-in on scroll ── */
+  const fadeEls = document.querySelectorAll('.fade-in');
+  const fadeObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        fadeObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  fadeEls.forEach(el => fadeObserver.observe(el));
+
+  /* ── Star particles + Parallax ── */
+  var heroStars = document.getElementById('heroStars');
+  var starEls = [];
+  for (var si = 0; si < 70; si++) {
+    var star = document.createElement('div');
+    star.className = 'star-particle';
+    var spd = (Math.random() * 0.06 + 0.01).toFixed(3);
+    star.dataset.speed = spd;
+    star.style.left = (Math.random()*100) + '%';
+    star.style.top  = (Math.random()*100) + '%';
+    star.style.setProperty('--dur',   (2 + Math.random()*4) + 's');
+    star.style.setProperty('--delay', (Math.random()*4) + 's');
+    star.style.setProperty('--op',    (0.2 + Math.random()*0.45).toFixed(2));
+    star.style.width  = (Math.random() > .7 ? 3 : 2) + 'px';
+    star.style.height = star.style.width;
+    heroStars.appendChild(star);
+    starEls.push(star);
+  }
+
+  /* Параллакс при движении мыши */
+  var heroSection = document.getElementById('home');
+  heroSection.addEventListener('mousemove', function(e) {
+    var rect = heroSection.getBoundingClientRect();
+    var dx = (e.clientX - rect.left - rect.width  / 2);
+    var dy = (e.clientY - rect.top  - rect.height / 2);
+    starEls.forEach(function(s) {
+      var sp = parseFloat(s.dataset.speed);
+      s.style.transform = 'translate(' + (dx * sp).toFixed(1) + 'px,' + (dy * sp).toFixed(1) + 'px)';
+    });
+  });
+  heroSection.addEventListener('mouseleave', function() {
+    starEls.forEach(function(s) { s.style.transform = ''; });
+  });
+
+  /* ══════════════════════════════════
+     ФАЗА ЛУНЫ И ТАЙМЕР
+  ══════════════════════════════════ */
+  function getMoonAge(date) {
+    var ref = new Date(Date.UTC(2000, 0, 6, 18, 14));
+    var cycle = 29.53058867;
+    var days = (date - ref) / 86400000;
+    return ((days % cycle) + cycle) % cycle;
+  }
+
+  function getMoonInfo(age) {
+    if (age <  1.85) return {icon:'🌑', name:'Новолуние',          desc:'Время новых начинаний и намерений'};
+    if (age <  6.5)  return {icon:'🌒', name:'Растущая луна',       desc:'Энергия роста — притягивай желаемое'};
+    if (age < 10.5)  return {icon:'🌓', name:'Первая четверть',     desc:'Время решительных действий'};
+    if (age < 14.0)  return {icon:'🌔', name:'Прибывающая луна',    desc:'Сила нарастает — действуй смелее'};
+    if (age < 16.0)  return {icon:'🌕', name:'Полнолуние',          desc:'Пик энергии. Лучшее время для расклада!'};
+    if (age < 21.5)  return {icon:'🌖', name:'Убывающая луна',      desc:'Время отпускания и завершений'};
+    if (age < 25.5)  return {icon:'🌗', name:'Последняя четверть',  desc:'Подведение итогов и очищение'};
+    return            {icon:'🌘', name:'Старая луна',               desc:'Время покоя и глубокого осмысления'};
+  }
+
+  function secsToFullMoon(age) {
+    var cycle = 29.53058867;
+    var full  = 14.765;
+    var rem = age < full ? full - age : cycle - age + full;
+    return Math.max(0, Math.round(rem * 86400));
+  }
+
+  function formatTimer(secs) {
+    var d = Math.floor(secs / 86400);
+    var h = Math.floor((secs % 86400) / 3600);
+    var m = Math.floor((secs % 3600) / 60);
+    var s = secs % 60;
+    if (d > 0) return d + 'д ' + pad(h) + 'ч ' + pad(m) + 'м';
+    return pad(h) + ':' + pad(m) + ':' + pad(s);
+  }
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  var moonIconEl  = document.getElementById('moonIcon');
+  var moonNameEl  = document.getElementById('moonName');
+  var moonDescEl  = document.getElementById('moonDesc');
+  var moonTimerEl = document.getElementById('moonTimer');
+  var moonLabelEl = document.getElementById('moonCdLabel');
+
+  function updateMoon() {
+    var age  = getMoonAge(new Date());
+    var info = getMoonInfo(age);
+    if (moonIconEl) moonIconEl.textContent = info.icon;
+    if (moonNameEl) moonNameEl.textContent = info.name;
+    if (moonDescEl) moonDescEl.textContent = info.desc;
+    if (moonTimerEl) {
+      var isFullNow = age >= 14.0 && age < 16.0;
+      if (isFullNow) {
+        if (moonLabelEl) moonLabelEl.textContent = 'Сейчас';
+        moonTimerEl.textContent = 'Полнолуние!';
+      } else {
+        if (moonLabelEl) moonLabelEl.textContent = 'До полнолуния';
+        moonTimerEl.textContent = formatTimer(secsToFullMoon(age));
+      }
+    }
+  }
+  updateMoon();
+  setInterval(updateMoon, 1000);
+
+  /* ══════════════════════════════════
+     ПОПАП СОЦИАЛЬНОГО ДОКАЗАТЕЛЬСТВА
+  ══════════════════════════════════ */
+  var proofPeople = [
+    {who:'Анна из Москвы',         what:'получила расклад «Кельтский крест»',  ago:'только что'},
+    {who:'Мария из Питера',        what:'вытянула карту дня — Звезда',          ago:'1 мин назад'},
+    {who:'Елена из Казани',        what:'получила расклад «Любовь и Связи»',    ago:'3 мин назад'},
+    {who:'Ольга из Екатеринбурга', what:'прошла расклад «Карьерный путь»',      ago:'только что'},
+    {who:'Наталья из Краснодара',  what:'получила расклад «Кельтский крест»',   ago:'2 мин назад'},
+    {who:'Дарья из Новосибирска',  what:'вытянула карту дня — Солнце',          ago:'5 мин назад'},
+    {who:'Виктория из Самары',     what:'получила расклад «Любовь и Связи»',    ago:'только что'},
+    {who:'Алексей из Москвы',      what:'прошёл расклад «Карьерный путь»',      ago:'4 мин назад'},
+    {who:'Светлана из Воронежа',   what:'вытянула карту дня — Луна',            ago:'1 мин назад'},
+    {who:'Ирина из Ростова',       what:'получила расклад «Кельтский крест»',   ago:'только что'},
+  ];
+
+  var proofIdx = Math.floor(Math.random() * proofPeople.length);
+  var proofToast = document.getElementById('proofToast');
+
+  function showProof() {
+    var p = proofPeople[proofIdx % proofPeople.length];
+    proofIdx++;
+    document.getElementById('proofWho').textContent  = p.who;
+    document.getElementById('proofWhat').textContent = p.what;
+    document.getElementById('proofAgo').textContent  = p.ago;
+    proofToast.classList.add('show');
+    setTimeout(function() { proofToast.classList.remove('show'); }, 4500);
+  }
+
+  function closeProof() { proofToast.classList.remove('show'); }
+
+  setTimeout(function() {
+    showProof();
+    setInterval(showProof, 38000);
+  }, 9000);
+
+  /* ── Nav shadow on scroll ── */
+  window.addEventListener('scroll', () => {
+    document.getElementById('nav').style.boxShadow =
+      window.scrollY > 10 ? '0 4px 30px rgba(0,0,0,.5)' : 'none';
+  });
+
+  /* ══════════════════════════════════
+     КАРТЫ ТАРО — данные
+  ══════════════════════════════════ */
+  const TAROT = [
+    {num:'0',    name:'Шут',             meaning:'Начало нового пути. Доверяй интуиции и делай первый шаг без страха.'},
+    {num:'I',    name:'Маг',             meaning:'Сила воли и мастерство. Все инструменты уже у тебя в руках.'},
+    {num:'II',   name:'Верховная Жрица', meaning:'Прислушайся к внутреннему голосу. Ответы уже внутри тебя.'},
+    {num:'III',  name:'Императрица',     meaning:'Изобилие и творчество. Время расцвета и щедрого плодородия.'},
+    {num:'IV',   name:'Император',       meaning:'Стабильность и власть. Возьми ситуацию под контроль.'},
+    {num:'VI',   name:'Влюблённые',      meaning:'Выбор и единение. Следуй зову сердца, а не разума.'},
+    {num:'VII',  name:'Колесница',       meaning:'Победа через настойчивость. Двигайся вперёд несмотря ни на что.'},
+    {num:'VIII', name:'Сила',            meaning:'Внутренняя мощь побеждает внешнее давление. Ты сильнее, чем думаешь.'},
+    {num:'IX',   name:'Отшельник',       meaning:'Время уединения и мудрости. Ищи ответы внутри себя.'},
+    {num:'X',    name:'Колесо Фортуны',  meaning:'Судьба делает поворот. Будь готов к переменам — используй момент.'},
+    {num:'XI',   name:'Справедливость',  meaning:'Баланс и истина. Каждое действие получит своё справедливое отражение.'},
+    {num:'XII',  name:'Повешенный',      meaning:'Пауза и новая перспектива. Смени угол зрения — и всё прояснится.'},
+    {num:'XIII', name:'Смерть',          meaning:'Трансформация и обновление. Старое уходит, открывая путь новому.'},
+    {num:'XIV',  name:'Умеренность',     meaning:'Гармония и терпение. Всему своё время — не торопи события.'},
+    {num:'XVII', name:'Звезда',          meaning:'Надежда и вдохновение. Свет появляется после самой тёмной ночи.'},
+    {num:'XVIII',name:'Луна',            meaning:'Иллюзии и скрытые страхи. Не всё то, чем кажется на первый взгляд.'},
+    {num:'XIX',  name:'Солнце',          meaning:'Радость и победа. Ясность и успех уже у твоего порога.'},
+    {num:'XX',   name:'Суд',             meaning:'Пробуждение и трансформация. Новая глава жизни уже открывается.'},
+    {num:'XXI',  name:'Мир',             meaning:'Завершение цикла. Полнота и достижение цели — всё сложилось.'},
+  ];
+
+  /* ── Инициализация карт ── */
+  (function initCards() {
+    var row = document.getElementById('cardsRow');
+    if (!row) return;
+    var picked = TAROT.slice().sort(function(){ return Math.random() - 0.5; }).slice(0, 5);
+    row.innerHTML = picked.map(function(c) {
+      return '<div class="card-flip" onclick="this.classList.add(\'flipped\')">' +
+        '<div class="card-flip-inner">' +
+          '<div class="card-face card-front">' +
+            '<svg width="72" height="72" viewBox="0 0 100 100" fill="none">' +
+              '<circle cx="50" cy="50" r="38" stroke="rgba(201,168,76,.2)" stroke-width="1"/>' +
+              '<circle cx="50" cy="50" r="24" stroke="rgba(201,168,76,.15)" stroke-width="1"/>' +
+              '<polygon points="50,22 56,40 75,40 60,52 65,70 50,58 35,70 40,52 25,40 44,40"' +
+                ' fill="rgba(201,168,76,.1)" stroke="rgba(201,168,76,.22)" stroke-width="1"/>' +
+              '<circle cx="50" cy="50" r="5" fill="rgba(201,168,76,.35)"/>' +
+            '</svg>' +
+            '<span class="card-hint">НАЖМИ</span>' +
+          '</div>' +
+          '<div class="card-face card-back-f">' +
+            '<span class="crd-num">' + c.num + '</span>' +
+            '<div class="crd-icon">' +
+              '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">' +
+                '<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>' +
+              '</svg>' +
+            '</div>' +
+            '<div>' +
+              '<div class="crd-name">' + c.name + '</div>' +
+              '<div class="crd-meaning">' + c.meaning + '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  })();
+
+  /* ══════════════════════════════════
+     ЧАТ ДЕМО — анимация
+  ══════════════════════════════════ */
+  (function initChat() {
+    var container = document.getElementById('chatMsgs');
+    if (!container) return;
+
+    var msgs = [
+      {t:'u', text:'Что ждёт меня в карьере?'},
+      {t:'typing'},
+      {t:'b', text:'Инициирую расклад «Карьерный путь» 🃏\nСосредоточься на своём вопросе...'},
+      {t:'typing'},
+      {t:'card', name:'⚡ Колесо Фортуны (X)', text:'Перемены на горизонте. Возможность, которую ты ждал, стремительно приближается. Действуй — не медли.'},
+      {t:'u', text:'А что мне сейчас мешает?'},
+      {t:'typing'},
+      {t:'b', text:'Аркан Повешенный указывает: ты сам откладываешь решение. Отпусти старые убеждения — и путь откроется.'},
+    ];
+
+    var idx = 0;
+    var started = false;
+
+    function next() {
+      if (idx >= msgs.length) return;
+      var m = msgs[idx++];
+
+      if (m.t === 'typing') {
+        var tw = document.createElement('div');
+        tw.className = 'cmsg b';
+        tw.innerHTML = '<div class="typing-wrap"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div>';
+        container.appendChild(tw);
+        setTimeout(function(){ tw.querySelector('.typing-wrap').classList.add('vis'); }, 30);
+        setTimeout(function(){ tw.remove(); next(); }, 1300);
+      } else {
+        var d = document.createElement('div');
+        d.className = 'cmsg ' + (m.t === 'u' ? 'u' : 'b');
+        if (m.t === 'card') {
+          d.innerHTML = '<div class="cmsg-b">Вот что говорит оракул:</div>' +
+            '<div class="cmsg-card">' +
+              '<div class="cmsg-card-name">' + m.name + '</div>' +
+              '<div class="cmsg-card-txt">' + m.text + '</div>' +
+            '</div>';
+        } else {
+          d.innerHTML = '<div class="cmsg-b">' + m.text.replace(/\n/g,'<br>') + '</div>';
+        }
+        container.appendChild(d);
+        container.scrollTop = container.scrollHeight;
+        setTimeout(function(){ d.classList.add('vis'); }, 30);
+        setTimeout(next, m.t === 'u' ? 750 : 950);
+      }
+    }
+
+    var obs = new IntersectionObserver(function(entries) {
+      if (entries[0].isIntersecting && !started) {
+        started = true;
+        setTimeout(next, 500);
+      }
+    }, {threshold: 0.35});
+    obs.observe(container);
+  })();
+
+  /* ══════════════════════════════════
+     КВИЗ
+  ══════════════════════════════════ */
+  var quizAns = [];
+
+  function quizAnswer(step, val) {
+    quizAns[step] = val;
+    document.querySelectorAll('#qs' + step + ' .qopt').forEach(function(o, i) {
+      o.classList.toggle('sel', i === val);
+    });
+    document.getElementById('qp' + step).classList.add('done');
+
+    setTimeout(function() {
+      document.getElementById('qs' + step).classList.remove('active');
+      var next = document.getElementById('qs' + (step + 1));
+      if (next) {
+        next.classList.add('active');
+      } else {
+        showQuizResult();
+      }
+    }, 350);
+  }
+
+  function showQuizResult() {
+    var spreads = [
+      {
+        name: 'Любовь и Связи',
+        count: '3 КАРТЫ',
+        desc: 'Этот расклад раскроет динамику твоих отношений, скрытые препятствия и возможные сценарии будущего. Идеально для твоей ситуации.',
+      },
+      {
+        name: 'Карьерный Путь',
+        count: '5 КАРТ',
+        desc: 'Пять карт осветят твою профессиональную ситуацию со всех сторон: прошлое влияние, настоящее положение и скрытый потенциал.',
+      },
+      {
+        name: 'Карта дня',
+        count: '1 КАРТА',
+        desc: 'Одна точная карта с ясным посланием. Быстро, чётко и без лишнего — именно то, что тебе нужно прямо сейчас.',
+      },
+      {
+        name: 'Кельтский Крест',
+        count: '10 КАРТ',
+        desc: 'Самый глубокий расклад. Десять карт создают полную картину: прошлое, настоящее, окружение, страхи, надежды и итог.',
+      },
+    ];
+
+    var a = quizAns;
+    var idx;
+    if (a[0] === 0) idx = 0;
+    else if (a[0] === 1) idx = 1;
+    else if (a[1] === 1 || a[2] === 1) idx = 3;
+    else idx = 2;
+
+    var sp = spreads[idx];
+    document.getElementById('qr-title').textContent = sp.name;
+    document.getElementById('qr-count').textContent = sp.count;
+    document.getElementById('qr-desc').textContent = sp.desc;
+    document.getElementById('qresult').classList.add('active');
+  }
+
+  function quizReset() {
+    quizAns = [];
+    document.querySelectorAll('.quiz-step').forEach(function(s, i) {
+      s.classList.toggle('active', i === 0);
+    });
+    document.getElementById('qresult').classList.remove('active');
+    document.querySelectorAll('.qpd').forEach(function(d){ d.classList.remove('done'); });
+    document.querySelectorAll('.qopt').forEach(function(o){ o.classList.remove('sel'); });
+  }
+
+  /* ══════════════════════════════════
+     ГЕРОЙ — интерактивная карта (ритуал)
+  ══════════════════════════════════ */
+  (function initHeroCard() {
+    var wrap    = document.getElementById('heroCardWrap');
+    var card    = document.getElementById('heroCard');
+    var symWrap = document.getElementById('heroSymWrap');
+    var backRoman = document.getElementById('heroBackRoman');
+    var backName  = document.getElementById('heroBackName');
+    var backText  = document.getElementById('heroBackText');
+    if (!wrap || !card) return;
+
+    /* ── Символы (front face) ── */
+    var SYMBOLS = [
+      '<svg viewBox="0 0 100 100" width="110" height="110" fill="none" xmlns="http://www.w3.org/2000/svg"><polygon points="50,10 61,38 90,38 68,56 76,85 50,68 24,85 32,56 10,38 39,38" stroke="#C9A84C" stroke-width="1.4" fill="rgba(201,168,76,.07)"/><circle cx="50" cy="50" r="16" stroke="#C9A84C" stroke-width="1.2" fill="none"/><circle cx="50" cy="50" r="4" fill="#C9A84C" opacity=".7"/></svg>',
+      '<svg viewBox="0 0 100 100" width="110" height="110" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="50" cy="50" rx="34" ry="20" stroke="#C9A84C" stroke-width="1.4" fill="rgba(201,168,76,.05)"/><circle cx="50" cy="50" r="10" stroke="#C9A84C" stroke-width="1.3" fill="rgba(201,168,76,.15)"/><circle cx="50" cy="50" r="4" fill="#C9A84C" opacity=".8"/><line x1="50" y1="10" x2="50" y2="30" stroke="#C9A84C" stroke-width="1" opacity=".5"/><line x1="50" y1="70" x2="50" y2="90" stroke="#C9A84C" stroke-width="1" opacity=".5"/></svg>',
+      '<svg viewBox="0 0 100 100" width="110" height="110" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="36" cy="50" r="18" stroke="#C9A84C" stroke-width="1.3" fill="rgba(201,168,76,.06)"/><path d="M36,32 A18,18 0 0 1 36,68 A12,12 0 0 0 36,32Z" fill="#C9A84C" opacity=".25"/><circle cx="68" cy="50" r="12" stroke="#C9A84C" stroke-width="1.3" fill="rgba(201,168,76,.1)"/><g stroke="#C9A84C" stroke-width="1" opacity=".5"><line x1="68" y1="32" x2="68" y2="26"/><line x1="68" y1="68" x2="68" y2="74"/><line x1="50" y1="50" x2="44" y2="50"/><line x1="86" y1="50" x2="80" y2="50"/></g></svg>',
+      '<svg viewBox="0 0 100 100" width="110" height="110" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M30,50 C30,38 42,32 50,40 C58,48 70,42 70,50 C70,58 58,64 50,56 C42,48 30,62 30,50Z" stroke="#C9A84C" stroke-width="1.5" fill="rgba(201,168,76,.07)"/><line x1="50" y1="20" x2="50" y2="80" stroke="#C9A84C" stroke-width="1" opacity=".4"/><line x1="20" y1="50" x2="80" y2="50" stroke="#C9A84C" stroke-width="1" opacity=".4"/><circle cx="50" cy="50" r="5" fill="#C9A84C" opacity=".6"/></svg>',
+      '<svg viewBox="0 0 100 100" width="110" height="110" fill="none" xmlns="http://www.w3.org/2000/svg"><polygon points="50,15 85,80 15,80" stroke="#C9A84C" stroke-width="1.5" fill="rgba(201,168,76,.06)"/><ellipse cx="50" cy="60" rx="13" ry="8" stroke="#C9A84C" stroke-width="1.2" fill="rgba(201,168,76,.1)"/><circle cx="50" cy="60" r="4" fill="#C9A84C" opacity=".75"/></svg>',
+      '<svg viewBox="0 0 100 100" width="110" height="110" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="34" stroke="#C9A84C" stroke-width="1" opacity=".3" fill="none"/><circle cx="50" cy="50" r="22" stroke="#C9A84C" stroke-width="1" opacity=".4" fill="none"/><circle cx="50" cy="50" r="11" stroke="#C9A84C" stroke-width="1.2" opacity=".6" fill="none"/><circle cx="50" cy="50" r="4" fill="#C9A84C" opacity=".8"/><line x1="50" y1="16" x2="50" y2="28" stroke="#C9A84C" stroke-width="1.2" opacity=".5"/><line x1="50" y1="72" x2="50" y2="84" stroke="#C9A84C" stroke-width="1.2" opacity=".5"/><line x1="16" y1="50" x2="28" y2="50" stroke="#C9A84C" stroke-width="1.2" opacity=".5"/><line x1="72" y1="50" x2="84" y2="50" stroke="#C9A84C" stroke-width="1.2" opacity=".5"/></svg>',
+    ];
+    var symIdx = 0;
+    symWrap.innerHTML = SYMBOLS[0];
+
+    function setSymbol(i) {
+      symWrap.classList.add('sym-fade');
+      setTimeout(function() {
+        symWrap.innerHTML = SYMBOLS[i % SYMBOLS.length];
+        symWrap.classList.remove('sym-fade');
+      }, 450);
+    }
+
+    setInterval(function() {
+      if (isFlipped || isCharging) return;
+      symIdx = (symIdx + 1) % SYMBOLS.length;
+      setSymbol(symIdx);
+    }, 5000);
+
+    /* ── 3D наклон ── */
+    var isTilting = false, tiltRAF = null;
+    var targetRX = 0, targetRY = 0, currentRX = 0, currentRY = 0;
+
+    function lerpTilt() {
+      currentRX += (targetRX - currentRX) * 0.12;
+      currentRY += (targetRY - currentRY) * 0.12;
+      if (!isFlipped) card.style.transform = 'rotateX('+currentRX+'deg) rotateY('+currentRY+'deg)';
+      if (isTilting) tiltRAF = requestAnimationFrame(lerpTilt);
+    }
+
+    wrap.addEventListener('mouseenter', function() {
+      if (isFlipped || isCharging) return;
+      card.style.animation = 'none';
+      isTilting = true;
+      lerpTilt();
+    });
+    wrap.addEventListener('mousemove', function(e) {
+      if (isFlipped || isCharging) return;
+      var r = wrap.getBoundingClientRect();
+      targetRY =  ((e.clientX - r.left - r.width/2)  / (r.width/2))  * 18;
+      targetRX = -((e.clientY - r.top  - r.height/2) / (r.height/2)) * 14;
+    });
+    wrap.addEventListener('mouseleave', function() {
+      isTilting = false;
+      cancelAnimationFrame(tiltRAF);
+      targetRX = targetRY = currentRX = currentRY = 0;
+      if (!isFlipped) { card.style.transform = ''; card.style.animation = ''; }
+    });
+
+    /* ── Touch: наклон по свайпу пальца ── */
+    var touchStartX = 0, touchStartY = 0;
+    wrap.addEventListener('touchstart', function(e) {
+      if (isFlipped || isCharging) return;
+      var t = e.touches[0];
+      touchStartX = t.clientX;
+      touchStartY = t.clientY;
+      card.style.animation = 'none';
+      isTilting = true;
+      lerpTilt();
+    }, { passive: true });
+
+    wrap.addEventListener('touchmove', function(e) {
+      if (isFlipped || isCharging) return;
+      var t = e.touches[0];
+      var r = wrap.getBoundingClientRect();
+      targetRY =  ((t.clientX - r.left - r.width/2)  / (r.width/2))  * 14;
+      targetRX = -((t.clientY - r.top  - r.height/2) / (r.height/2)) * 10;
+    }, { passive: true });
+
+    wrap.addEventListener('touchend', function() {
+      isTilting = false;
+      cancelAnimationFrame(tiltRAF);
+      targetRX = targetRY = currentRX = currentRY = 0;
+      if (!isFlipped) { card.style.transform = ''; card.style.animation = ''; }
+    }, { passive: true });
+
+    /* ── Частицы ── */
+    function spawnParticles(x, y, count, spread) {
+      spread = spread || 80;
+      for (var i = 0; i < count; i++) {
+        var p    = document.createElement('div');
+        p.className = 'cparticle';
+        var size  = 2 + Math.random() * 5;
+        var angle = Math.random() * Math.PI * 2;
+        var dist  = spread * (0.4 + Math.random() * 0.9);
+        var dur   = 0.6 + Math.random() * 0.9;
+        p.style.cssText = 'width:'+size+'px;height:'+size+'px;left:'+(x-size/2)+'px;top:'+(y-size/2)+'px'
+          +';--px:'+Math.round(Math.cos(angle)*dist)+'px;--py:'+Math.round(Math.sin(angle)*dist)+'px'
+          +';--pd:'+dur+'s;opacity:'+(0.55+Math.random()*0.45);
+        document.body.appendChild(p);
+        setTimeout(function(el){ el.remove(); }, dur * 1000 + 100, p);
+      }
+    }
+
+    /* Тихие фоновые искры */
+    setInterval(function() {
+      if (isFlipped || isCharging) return;
+      var r = card.getBoundingClientRect();
+      spawnParticles(r.left + Math.random()*r.width, r.top + Math.random()*r.height*0.35, 2, 40);
+    }, 2800);
+
+    /* Периметр-вспышка */
+    function perimeterBurst() {
+      var r = card.getBoundingClientRect();
+      for (var i = 0; i < 30; i++) {
+        var t = Math.random();
+        var x, y;
+        var side = Math.floor(Math.random() * 4);
+        if (side === 0) { x = r.left + t*r.width;  y = r.top; }
+        else if (side === 1) { x = r.right;          y = r.top + t*r.height; }
+        else if (side === 2) { x = r.left + t*r.width;  y = r.bottom; }
+        else                 { x = r.left;             y = r.top + t*r.height; }
+        spawnParticles(x, y, 1, 55);
+      }
+    }
+
+    /* ── Печатная машинка ── */
+    function typewrite(el, text, speed) {
+      el.textContent = '';
+      var cursor = document.createElement('span');
+      cursor.className = 'tw-cursor';
+      el.appendChild(cursor);
+      var i = 0;
+      var t = setInterval(function() {
+        if (i >= text.length) {
+          clearInterval(t);
+          setTimeout(function() { if (cursor.parentNode) cursor.remove(); }, 1200);
+          return;
+        }
+        cursor.insertAdjacentText('beforebegin', text[i++]);
+      }, speed);
+    }
+
+    /* ── Состояние ── */
+    var isFlipped   = false;
+    var isCharging  = false;
+    var canClick    = true;
+
+    card.addEventListener('click', function() {
+      if (!canClick) return;
+
+      if (isFlipped) {
+        /* ── Возврат ── */
+        canClick = false;
+        perimeterBurst();
+        card.classList.add('unflipping');
+        card.classList.remove('is-flipped');
+        setTimeout(function() {
+          card.classList.remove('unflipping');
+          card.style.animation = '';
+          isFlipped = false;
+          symIdx = (symIdx + 1) % SYMBOLS.length;
+          setSymbol(symIdx);
+          canClick = true;
+        }, 800);
+        return;
+      }
+
+      /* ── Ритуал ── */
+      canClick    = false;
+      isCharging  = true;
+      isTilting   = false;
+      cancelAnimationFrame(tiltRAF);
+      card.style.animation = 'none';
+      card.style.transform = '';
+
+      /* 1. Зарядка — пульс гечения */
+      card.classList.add('is-charging');
+
+      /* 2. Оверлей "сосредоточься" */
+      var overlay = document.createElement('div');
+      overlay.className = 'card-focus-msg';
+      overlay.innerHTML = '<div class="cfm-icon">✦</div>'
+        + '<div class="cfm-text">Сосредоточься<br>на своём вопросе</div>'
+        + '<div class="cfm-bar"></div>';
+      card.querySelector('.card-face-front').appendChild(overlay);
+
+      /* 3. Через 1.6 сек — переворот + частицы */
+      setTimeout(function() {
+        card.classList.remove('is-charging');
+
+        /* Выбрать аркан */
+        var pick = TAROT[Math.floor(Math.random() * TAROT.length)];
+        backRoman.textContent = pick.num;
+        backName.textContent  = pick.name;
+        backText.textContent  = '';
+
+        /* Убрать оверлей */
+        overlay.style.transition = 'opacity .25s';
+        overlay.style.opacity = '0';
+        setTimeout(function() { if (overlay.parentNode) overlay.remove(); }, 280);
+
+        /* Взрыв частиц */
+        perimeterBurst();
+        var r = card.getBoundingClientRect();
+        spawnParticles(r.left + r.width/2, r.top + r.height/2, 22, 120);
+
+        /* Переворот */
+        card.classList.add('is-flipped');
+        isFlipped   = true;
+        isCharging  = false;
+
+        /* 4. После флипа — вспышка + машинка */
+        setTimeout(function() {
+          var flash = document.createElement('div');
+          flash.className = 'card-reveal-flash';
+          card.querySelector('.card-face-back').appendChild(flash);
+          setTimeout(function() { if (flash.parentNode) flash.remove(); }, 950);
+
+          typewrite(backText, pick.meaning, 28);
+          canClick = true;
+        }, 900);
+
+      }, 1650);
+    });
+  })();
+</script>
+</body>
+</html>
