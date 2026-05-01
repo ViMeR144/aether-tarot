@@ -12,6 +12,8 @@ const pool = new Pool({
 
 const ADMIN_SECRET   = process.env.ADMIN_SECRET   || 'aether_dev_secret_change_me';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
+const USER_SECRET    = process.env.USER_SECRET    || (ADMIN_SECRET + '_user');
+const BOT_USERNAME   = process.env.BOT_USERNAME   || '';
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
@@ -77,6 +79,18 @@ async function initDb() {
       ('tg_notify_chat_id', '')
     ON CONFLICT DO NOTHING
   `);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS tg_users (
+      id          SERIAL PRIMARY KEY,
+      telegram_id BIGINT      UNIQUE NOT NULL,
+      username    TEXT,
+      first_name  TEXT,
+      photo_url   TEXT,
+      agreed_at   TIMESTAMPTZ,
+      created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+    )
+  `);
 }
 initDb().catch(err => console.error('DB init error:', err.message));
 
@@ -104,8 +118,30 @@ function requireAdmin(req, res, next) {
   const auth  = req.headers.authorization || '';
   const token = auth.startsWith('Bearer ') ? auth.slice(7) : null;
   if (!token) return res.status(401).json({ error: 'Нет токена' });
-  try { jwt.verify(token, ADMIN_SECRET); next(); }
+  try {
+    const payload = jwt.verify(token, ADMIN_SECRET);
+    if (!payload.admin) return res.status(403).json({ error: 'Нет доступа' });
+    next();
+  } catch { res.status(401).json({ error: 'Токен недействителен' }); }
+}
+
+function requireUser(req, res, next) {
+  const auth  = req.headers.authorization || '';
+  const token = auth.startsWith('Bearer ') ? auth.slice(7) : null;
+  if (!token) return res.status(401).json({ error: 'Нет токена' });
+  try { req.tgUser = jwt.verify(token, USER_SECRET); next(); }
   catch { res.status(401).json({ error: 'Токен недействителен' }); }
+}
+
+function verifyTelegramAuth(data) {
+  const botToken = process.env.TELEGRAM_BOT_TOKEN || '';
+  if (!botToken) return false;
+  const { hash, ...fields } = data;
+  const checkStr = Object.keys(fields).sort().map(k => `${k}=${fields[k]}`).join('\n');
+  const secret   = crypto.createHash('sha256').update(botToken).digest();
+  const hmac     = crypto.createHmac('sha256', secret).update(checkStr).digest('hex');
+  const age      = Math.floor(Date.now() / 1000) - parseInt(fields.auth_date || 0);
+  return hmac === hash && age < 86400;
 }
 
 async function addLog(action, details) {
@@ -433,10 +469,75 @@ app.post('/api/admin/settings/test-tg', requireAdmin, async (req, res) => {
 });
 
 /* ══════════════════════════════════════
+   ПУБЛИЧНЫЙ КОНФИГ
+══════════════════════════════════════ */
+
+app.get('/api/config', (req, res) => {
+  res.json({ bot_username: BOT_USERNAME });
+});
+
+/* ══════════════════════════════════════
+   AUTH — TELEGRAM LOGIN
+══════════════════════════════════════ */
+
+app.post('/api/auth/telegram', async (req, res) => {
+  try {
+    if (!verifyTelegramAuth(req.body))
+      return res.status(401).json({ error: 'Неверная подпись Telegram' });
+
+    const { id: telegram_id, first_name, username, photo_url } = req.body;
+    const { rows } = await pool.query(`
+      INSERT INTO tg_users (telegram_id, username, first_name, photo_url)
+      VALUES ($1, $2, $3, $4)
+      ON CONFLICT (telegram_id) DO UPDATE SET
+        username   = EXCLUDED.username,
+        first_name = EXCLUDED.first_name,
+        photo_url  = EXCLUDED.photo_url
+      RETURNING *
+    `, [telegram_id, username || null, first_name || null, photo_url || null]);
+
+    const user  = rows[0];
+    const token = jwt.sign(
+      { tg_id: user.telegram_id, name: user.first_name, agreed: !!user.agreed_at },
+      USER_SECRET,
+      { expiresIn: '30d' }
+    );
+    res.json({ token, agreed: !!user.agreed_at, user: { first_name: user.first_name, photo_url: user.photo_url } });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+});
+
+app.post('/api/auth/agree', requireUser, async (req, res) => {
+  try {
+    await pool.query('UPDATE tg_users SET agreed_at = NOW() WHERE telegram_id = $1', [req.tgUser.tg_id]);
+    const token = jwt.sign(
+      { tg_id: req.tgUser.tg_id, name: req.tgUser.name, agreed: true },
+      USER_SECRET,
+      { expiresIn: '30d' }
+    );
+    res.json({ ok: true, token });
+  } catch (err) { res.status(500).json({ error: 'Ошибка сервера' }); }
+});
+
+app.get('/api/auth/me', requireUser, async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      'SELECT telegram_id, first_name, username, photo_url, agreed_at FROM tg_users WHERE telegram_id = $1',
+      [req.tgUser.tg_id]
+    );
+    if (!rows.length) return res.status(404).json({ error: 'Пользователь не найден' });
+    res.json(rows[0]);
+  } catch (err) { res.status(500).json({ error: 'Ошибка сервера' }); }
+});
+
+/* ══════════════════════════════════════
    СТРАНИЦЫ
 ══════════════════════════════════════ */
-app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
-app.get('*',      (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/admin',     (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
+app.get('/agreement', (req, res) => res.sendFile(path.join(__dirname, 'agreement.html')));
+app.get('*',          (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Aether Tarot running on port ${PORT}`));

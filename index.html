@@ -88,6 +88,31 @@
     .burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
     .burger span { width: 24px; height: 1.5px; background: var(--gold); transition: .3s; }
 
+    /* ───── NAV USER ───── */
+    #navUser {
+      display: none; align-items: center; gap: 10px;
+    }
+    #navAvatar {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 1px solid var(--gold-d); object-fit: cover;
+    }
+    #navName {
+      font-size: .65rem; letter-spacing: .1em; color: var(--gold-l); font-weight: 500;
+    }
+    #navLogout {
+      background: none; border: 1px solid var(--border); cursor: pointer;
+      color: var(--muted); font-size: .6rem; letter-spacing: .08em;
+      padding: 4px 8px; border-radius: 3px; transition: color .2s, border-color .2s;
+    }
+    #navLogout:hover { color: var(--gold); border-color: var(--gold-d); }
+    .nav-tg-btn {
+      font-size: .65rem; letter-spacing: .1em; font-weight: 500;
+      padding: 8px 16px; border-radius: 4px; border: 1px solid var(--border);
+      color: var(--gold); text-decoration: none; background: transparent;
+      transition: border-color .2s, background .2s;
+    }
+    .nav-tg-btn:hover { background: var(--gold-glow); border-color: var(--gold); }
+
     /* ───── SECTIONS ───── */
     section { scroll-margin-top: var(--nav-h); }
 
@@ -1406,6 +1431,12 @@
     <li><a href="#chat-demo">БОТ</a></li>
     <li><a href="#wisdom">ОТЗЫВЫ</a></li>
   </ul>
+  <div id="navUser">
+    <img id="navAvatar" src="" alt="" />
+    <span id="navName"></span>
+    <button id="navLogout" onclick="tgLogout()">ВЫЙТИ</button>
+  </div>
+  <a href="/agreement" id="navTgBtn" class="nav-tg-btn" style="display:none">☽ ВОЙТИ</a>
   <a href="https://t.me/Tarologfalse_bot" target="_blank" rel="noopener" class="nav-cta">КОНСУЛЬТАЦИЯ</a>
   <div class="burger" id="burger" aria-label="Menu">
     <span></span><span></span><span></span>
@@ -2186,7 +2217,7 @@
   <a href="#home" class="footer-logo">AETHER TAROT</a>
   <ul class="footer-links">
     <li><a href="#">ПУТЬ ОТШЕЛЬНИКА</a></li>
-    <li><a href="#">НЕБЕСНЫЕ УСЛОВИЯ</a></li>
+    <li><a href="/agreement">НЕБЕСНЫЕ УСЛОВИЯ</a></li>
     <li><a href="#">ПОКРОВ ТАЙНЫ</a></li>
     <li><a href="#">ПОДДЕРЖКА ОРАКУЛА</a></li>
   </ul>
@@ -3026,6 +3057,30 @@
       }, 1650);
     });
   })();
+
+  /* ── Telegram user display ── */
+  (async function() {
+    const token = localStorage.getItem('tg_token');
+    const navUser  = document.getElementById('navUser');
+    const navTgBtn = document.getElementById('navTgBtn');
+    if (!token) { navTgBtn.style.display = 'flex'; return; }
+    try {
+      const resp = await fetch('/api/auth/me', { headers: { Authorization: 'Bearer ' + token } });
+      if (!resp.ok) { localStorage.removeItem('tg_token'); navTgBtn.style.display = 'flex'; return; }
+      const user = await resp.json();
+      navUser.style.display = 'flex';
+      const avatarEl = document.getElementById('navAvatar');
+      if (user.photo_url) avatarEl.src = user.photo_url;
+      else avatarEl.style.display = 'none';
+      document.getElementById('navName').textContent = user.first_name || user.username || '';
+    } catch { navTgBtn.style.display = 'flex'; }
+  })();
+
+  function tgLogout() {
+    localStorage.removeItem('tg_token');
+    document.getElementById('navUser').style.display = 'none';
+    document.getElementById('navTgBtn').style.display = 'flex';
+  }
 </script>
 </body>
 </html>
