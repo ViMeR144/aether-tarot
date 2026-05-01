@@ -89,25 +89,39 @@
     .burger span { width: 24px; height: 1.5px; background: var(--gold); transition: .3s; }
 
     /* ───── NAV USER ───── */
-    #navUser {
-      display: none; align-items: center; gap: 10px;
+    #navUser { display: none; align-items: center; gap: 6px; }
+    .nav-profile-btn {
+      display: flex; align-items: center; gap: 9px;
+      padding: 5px 14px 5px 6px;
+      border-radius: 30px;
+      border: 1px solid var(--border);
+      background: rgba(201,168,76,.06);
+      text-decoration: none;
+      transition: border-color .2s, background .2s;
+      cursor: pointer;
     }
+    .nav-profile-btn:hover { border-color: var(--gold-d); background: var(--gold-glow); }
     #navAvatar {
-      width: 30px; height: 30px; border-radius: 50%;
+      width: 28px; height: 28px; border-radius: 50%;
       border: 1px solid var(--gold-d); object-fit: cover;
+      flex-shrink: 0;
     }
-    #navName {
-      font-size: .65rem; letter-spacing: .1em; color: var(--gold-l); font-weight: 500;
+    #navAvatarPlaceholder {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 1px solid var(--gold-d); background: var(--bg3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .75rem; color: var(--gold); flex-shrink: 0;
     }
+    #navName { font-size: .63rem; letter-spacing: .1em; color: var(--gold-l); font-weight: 500; }
     #navLogout {
-      background: none; border: 1px solid var(--border); cursor: pointer;
-      color: var(--muted); font-size: .6rem; letter-spacing: .08em;
-      padding: 4px 8px; border-radius: 3px; transition: color .2s, border-color .2s;
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); font-size: .75rem; line-height: 1;
+      padding: 4px 6px; opacity: .5; transition: opacity .2s;
     }
-    #navLogout:hover { color: var(--gold); border-color: var(--gold-d); }
+    #navLogout:hover { opacity: 1; color: var(--red, #e07070); }
     .nav-tg-btn {
       font-size: .65rem; letter-spacing: .1em; font-weight: 500;
-      padding: 8px 16px; border-radius: 4px; border: 1px solid var(--border);
+      padding: 8px 16px; border-radius: 30px; border: 1px solid var(--border);
       color: var(--gold); text-decoration: none; background: transparent;
       transition: border-color .2s, background .2s;
     }
@@ -1432,12 +1446,14 @@
     <li><a href="#wisdom">ОТЗЫВЫ</a></li>
   </ul>
   <div id="navUser">
-    <img id="navAvatar" src="" alt="" />
-    <span id="navName"></span>
-    <button id="navLogout" onclick="tgLogout()">ВЫЙТИ</button>
+    <a href="/profile" class="nav-profile-btn">
+      <div id="navAvatarPlaceholder">☽</div>
+      <img id="navAvatar" src="" alt="" style="display:none" />
+      <span id="navName"></span>
+    </a>
+    <button id="navLogout" onclick="tgLogout()" title="Выйти">✕</button>
   </div>
   <a href="/agreement" id="navTgBtn" class="nav-tg-btn" style="display:none">☽ ВОЙТИ</a>
-  <a href="/profile" id="navProfile" class="nav-cta" style="display:none">МОЙ ПРОФИЛЬ</a>
   <div class="burger" id="burger" aria-label="Menu">
     <span></span><span></span><span></span>
   </div>
@@ -3065,11 +3081,10 @@
   /* ── Telegram user display ── */
   (async function() {
     const token   = localStorage.getItem('tg_token');
-    const navUser = document.getElementById('navUser');
-    const navTgBtn= document.getElementById('navTgBtn');
-    const navProf = document.getElementById('navProfile');
-    const navProfM= document.getElementById('navProfileMobile');
-    const navLoginM=document.getElementById('navLoginMobile');
+    const navUser  = document.getElementById('navUser');
+    const navTgBtn = document.getElementById('navTgBtn');
+    const navProfM = document.getElementById('navProfileMobile');
+    const navLoginM= document.getElementById('navLoginMobile');
 
     function showLoggedOut() {
       navTgBtn.style.display  = 'flex';
@@ -3077,12 +3092,15 @@
     }
     function showLoggedIn(user) {
       navUser.style.display  = 'flex';
-      navProf.style.display  = '';
-      if (navProfM)  { navProfM.style.display  = ''; }
-      if (navLoginM) { navLoginM.style.display  = 'none'; }
+      if (navProfM)  navProfM.style.display  = '';
+      if (navLoginM) navLoginM.style.display  = 'none';
       const avatarEl = document.getElementById('navAvatar');
-      if (user.photo_url) avatarEl.src = user.photo_url;
-      else avatarEl.style.display = 'none';
+      const placeholderEl = document.getElementById('navAvatarPlaceholder');
+      if (user.photo_url) {
+        avatarEl.src = user.photo_url;
+        avatarEl.style.display = '';
+        if (placeholderEl) placeholderEl.style.display = 'none';
+      }
       document.getElementById('navName').textContent = user.first_name || user.username || '';
     }
 
@@ -3097,7 +3115,6 @@
   function tgLogout() {
     localStorage.removeItem('tg_token');
     document.getElementById('navUser').style.display  = 'none';
-    document.getElementById('navProfile').style.display = 'none';
     document.getElementById('navTgBtn').style.display = 'flex';
     const m = document.getElementById('navProfileMobile');
     const l = document.getElementById('navLoginMobile');
