@@ -204,6 +204,21 @@
   /* ── State: not logged in — show Telegram widget ── */
   async function showLoginState() {
     const area = document.getElementById('actionArea');
+
+    /* Detect Telegram in-app browser */
+    const isTelegram = /Telegram/i.test(navigator.userAgent) || !!window.Telegram?.WebApp?.initData;
+    if (isTelegram) {
+      area.innerHTML = `
+        <p class="login-label">Войти через Telegram</p>
+        <p class="note" style="opacity:1;color:var(--muted)">Виджет входа не работает внутри Telegram.<br>Открой страницу в браузере телефона.</p>
+        <a href="${location.href}" target="_blank" class="btn-accept" style="text-decoration:none;text-align:center;margin-top:4px">
+          ОТКРЫТЬ В БРАУЗЕРЕ
+        </a>
+        <p class="note">После входа вернись в Telegram.</p>
+      `;
+      return;
+    }
+
     area.innerHTML = `
       <p class="login-label">Чтобы принять соглашение — войдите через Telegram</p>
       <div id="tgWidgetContainer"></div>
