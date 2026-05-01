@@ -657,10 +657,11 @@ app.delete('/api/profile', requireUser, async (req, res) => {
 /* ══════════════════════════════════════
    СТРАНИЦЫ
 ══════════════════════════════════════ */
-app.get('/admin',     (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
-app.get('/agreement', (req, res) => res.sendFile(path.join(__dirname, 'agreement.html')));
-app.get('/profile',   (req, res) => res.sendFile(path.join(__dirname, 'profile.html')));
-app.get('*',          (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/admin',           (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
+app.get('/agreement',       (req, res) => res.sendFile(path.join(__dirname, 'agreement.html')));
+app.get('/agreement/terms', (req, res) => res.redirect('/agreement'));
+app.get('/profile',         (req, res) => res.sendFile(path.join(__dirname, 'profile.html')));
+app.get('*',                (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Aether Tarot running on port ${PORT}`));
