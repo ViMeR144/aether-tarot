@@ -79,10 +79,22 @@
     .arch-desc { font-size:.7rem; line-height:1.7; color:var(--muted); }
 
     /* NUMEROLOGY */
-    .birth-row { display:flex; gap:10px; align-items:center; }
-    .birth-input { flex:1; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 14px; color:var(--text); font-family:'Montserrat',sans-serif; font-size:.75rem; outline:none; transition:border-color .2s; }
-    .birth-input:focus { border-color:var(--gold-d); }
-    .birth-save { padding:10px 20px; background:var(--gold); color:var(--bg); border:none; border-radius:8px; font-size:.65rem; letter-spacing:.12em; font-weight:600; cursor:pointer; transition:background .2s; white-space:nowrap; }
+    /* Date picker */
+    .date-picker-row { display:flex; gap:8px; align-items:center; }
+    .date-select-wrap { position:relative; flex:1; }
+    .date-select-wrap::after { content:'▾'; position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--gold-d); font-size:.7rem; pointer-events:none; }
+    .date-select {
+      width:100%; appearance:none; -webkit-appearance:none;
+      background:var(--bg3); border:1px solid var(--border);
+      border-radius:8px; padding:11px 32px 11px 14px;
+      color:var(--muted); font-family:'Montserrat',sans-serif;
+      font-size:.72rem; letter-spacing:.06em; outline:none;
+      cursor:pointer; transition:border-color .2s, color .2s;
+    }
+    .date-select:focus { border-color:var(--gold-d); color:var(--text); }
+    .date-select.filled { color:var(--text); border-color:var(--gold-d); }
+    .date-select option { background:var(--bg3); color:var(--text); }
+    .birth-save { padding:11px 20px; background:var(--gold); color:var(--bg); border:none; border-radius:8px; font-size:.63rem; letter-spacing:.14em; font-weight:600; cursor:pointer; transition:background .2s; white-space:nowrap; flex-shrink:0; }
     .birth-save:hover { background:var(--gold-l); }
     .numerology-result { margin-top:16px; background:var(--bg3); border:1px solid var(--border); border-radius:12px; padding:20px 24px; display:none; }
     .numerology-result.visible { display:flex; gap:20px; align-items:center; animation:fadeUp .3s ease; }
@@ -287,8 +299,28 @@
   <div>
     <div class="section-title">Нумерология</div>
     <div class="card">
-      <div class="birth-row">
-        <input type="date" class="birth-input" id="birthInput" max="" />
+      <div class="date-picker-row">
+        <div class="date-select-wrap">
+          <select class="date-select" id="birthDay" onchange="onDateChange(this)">
+            <option value="">День</option>
+          </select>
+        </div>
+        <div class="date-select-wrap" style="flex:2">
+          <select class="date-select" id="birthMonth" onchange="onDateChange(this)">
+            <option value="">Месяц</option>
+            <option value="01">Январь</option><option value="02">Февраль</option>
+            <option value="03">Март</option><option value="04">Апрель</option>
+            <option value="05">Май</option><option value="06">Июнь</option>
+            <option value="07">Июль</option><option value="08">Август</option>
+            <option value="09">Сентябрь</option><option value="10">Октябрь</option>
+            <option value="11">Ноябрь</option><option value="12">Декабрь</option>
+          </select>
+        </div>
+        <div class="date-select-wrap" style="flex:1.5">
+          <select class="date-select" id="birthYear" onchange="onDateChange(this)">
+            <option value="">Год</option>
+          </select>
+        </div>
         <button class="birth-save" onclick="saveBirthDate()">РАССЧИТАТЬ</button>
       </div>
       <div class="numerology-result" id="numResult">
@@ -406,6 +438,41 @@ document.getElementById('zodiacGrid').addEventListener('click', e => {
   if (btn) selectZodiac(btn.dataset.sign, true);
 });
 
+/* ── Date picker init ── */
+function initDatePicker() {
+  const dayEl  = document.getElementById('birthDay');
+  const yearEl = document.getElementById('birthYear');
+  for (let d = 1; d <= 31; d++) {
+    const o = document.createElement('option');
+    o.value = String(d).padStart(2,'0'); o.textContent = d;
+    dayEl.appendChild(o);
+  }
+  const curYear = new Date().getFullYear();
+  for (let y = curYear; y >= 1920; y--) {
+    const o = document.createElement('option');
+    o.value = y; o.textContent = y;
+    yearEl.appendChild(o);
+  }
+}
+function onDateChange(el) { el.classList.toggle('filled', !!el.value); }
+function getBirthValue() {
+  const d = document.getElementById('birthDay').value;
+  const m = document.getElementById('birthMonth').value;
+  const y = document.getElementById('birthYear').value;
+  if (!d || !m || !y) return null;
+  return `${y}-${m}-${d}`;
+}
+function setBirthValue(dateStr) {
+  if (!dateStr) return;
+  const [y,m,d] = dateStr.slice(0,10).split('-');
+  const dayEl   = document.getElementById('birthDay');
+  const monthEl = document.getElementById('birthMonth');
+  const yearEl  = document.getElementById('birthYear');
+  dayEl.value   = d;   dayEl.classList.add('filled');
+  monthEl.value = m;   monthEl.classList.add('filled');
+  yearEl.value  = y;   yearEl.classList.add('filled');
+}
+
 /* ── Numerology ── */
 function calcLifePath(dateStr) {
   const digits = dateStr.replace(/-/g,'').split('').map(Number);
@@ -414,7 +481,7 @@ function calcLifePath(dateStr) {
   return sum;
 }
 function showNumerology(dateStr) {
-  const num = calcLifePath(dateStr);
+  const num  = calcLifePath(dateStr);
   const data = NUMEROLOGY[num] || NUMEROLOGY[num % 22] || NUMEROLOGY[1];
   document.getElementById('numNumber').textContent = num;
   document.getElementById('numCard').textContent   = 'Карта жизни: ' + data.card;
@@ -422,8 +489,8 @@ function showNumerology(dateStr) {
   document.getElementById('numResult').classList.add('visible');
 }
 async function saveBirthDate() {
-  const val = document.getElementById('birthInput').value;
-  if (!val) return;
+  const val = getBirthValue();
+  if (!val) { toast('Выбери день, месяц и год'); return; }
   const resp = await fetch('/api/profile/birthdate', { method:'PUT', headers:authH(), body:JSON.stringify({birth_date:val}) });
   const data = await resp.json();
   if (data.ok) { showNumerology(val); toast('Дата рождения сохранена'); }
@@ -529,7 +596,7 @@ async function deleteAccount() {
 
 /* ── Init ── */
 async function init() {
-  document.getElementById('birthInput').max = new Date().toISOString().slice(0,10);
+  initDatePicker();
   try {
     const resp = await fetch('/api/profile', { headers: authH() });
     if (resp.status === 401) { window.location.href = '/agreement'; return; }
@@ -571,7 +638,7 @@ async function init() {
 
     /* Numerology */
     if (user.birth_date) {
-      document.getElementById('birthInput').value = user.birth_date.slice(0,10);
+      setBirthValue(user.birth_date);
       showNumerology(user.birth_date.slice(0,10));
     }
 
