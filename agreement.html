@@ -271,10 +271,16 @@
   <h2>Вы уже приняли соглашение</h2>
   <p>Авторизация выполнена. Добро пожаловать обратно.</p>
   <a href="/" class="btn-go">ВЕРНУТЬСЯ НА САЙТ</a>
+  <button onclick="switchAccount()" style="background:none;border:none;color:var(--muted);font-size:.65rem;letter-spacing:.1em;cursor:pointer;margin-top:4px;text-decoration:underline;text-underline-offset:3px;opacity:.6;transition:opacity .2s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.6">Сменить аккаунт</button>
 </div>
 
 <script>
   const TOKEN_KEY = 'tg_token';
+
+  function switchAccount() {
+    localStorage.removeItem(TOKEN_KEY);
+    window.location.reload();
+  }
 
   function show(id) {
     ['step0','step1','step2','step3','stepAlready'].forEach(s => {
