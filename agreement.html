@@ -94,22 +94,12 @@
     /* Error */
     .err { font-size: .7rem; color: #e07070; text-align: center; background: rgba(224,112,112,.08); border: 1px solid rgba(224,112,112,.2); border-radius: 6px; padding: 10px 16px; width: 100%; display: none; }
 
-    /* ── Already agreed card ── */
-    .done-card {
-      width: 100%; max-width: 600px;
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 20px; padding: 52px 40px;
-      display: flex; flex-direction: column; align-items: center; gap: 20px;
-      animation: fadeUp .4s ease;
-    }
-    .done-card.hidden { display: none; }
-    .checkmark { width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--gold); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: var(--gold); }
-    .done-card h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 400; color: var(--gold); text-align: center; }
-    .done-card p { font-size: .75rem; color: var(--muted); text-align: center; line-height: 1.7; }
     .btn-go { display: inline-block; padding: 14px 40px; background: transparent; border: 1px solid var(--gold); color: var(--gold); font-size: .72rem; letter-spacing: .18em; font-weight: 600; text-decoration: none; border-radius: 6px; transition: background .2s; }
     .btn-go:hover { background: var(--gold-glow); }
-    .btn-switch { background: none; border: none; color: var(--muted); font-size: .63rem; letter-spacing: .1em; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; opacity: .5; transition: opacity .2s; }
+    .btn-switch { background: none; border: none; color: var(--muted); font-size: .63rem; letter-spacing: .1em; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; opacity: .5; transition: opacity .2s; font-family: 'Montserrat', sans-serif; }
     .btn-switch:hover { opacity: 1; }
+    .status-badge { display: flex; align-items: center; gap: 10px; color: var(--gold); }
+    .status-badge span { font-size: .72rem; letter-spacing: .1em; }
 
     @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -169,15 +159,6 @@
   </div>
 </div>
 
-<!-- Already agreed card (shown instead of main card) -->
-<div class="done-card hidden" id="doneCard">
-  <div class="checkmark" id="doneIcon">✦</div>
-  <h2 id="doneTitle">Соглашение принято</h2>
-  <p id="doneDesc">Добро пожаловать в Aether Tarot.</p>
-  <a href="/" class="btn-go">ПЕРЕЙТИ НА САЙТ</a>
-  <button class="btn-switch" onclick="switchAccount()">Сменить аккаунт</button>
-</div>
-
 <div class="err" id="errGlobal" style="max-width:600px;margin-top:16px"></div>
 
 <script>
@@ -188,12 +169,26 @@
     window.location.reload();
   }
 
-  function showDone(icon, title, desc) {
-    document.getElementById('mainCard').classList.add('hidden');
-    document.getElementById('doneIcon').textContent  = icon;
-    document.getElementById('doneTitle').textContent = title;
-    document.getElementById('doneDesc').textContent  = desc;
-    document.getElementById('doneCard').classList.remove('hidden');
+  function showAlreadyAgreed() {
+    document.getElementById('actionArea').innerHTML = `
+      <div class="status-badge">
+        <span style="font-size:1.2rem">✦</span>
+        <span>СОГЛАШЕНИЕ ПРИНЯТО</span>
+      </div>
+      <a href="/" class="btn-go">ПЕРЕЙТИ НА САЙТ</a>
+      <button class="btn-switch" onclick="switchAccount()">Сменить аккаунт</button>
+    `;
+  }
+
+  function showJustAccepted() {
+    document.getElementById('actionArea').innerHTML = `
+      <div class="status-badge">
+        <span style="font-size:1.2rem">✦</span>
+        <span>СОГЛАШЕНИЕ ПРИНЯТО</span>
+      </div>
+      <p style="font-size:.72rem;color:var(--muted);text-align:center">Добро пожаловать в Aether Tarot.<br>Вселенная раскрывает свои карты...</p>
+      <a href="/" class="btn-go">ПЕРЕЙТИ НА САЙТ</a>
+    `;
   }
 
   function showErr(msg) {
@@ -277,7 +272,7 @@
       }
       localStorage.setItem(TOKEN_KEY, data.token);
       if (data.agreed) {
-        showDone('☽', 'Вы уже приняли соглашение', 'Авторизация выполнена. Добро пожаловать обратно.');
+        showAlreadyAgreed();
       } else {
         showAcceptState(data.user);
       }
@@ -300,7 +295,7 @@
       const data = await resp.json();
       if (data.ok) {
         localStorage.setItem(TOKEN_KEY, data.token);
-        showDone('✦', 'Соглашение принято', 'Добро пожаловать в Aether Tarot. Вселенная раскрывает свои карты...');
+        showJustAccepted();
       } else {
         const errEl = document.getElementById('err2');
         if (errEl) { errEl.textContent = data.error || 'Ошибка'; errEl.style.display = 'block'; }
@@ -322,7 +317,7 @@
         if (resp.ok) {
           const user = await resp.json();
           if (user.agreed_at) {
-            showDone('☽', 'Вы уже приняли соглашение', 'Авторизация выполнена. Добро пожаловать обратно.');
+            showAlreadyAgreed();
             return;
           }
           showAcceptState(user);
