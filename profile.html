@@ -11,220 +11,158 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg:    #0C0C0F; --bg2: #111114; --bg3: #18181D; --bg4: #1F1F26;
-      --gold:  #C9A84C; --gold-l: #E2C97E; --gold-d: #8B6B20;
-      --gold-glow: rgba(201,168,76,.12);
-      --text:  #EDE8DC; --muted: #7A7870; --border: rgba(201,168,76,.18);
-      --red:   #e07070; --green: #6fcf97;
+      --bg:#0C0C0F; --bg2:#111114; --bg3:#18181D; --bg4:#1F1F26;
+      --gold:#C9A84C; --gold-l:#E2C97E; --gold-d:#8B6B20;
+      --gold-glow:rgba(201,168,76,.12);
+      --text:#EDE8DC; --muted:#7A7870; --border:rgba(201,168,76,.18);
+      --red:#e07070; --green:#6fcf97;
     }
     html { scroll-behavior: smooth; }
-    body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: var(--bg2); }
-    ::-webkit-scrollbar-thumb { background: var(--gold-d); border-radius: 3px; }
+    body { font-family:'Montserrat',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+    ::-webkit-scrollbar { width:5px; }
+    ::-webkit-scrollbar-track { background:var(--bg2); }
+    ::-webkit-scrollbar-thumb { background:var(--gold-d); border-radius:3px; }
 
-    /* ── NAV ── */
-    nav {
-      position: sticky; top: 0; z-index: 50;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 48px; height: 64px;
-      background: rgba(12,12,15,.9); backdrop-filter: blur(18px);
-      border-bottom: 1px solid var(--border);
-    }
+    /* NAV */
+    nav { position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; padding:0 48px; height:64px; background:rgba(12,12,15,.9); backdrop-filter:blur(18px); border-bottom:1px solid var(--border); }
     .nav-logo { font-family:'Cormorant Garamond',serif; font-size:1.1rem; letter-spacing:.2em; color:var(--gold); text-decoration:none; }
-    .nav-right { display:flex; gap:20px; align-items:center; }
+    .nav-right { display:flex; gap:16px; align-items:center; }
     .nav-link { font-size:.65rem; letter-spacing:.12em; color:var(--muted); text-decoration:none; transition:color .2s; }
     .nav-link:hover { color:var(--gold-l); }
     .btn-logout { background:none; border:1px solid var(--border); color:var(--muted); font-size:.6rem; letter-spacing:.1em; padding:6px 14px; border-radius:3px; cursor:pointer; transition:color .2s,border-color .2s; }
     .btn-logout:hover { color:var(--red); border-color:var(--red); }
 
-    /* ── LAYOUT ── */
-    .page { max-width: 900px; margin: 0 auto; padding: 48px 24px 80px; }
+    /* LAYOUT */
+    .page { max-width:920px; margin:0 auto; padding:40px 24px 80px; display:flex; flex-direction:column; gap:20px; }
 
-    /* ── PROFILE HERO ── */
-    .profile-hero {
-      display: flex; gap: 32px; align-items: center;
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 20px; padding: 36px 40px; margin-bottom: 28px;
-    }
-    .avatar-wrap { position: relative; flex-shrink: 0; }
-    .avatar {
-      width: 90px; height: 90px; border-radius: 50%;
-      border: 2px solid var(--gold-d); object-fit: cover;
-      background: var(--bg3);
-    }
-    .avatar-placeholder {
-      width: 90px; height: 90px; border-radius: 50%;
-      border: 2px solid var(--gold-d); background: var(--bg3);
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Cormorant Garamond',serif; font-size: 2.2rem; color: var(--gold);
-    }
-    .profile-info { flex: 1; }
-    .profile-name {
-      font-family: 'Cormorant Garamond',serif; font-size: 1.9rem;
-      font-weight: 400; color: var(--gold); margin-bottom: 4px;
-    }
-    .profile-username { font-size:.7rem; letter-spacing:.12em; color:var(--muted); margin-bottom:16px; }
-    .profile-meta { display:flex; gap:20px; flex-wrap:wrap; }
-    .meta-item { font-size:.65rem; letter-spacing:.08em; color:var(--muted); }
-    .meta-item span { color:var(--text); font-weight:500; }
-    .agreed-badge {
-      display:inline-flex; align-items:center; gap:5px;
-      font-size:.6rem; letter-spacing:.1em;
-      background: rgba(111,207,151,.08); border:1px solid rgba(111,207,151,.2);
-      color:var(--green); border-radius:20px; padding:3px 10px;
-    }
-
-    /* ── SECTION ── */
-    .section { margin-bottom: 24px; }
-    .section-title {
-      font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-weight:400;
-      color:var(--gold); letter-spacing:.08em; margin-bottom:16px;
-      display:flex; align-items:center; gap:10px;
-    }
+    /* SECTION */
+    .section-title { font-family:'Cormorant Garamond',serif; font-size:1.15rem; font-weight:400; color:var(--gold); letter-spacing:.08em; margin-bottom:14px; display:flex; align-items:center; gap:10px; }
     .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
 
-    /* ── ZODIAC GRID ── */
+    /* CARD */
+    .card { background:var(--bg2); border:1px solid var(--border); border-radius:16px; padding:28px; }
+
+    /* PROFILE HERO */
+    .profile-hero { display:flex; gap:28px; align-items:center; }
+    .avatar { width:82px; height:82px; border-radius:50%; border:2px solid var(--gold-d); object-fit:cover; background:var(--bg3); flex-shrink:0; }
+    .avatar-placeholder { width:82px; height:82px; border-radius:50%; border:2px solid var(--gold-d); background:var(--bg3); display:flex; align-items:center; justify-content:center; font-family:'Cormorant Garamond',serif; font-size:2rem; color:var(--gold); flex-shrink:0; }
+    .profile-info { flex:1; min-width:0; }
+    .profile-name { font-family:'Cormorant Garamond',serif; font-size:1.8rem; color:var(--gold); margin-bottom:2px; }
+    .profile-username { font-size:.65rem; letter-spacing:.12em; color:var(--muted); margin-bottom:12px; }
+    .profile-badges { display:flex; flex-wrap:wrap; gap:8px; }
+    .badge { display:inline-flex; align-items:center; gap:5px; font-size:.58rem; letter-spacing:.1em; border-radius:20px; padding:3px 10px; }
+    .badge-green { background:rgba(111,207,151,.08); border:1px solid rgba(111,207,151,.2); color:var(--green); }
+    .badge-gold  { background:var(--gold-glow); border:1px solid var(--border); color:var(--gold); }
+
+    /* STATS GRID */
+    .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+    .stat-card { background:var(--bg3); border:1px solid var(--border); border-radius:12px; padding:18px 16px; text-align:center; }
+    .stat-value { font-family:'Cormorant Garamond',serif; font-size:1.8rem; color:var(--gold); line-height:1; margin-bottom:4px; }
+    .stat-label { font-size:.58rem; letter-spacing:.1em; color:var(--muted); }
+    .streak-fire { font-size:1.2rem; }
+
+    /* BOT BUTTON */
+    .bot-btn { display:flex; align-items:center; justify-content:center; gap:10px; padding:14px; border-radius:10px; background:var(--gold-glow); border:1px solid var(--gold-d); color:var(--gold-l); text-decoration:none; font-size:.72rem; letter-spacing:.14em; font-weight:600; transition:background .2s,border-color .2s; }
+    .bot-btn:hover { background:rgba(201,168,76,.2); border-color:var(--gold); }
+
+    /* ZODIAC */
     .zodiac-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; }
-    .zodiac-btn {
-      display:flex; flex-direction:column; align-items:center; gap:4px;
-      padding:12px 4px; border-radius:10px;
-      border:1px solid var(--border); background:var(--bg2);
-      cursor:pointer; transition:border-color .2s, background .2s;
-      color:var(--muted);
-    }
+    .zodiac-btn { display:flex; flex-direction:column; align-items:center; gap:3px; padding:10px 4px; border-radius:10px; border:1px solid var(--border); background:var(--bg3); cursor:pointer; transition:border-color .2s,background .2s; color:var(--muted); }
     .zodiac-btn:hover { border-color:var(--gold-d); color:var(--text); }
     .zodiac-btn.active { border-color:var(--gold); background:var(--gold-glow); color:var(--gold-l); }
-    .zodiac-sym { font-size:1.4rem; }
-    .zodiac-name { font-size:.5rem; letter-spacing:.08em; }
+    .zodiac-sym { font-size:1.3rem; }
+    .zodiac-name { font-size:.48rem; letter-spacing:.08em; }
+    .archetype-card { display:none; margin-top:14px; background:linear-gradient(135deg,var(--bg3),var(--bg2)); border:1px solid var(--gold-d); border-radius:12px; padding:20px 24px; }
+    .archetype-card.visible { display:flex; gap:18px; align-items:center; animation:fadeUp .3s ease; }
+    .arch-sym { font-size:2.4rem; color:var(--gold); opacity:.6; flex-shrink:0; }
+    .arch-name { font-family:'Cormorant Garamond',serif; font-size:1.2rem; color:var(--gold-l); margin-bottom:4px; }
+    .arch-desc { font-size:.7rem; line-height:1.7; color:var(--muted); }
 
-    /* ── ARCHETYPE ── */
-    .archetype-card {
-      display:none; margin-top:16px;
-      background: linear-gradient(135deg, var(--bg3), var(--bg2));
-      border:1px solid var(--gold-d); border-radius:14px;
-      padding:24px 28px; position:relative; overflow:hidden;
-    }
-    .archetype-card.visible { display:flex; gap:24px; align-items:center; animation:fadeUp .4s ease; }
-    .archetype-card::before {
-      content:''; position:absolute; inset:0;
-      background: radial-gradient(ellipse 60% 80% at 90% 50%, rgba(201,168,76,.07), transparent);
-    }
-    .arch-symbol { font-size:3rem; color:var(--gold); opacity:.6; flex-shrink:0; }
-    .arch-card-name { font-family:'Cormorant Garamond',serif; font-size:1.3rem; color:var(--gold-l); margin-bottom:6px; }
-    .arch-desc { font-size:.73rem; line-height:1.7; color:var(--muted); }
+    /* NUMEROLOGY */
+    .birth-row { display:flex; gap:10px; align-items:center; }
+    .birth-input { flex:1; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 14px; color:var(--text); font-family:'Montserrat',sans-serif; font-size:.75rem; outline:none; transition:border-color .2s; }
+    .birth-input:focus { border-color:var(--gold-d); }
+    .birth-save { padding:10px 20px; background:var(--gold); color:var(--bg); border:none; border-radius:8px; font-size:.65rem; letter-spacing:.12em; font-weight:600; cursor:pointer; transition:background .2s; white-space:nowrap; }
+    .birth-save:hover { background:var(--gold-l); }
+    .numerology-result { margin-top:16px; background:var(--bg3); border:1px solid var(--border); border-radius:12px; padding:20px 24px; display:none; }
+    .numerology-result.visible { display:flex; gap:20px; align-items:center; animation:fadeUp .3s ease; }
+    .num-number { font-family:'Cormorant Garamond',serif; font-size:3rem; color:var(--gold); line-height:1; flex-shrink:0; min-width:50px; text-align:center; }
+    .num-card { font-family:'Cormorant Garamond',serif; font-size:1.2rem; color:var(--gold-l); margin-bottom:4px; }
+    .num-desc { font-size:.7rem; line-height:1.7; color:var(--muted); }
 
-    /* ── CARD OF DAY ── */
-    .card-day-wrap { display:flex; justify-content:center; }
-    .card-day {
-      width: 200px; height: 320px;
-      perspective: 800px; cursor:pointer;
-      position:relative;
-    }
-    .card-day-inner {
-      width:100%; height:100%;
-      transform-style: preserve-3d;
-      transition: transform .7s ease;
-      position:relative;
-    }
-    .card-day.revealed .card-day-inner { transform: rotateY(180deg); }
-    .card-face, .card-back {
-      position:absolute; inset:0;
-      backface-visibility:hidden; border-radius:14px;
-      display:flex; flex-direction:column; align-items:center; justify-content:center;
-      border:1px solid var(--gold-d);
-    }
-    .card-back {
-      background: var(--bg3);
-      background-image: repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(201,168,76,.04) 8px, rgba(201,168,76,.04) 9px);
-    }
-    .card-back-sym { font-size:3.5rem; color:var(--gold); opacity:.3; }
-    .card-back-hint { font-size:.55rem; letter-spacing:.15em; color:var(--muted); margin-top:12px; }
-    .card-face {
-      background: linear-gradient(160deg, var(--bg4), var(--bg2));
-      transform: rotateY(180deg);
-      padding:20px; text-align:center; gap:12px;
-    }
-    .card-face-sym { font-size:2rem; color:var(--gold); }
-    .card-face-name { font-family:'Cormorant Garamond',serif; font-size:1.15rem; color:var(--gold-l); }
-    .card-face-meaning { font-size:.62rem; line-height:1.7; color:var(--muted); }
-    .card-already { font-size:.65rem; color:var(--muted); text-align:center; margin-top:10px; }
+    /* CARD OF DAY */
+    .card-day-wrap { display:flex; gap:24px; align-items:flex-start; }
+    .card-day { width:140px; height:220px; perspective:800px; cursor:pointer; flex-shrink:0; }
+    .card-day-inner { width:100%; height:100%; transform-style:preserve-3d; transition:transform .7s ease; position:relative; }
+    .card-day.revealed .card-day-inner { transform:rotateY(180deg); }
+    .card-face, .card-back { position:absolute; inset:0; backface-visibility:hidden; border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; border:1px solid var(--gold-d); }
+    .card-back { background:var(--bg3); background-image:repeating-linear-gradient(45deg,transparent,transparent 8px,rgba(201,168,76,.04) 8px,rgba(201,168,76,.04) 9px); }
+    .card-back-sym { font-size:2.5rem; color:var(--gold); opacity:.3; }
+    .card-back-hint { font-size:.5rem; letter-spacing:.12em; color:var(--muted); margin-top:8px; text-align:center; padding:0 8px; }
+    .card-face { background:linear-gradient(160deg,var(--bg4),var(--bg2)); transform:rotateY(180deg); padding:14px; text-align:center; gap:8px; }
+    .card-face-sym { font-size:1.5rem; color:var(--gold); }
+    .card-face-name { font-family:'Cormorant Garamond',serif; font-size:.95rem; color:var(--gold-l); }
+    .card-face-meaning { font-size:.56rem; line-height:1.6; color:var(--muted); }
+    .card-day-info { flex:1; display:flex; flex-direction:column; gap:10px; padding-top:4px; }
+    .card-day-label { font-size:.6rem; letter-spacing:.12em; color:var(--muted); }
+    .card-day-hint { font-size:.7rem; color:var(--muted); line-height:1.6; }
 
-    /* ── REVIEWS ── */
-    .reviews-list { display:flex; flex-direction:column; gap:12px; }
-    .review-card {
-      background:var(--bg2); border:1px solid var(--border);
-      border-radius:12px; padding:18px 20px;
-      display:flex; gap:16px; align-items:flex-start;
-    }
-    .review-card.hidden-rev { opacity:.5; border-style:dashed; }
+    /* CARD HISTORY */
+    .history-grid { display:flex; flex-wrap:wrap; gap:8px; }
+    .hist-item { background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 12px; min-width:100px; }
+    .hist-date { font-size:.55rem; letter-spacing:.08em; color:var(--muted); margin-bottom:3px; }
+    .hist-name { font-size:.68rem; color:var(--gold-l); font-family:'Cormorant Garamond',serif; }
+    .hist-meaning { font-size:.55rem; color:var(--muted); margin-top:2px; line-height:1.5; }
+    .hist-today { border-color:var(--gold-d); background:var(--gold-glow); }
+
+    /* ACHIEVEMENTS */
+    .achievements-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px; }
+    .ach-item { background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:14px 16px; display:flex; gap:10px; align-items:center; }
+    .ach-item.earned { border-color:var(--gold-d); background:var(--gold-glow); }
+    .ach-item.locked { opacity:.35; filter:grayscale(1); }
+    .ach-icon { font-size:1.4rem; flex-shrink:0; }
+    .ach-name { font-size:.65rem; font-weight:600; color:var(--text); margin-bottom:2px; }
+    .ach-desc { font-size:.58rem; color:var(--muted); line-height:1.4; }
+
+    /* REVIEWS */
+    .reviews-list { display:flex; flex-direction:column; gap:10px; }
+    .review-card { background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:16px 18px; display:flex; gap:14px; align-items:flex-start; }
+    .review-card.hidden-rev { opacity:.45; border-style:dashed; }
     .review-body { flex:1; }
-    .review-stars { color:var(--gold); font-size:.8rem; margin-bottom:5px; }
-    .review-text { font-size:.75rem; line-height:1.7; color:var(--muted); margin-bottom:8px; }
-    .review-date { font-size:.6rem; letter-spacing:.08em; color:var(--muted); opacity:.5; }
-    .review-status {
-      font-size:.55rem; letter-spacing:.1em;
-      padding:2px 8px; border-radius:10px;
-      background:rgba(224,112,112,.1); color:var(--red);
-      border:1px solid rgba(224,112,112,.2);
-    }
-    .btn-del-review {
-      background:none; border:1px solid rgba(224,112,112,.2);
-      color:rgba(224,112,112,.5); font-size:.6rem; padding:6px 12px;
-      border-radius:6px; cursor:pointer; white-space:nowrap; flex-shrink:0;
-      transition:color .2s,border-color .2s;
-    }
-    .btn-del-review:hover { color:var(--red); border-color:var(--red); }
-    .no-reviews { font-size:.75rem; color:var(--muted); text-align:center; padding:24px; }
+    .review-stars { color:var(--gold); font-size:.8rem; margin-bottom:4px; }
+    .review-text { font-size:.72rem; line-height:1.7; color:var(--muted); margin-bottom:6px; }
+    .review-date { font-size:.58rem; letter-spacing:.08em; color:var(--muted); opacity:.5; }
+    .review-status { font-size:.55rem; letter-spacing:.1em; padding:2px 8px; border-radius:10px; background:rgba(224,112,112,.1); color:var(--red); border:1px solid rgba(224,112,112,.2); margin-left:6px; }
+    .btn-del { background:none; border:1px solid rgba(224,112,112,.2); color:rgba(224,112,112,.5); font-size:.58rem; padding:5px 10px; border-radius:6px; cursor:pointer; flex-shrink:0; transition:color .2s,border-color .2s; }
+    .btn-del:hover { color:var(--red); border-color:var(--red); }
+    .no-items { font-size:.72rem; color:var(--muted); text-align:center; padding:20px; }
 
-    /* ── INFO GRID ── */
-    .info-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
-    .info-card {
-      background:var(--bg2); border:1px solid var(--border);
-      border-radius:12px; padding:20px;
-      display:flex; flex-direction:column; gap:6px;
-    }
-    .info-label { font-size:.6rem; letter-spacing:.12em; color:var(--muted); }
-    .info-value { font-size:1.2rem; color:var(--gold); font-family:'Cormorant Garamond',serif; }
-    .info-sub { font-size:.6rem; color:var(--muted); opacity:.6; }
-
-    /* ── DANGER ZONE ── */
-    .danger-zone {
-      background:rgba(224,112,112,.04); border:1px solid rgba(224,112,112,.15);
-      border-radius:14px; padding:24px 28px; margin-top:32px;
-    }
-    .danger-title { font-size:.7rem; letter-spacing:.16em; color:var(--red); margin-bottom:8px; opacity:.7; }
-    .danger-desc { font-size:.72rem; color:var(--muted); line-height:1.6; margin-bottom:16px; }
-    .btn-danger {
-      background:none; border:1px solid rgba(224,112,112,.3); color:var(--red);
-      font-size:.65rem; letter-spacing:.12em; padding:10px 24px;
-      border-radius:6px; cursor:pointer; transition:background .2s,border-color .2s;
-    }
+    /* DANGER */
+    .danger-zone { background:rgba(224,112,112,.04); border:1px solid rgba(224,112,112,.15); border-radius:14px; padding:22px 26px; }
+    .danger-title { font-size:.65rem; letter-spacing:.16em; color:var(--red); margin-bottom:6px; opacity:.7; }
+    .danger-desc { font-size:.7rem; color:var(--muted); line-height:1.6; margin-bottom:14px; }
+    .btn-danger { background:none; border:1px solid rgba(224,112,112,.3); color:var(--red); font-size:.63rem; letter-spacing:.12em; padding:9px 22px; border-radius:6px; cursor:pointer; transition:background .2s,border-color .2s; }
     .btn-danger:hover { background:rgba(224,112,112,.1); border-color:var(--red); }
 
-    /* ── TOAST ── */
-    .toast {
-      position:fixed; bottom:28px; left:50%; transform:translateX(-50%);
-      background:var(--bg3); border:1px solid var(--border);
-      color:var(--text); font-size:.72rem; letter-spacing:.08em;
-      padding:12px 28px; border-radius:8px;
-      opacity:0; transition:opacity .3s; pointer-events:none; z-index:999;
-    }
+    /* TOAST */
+    .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--bg3); border:1px solid var(--border); color:var(--text); font-size:.7rem; letter-spacing:.08em; padding:11px 26px; border-radius:8px; opacity:0; transition:opacity .3s; pointer-events:none; z-index:999; white-space:nowrap; }
     .toast.show { opacity:1; }
 
-    /* ── SPINNER / LOADING ── */
-    .loading { display:flex; justify-content:center; padding:60px; }
-    .spinner { width:32px; height:32px; border-radius:50%; border:2px solid var(--border); border-top-color:var(--gold); animation:spin .8s linear infinite; }
+    /* LOADING */
+    .loading { display:flex; justify-content:center; padding:80px; }
+    .spinner { width:30px; height:30px; border-radius:50%; border:2px solid var(--border); border-top-color:var(--gold); animation:spin .8s linear infinite; }
     @keyframes spin { to { transform:rotate(360deg); } }
-    @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 
-    @media (max-width:640px) {
+    @media(max-width:640px) {
       nav { padding:0 20px; }
-      .profile-hero { flex-direction:column; text-align:center; padding:28px 20px; }
-      .profile-meta { justify-content:center; }
+      .stats-grid { grid-template-columns:repeat(2,1fr); }
       .zodiac-grid { grid-template-columns:repeat(4,1fr); }
-      .info-grid { grid-template-columns:repeat(2,1fr); }
-      .page { padding:28px 16px 60px; }
+      .card-day-wrap { flex-direction:column; align-items:center; }
+      .page { padding:24px 16px 60px; }
+      .card { padding:20px; }
+      .profile-hero { flex-direction:column; text-align:center; }
+      .profile-badges { justify-content:center; }
     }
   </style>
 </head>
@@ -238,68 +176,61 @@
   </div>
 </nav>
 
-<!-- Loading -->
-<div class="page" id="loadingView">
-  <div class="loading"><div class="spinner"></div></div>
-</div>
+<div id="loadingView" class="loading"><div class="spinner"></div></div>
 
-<!-- Main content -->
 <div class="page" id="mainView" style="display:none">
 
   <!-- Profile hero -->
-  <div class="profile-hero">
-    <div class="avatar-wrap">
-      <img class="avatar" id="avatarImg" src="" alt="" style="display:none" />
+  <div class="card">
+    <div class="profile-hero">
+      <img class="avatar" id="avatarImg" src="" alt="" style="display:none"/>
       <div class="avatar-placeholder" id="avatarPlaceholder">☽</div>
-    </div>
-    <div class="profile-info">
-      <div class="profile-name" id="profileName"></div>
-      <div class="profile-username" id="profileUsername"></div>
-      <div class="profile-meta">
-        <div class="meta-item">Регистрация: <span id="metaCreated"></span></div>
-        <div class="meta-item" id="metaAgreedWrap">Соглашение: <span id="metaAgreed"></span></div>
-        <div class="agreed-badge" id="metaBadge" style="display:none">✦ ВЕРИФИЦИРОВАН</div>
+      <div class="profile-info">
+        <div class="profile-name" id="profileName"></div>
+        <div class="profile-username" id="profileUsername"></div>
+        <div class="profile-badges" id="profileBadges"></div>
       </div>
     </div>
   </div>
 
-  <!-- Zodiac -->
-  <div class="section">
-    <div class="section-title">Знак зодиака</div>
-    <div class="zodiac-grid" id="zodiacGrid">
-      <button class="zodiac-btn" data-sign="aries">       <span class="zodiac-sym">♈</span><span class="zodiac-name">ОВЕН</span></button>
-      <button class="zodiac-btn" data-sign="taurus">      <span class="zodiac-sym">♉</span><span class="zodiac-name">ТЕЛЕЦ</span></button>
-      <button class="zodiac-btn" data-sign="gemini">      <span class="zodiac-sym">♊</span><span class="zodiac-name">БЛИЗНЕЦЫ</span></button>
-      <button class="zodiac-btn" data-sign="cancer">      <span class="zodiac-sym">♋</span><span class="zodiac-name">РАК</span></button>
-      <button class="zodiac-btn" data-sign="leo">         <span class="zodiac-sym">♌</span><span class="zodiac-name">ЛЕВ</span></button>
-      <button class="zodiac-btn" data-sign="virgo">       <span class="zodiac-sym">♍</span><span class="zodiac-name">ДЕВА</span></button>
-      <button class="zodiac-btn" data-sign="libra">       <span class="zodiac-sym">♎</span><span class="zodiac-name">ВЕСЫ</span></button>
-      <button class="zodiac-btn" data-sign="scorpio">     <span class="zodiac-sym">♏</span><span class="zodiac-name">СКОРПИОН</span></button>
-      <button class="zodiac-btn" data-sign="sagittarius"> <span class="zodiac-sym">♐</span><span class="zodiac-name">СТРЕЛЕЦ</span></button>
-      <button class="zodiac-btn" data-sign="capricorn">   <span class="zodiac-sym">♑</span><span class="zodiac-name">КОЗЕРОГ</span></button>
-      <button class="zodiac-btn" data-sign="aquarius">    <span class="zodiac-sym">♒</span><span class="zodiac-name">ВОДОЛЕЙ</span></button>
-      <button class="zodiac-btn" data-sign="pisces">      <span class="zodiac-sym">♓</span><span class="zodiac-name">РЫБЫ</span></button>
-    </div>
-
-    <div class="archetype-card" id="archetypeCard">
-      <div class="arch-symbol" id="archSymbol"></div>
-      <div>
-        <div class="arch-card-name" id="archCardName"></div>
-        <div class="arch-desc" id="archDesc"></div>
+  <!-- Stats -->
+  <div>
+    <div class="section-title">Статистика</div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="statDays">—</div>
+        <div class="stat-label">ДНЕЙ С НАМИ</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statStreak">—</div>
+        <div class="stat-label">СТРИК КАРТ <span class="streak-fire" id="streakFire"></span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statCards">—</div>
+        <div class="stat-label">КАРТ ОТКРЫТО</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statReviews">—</div>
+        <div class="stat-label">МОИ ОТЗЫВЫ</div>
       </div>
     </div>
   </div>
 
-  <!-- Card of the day -->
-  <div class="section">
+  <!-- Bot link -->
+  <a href="https://t.me/Tarologfalse_bot" target="_blank" class="bot-btn">
+    <span>✦</span> НАЧАТЬ РАСКЛАД В БОТЕ
+  </a>
+
+  <!-- Card of day -->
+  <div>
     <div class="section-title">Карта дня</div>
-    <div class="card-day-wrap">
-      <div>
+    <div class="card">
+      <div class="card-day-wrap">
         <div class="card-day" id="cardOfDay">
           <div class="card-day-inner">
             <div class="card-back">
               <div class="card-back-sym">✦</div>
-              <div class="card-back-hint">НАЖМИ, ЧТОБЫ ОТКРЫТЬ</div>
+              <div class="card-back-hint">НАЖМИ ЧТОБЫ ОТКРЫТЬ</div>
             </div>
             <div class="card-face" id="cardFace">
               <div class="card-face-sym">✦</div>
@@ -308,45 +239,84 @@
             </div>
           </div>
         </div>
-        <div class="card-already" id="cardAlready"></div>
+        <div class="card-day-info">
+          <div class="card-day-label">КАРТА ДНЯ</div>
+          <div class="card-day-hint" id="cardHint">Каждый день вселенная приготовила для тебя послание. Нажми на карту, чтобы узнать его.</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Stats -->
-  <div class="section">
-    <div class="section-title">Статистика</div>
-    <div class="info-grid">
-      <div class="info-card">
-        <div class="info-label">МОИ ОТЗЫВЫ</div>
-        <div class="info-value" id="statReviews">—</div>
-        <div class="info-sub">опубликовано</div>
+  <!-- Card history -->
+  <div id="historySection" style="display:none">
+    <div class="section-title">История карт</div>
+    <div class="card">
+      <div class="history-grid" id="historyGrid"></div>
+    </div>
+  </div>
+
+  <!-- Zodiac & Archetype -->
+  <div>
+    <div class="section-title">Знак зодиака</div>
+    <div class="card">
+      <div class="zodiac-grid" id="zodiacGrid">
+        <button class="zodiac-btn" data-sign="aries">      <span class="zodiac-sym">♈</span><span class="zodiac-name">ОВЕН</span></button>
+        <button class="zodiac-btn" data-sign="taurus">     <span class="zodiac-sym">♉</span><span class="zodiac-name">ТЕЛЕЦ</span></button>
+        <button class="zodiac-btn" data-sign="gemini">     <span class="zodiac-sym">♊</span><span class="zodiac-name">БЛИЗНЕЦЫ</span></button>
+        <button class="zodiac-btn" data-sign="cancer">     <span class="zodiac-sym">♋</span><span class="zodiac-name">РАК</span></button>
+        <button class="zodiac-btn" data-sign="leo">        <span class="zodiac-sym">♌</span><span class="zodiac-name">ЛЕВ</span></button>
+        <button class="zodiac-btn" data-sign="virgo">      <span class="zodiac-sym">♍</span><span class="zodiac-name">ДЕВА</span></button>
+        <button class="zodiac-btn" data-sign="libra">      <span class="zodiac-sym">♎</span><span class="zodiac-name">ВЕСЫ</span></button>
+        <button class="zodiac-btn" data-sign="scorpio">    <span class="zodiac-sym">♏</span><span class="zodiac-name">СКОРПИОН</span></button>
+        <button class="zodiac-btn" data-sign="sagittarius"><span class="zodiac-sym">♐</span><span class="zodiac-name">СТРЕЛЕЦ</span></button>
+        <button class="zodiac-btn" data-sign="capricorn">  <span class="zodiac-sym">♑</span><span class="zodiac-name">КОЗЕРОГ</span></button>
+        <button class="zodiac-btn" data-sign="aquarius">   <span class="zodiac-sym">♒</span><span class="zodiac-name">ВОДОЛЕЙ</span></button>
+        <button class="zodiac-btn" data-sign="pisces">     <span class="zodiac-sym">♓</span><span class="zodiac-name">РЫБЫ</span></button>
       </div>
-      <div class="info-card">
-        <div class="info-label">КАРТ ОТКРЫТО</div>
-        <div class="info-value" id="statCards">—</div>
-        <div class="info-sub">за всё время</div>
-      </div>
-      <div class="info-card">
-        <div class="info-label">ДНЕЙ С НАМИ</div>
-        <div class="info-value" id="statDays">—</div>
-        <div class="info-sub">с момента регистрации</div>
+      <div class="archetype-card" id="archetypeCard">
+        <div class="arch-sym" id="archSym"></div>
+        <div>
+          <div class="arch-name" id="archName"></div>
+          <div class="arch-desc" id="archDesc"></div>
+        </div>
       </div>
     </div>
+  </div>
+
+  <!-- Numerology -->
+  <div>
+    <div class="section-title">Нумерология</div>
+    <div class="card">
+      <div class="birth-row">
+        <input type="date" class="birth-input" id="birthInput" max="" />
+        <button class="birth-save" onclick="saveBirthDate()">РАССЧИТАТЬ</button>
+      </div>
+      <div class="numerology-result" id="numResult">
+        <div class="num-number" id="numNumber"></div>
+        <div>
+          <div class="num-card" id="numCard"></div>
+          <div class="num-desc" id="numDesc"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Achievements -->
+  <div>
+    <div class="section-title">Достижения</div>
+    <div class="achievements-grid" id="achGrid"></div>
   </div>
 
   <!-- My reviews -->
-  <div class="section">
+  <div>
     <div class="section-title">Мои отзывы</div>
-    <div class="reviews-list" id="reviewsList">
-      <div class="no-reviews">Загрузка...</div>
-    </div>
+    <div class="reviews-list" id="reviewsList"><div class="no-items">Загрузка...</div></div>
   </div>
 
   <!-- Danger zone -->
   <div class="danger-zone">
     <div class="danger-title">ОПАСНАЯ ЗОНА</div>
-    <div class="danger-desc">Удаление аккаунта необратимо. Твои отзывы будут анонимизированы и останутся на сайте, история карт будет удалена.</div>
+    <div class="danger-desc">Удаление аккаунта необратимо. Твои отзывы будут анонимизированы, история карт — удалена.</div>
     <button class="btn-danger" onclick="deleteAccount()">УДАЛИТЬ АККАУНТ</button>
   </div>
 
@@ -355,200 +325,271 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  const ZODIAC_ARCHETYPES = {
-    aries:       { ru:'Овен',     sym:'♈', card:'Император',       desc:'Ты воплощаешь волю и власть. Твой путь — лидерство и созидание.' },
-    taurus:      { ru:'Телец',    sym:'♉', card:'Иерофант',        desc:'Мудрость традиций течёт сквозь тебя. Ты хранитель вечных истин.' },
-    gemini:      { ru:'Близнецы', sym:'♊', card:'Дурак',           desc:'Свобода и любопытство — твои крылья. Каждый день — новое приключение.' },
-    cancer:      { ru:'Рак',      sym:'♋', card:'Луна',            desc:'Интуиция — твой фонарь в темноте. Ты чувствуешь то, чего не видят другие.' },
-    leo:         { ru:'Лев',      sym:'♌', card:'Солнце',          desc:'Ты свет среди теней. Твоя энергия согревает всех вокруг.' },
-    virgo:       { ru:'Дева',     sym:'♍', card:'Отшельник',       desc:'Поиск истины — смысл твоего пути. Мудрость рождается в тишине.' },
-    libra:       { ru:'Весы',     sym:'♎', card:'Справедливость',  desc:'Гармония и баланс — твоя природа. Ты видишь все стороны бытия.' },
-    scorpio:     { ru:'Скорпион', sym:'♏', card:'Смерть',          desc:'Трансформация — твой дар. Из пепла ты рождаешься заново.' },
-    sagittarius: { ru:'Стрелец',  sym:'♐', card:'Колесо Фортуны',  desc:'Судьба благосклонна к искателям. Твоя стрела всегда летит вперёд.' },
-    capricorn:   { ru:'Козерог',  sym:'♑', card:'Мир',             desc:'Настойчивость — твоя суперсила. Ты достигаешь вершин, которые другим не по силам.' },
-    aquarius:    { ru:'Водолей',  sym:'♒', card:'Звезда',          desc:'Ты видишь будущее. Твой взгляд озаряет дорогу для всего человечества.' },
-    pisces:      { ru:'Рыбы',     sym:'♓', card:'Верховная Жрица', desc:'Мистика и глубина — твоя стихия. Ты слышишь голос вселенной.' },
-  };
+/* ── Constants ── */
+const ZODIAC_ARCHETYPES = {
+  aries:       { ru:'Овен',     sym:'♈', card:'Император',       desc:'Ты воплощаешь волю и власть. Твой путь — лидерство и созидание.' },
+  taurus:      { ru:'Телец',    sym:'♉', card:'Иерофант',        desc:'Мудрость традиций течёт сквозь тебя. Ты хранитель вечных истин.' },
+  gemini:      { ru:'Близнецы', sym:'♊', card:'Дурак',           desc:'Свобода и любопытство — твои крылья. Каждый день — новое приключение.' },
+  cancer:      { ru:'Рак',      sym:'♋', card:'Луна',            desc:'Интуиция — твой фонарь в темноте. Ты чувствуешь то, чего не видят другие.' },
+  leo:         { ru:'Лев',      sym:'♌', card:'Солнце',          desc:'Ты свет среди теней. Твоя энергия согревает всех вокруг.' },
+  virgo:       { ru:'Дева',     sym:'♍', card:'Отшельник',       desc:'Поиск истины — смысл твоего пути. Мудрость рождается в тишине.' },
+  libra:       { ru:'Весы',     sym:'♎', card:'Справедливость',  desc:'Гармония и баланс — твоя природа. Ты видишь все стороны бытия.' },
+  scorpio:     { ru:'Скорпион', sym:'♏', card:'Смерть',          desc:'Трансформация — твой дар. Из пепла ты рождаешься заново.' },
+  sagittarius: { ru:'Стрелец',  sym:'♐', card:'Колесо Фортуны',  desc:'Судьба благосклонна к искателям. Твоя стрела всегда летит вперёд.' },
+  capricorn:   { ru:'Козерог',  sym:'♑', card:'Мир',             desc:'Настойчивость — твоя суперсила. Ты достигаешь вершин, которые другим не по силам.' },
+  aquarius:    { ru:'Водолей',  sym:'♒', card:'Звезда',          desc:'Ты видишь будущее. Твой взгляд озаряет дорогу для всего человечества.' },
+  pisces:      { ru:'Рыбы',     sym:'♓', card:'Верховная Жрица', desc:'Мистика и глубина — твоя стихия. Ты слышишь голос вселенной.' },
+};
 
-  const token = localStorage.getItem('tg_token');
-  if (!token) { window.location.href = '/agreement'; }
+const NUMEROLOGY = [
+  null,
+  { card:'Маг',             desc:'Ты обладаешь силой воли и способностью воплощать замыслы в реальность.' },
+  { card:'Верховная Жрица', desc:'Интуиция и скрытое знание — твои главные инструменты.' },
+  { card:'Императрица',     desc:'Творческая сила и изобилие сопровождают твой путь.' },
+  { card:'Император',       desc:'Ты рождён для структуры, лидерства и созидания.' },
+  { card:'Иерофант',        desc:'Традиции и духовный поиск определяют твою судьбу.' },
+  { card:'Влюблённые',      desc:'Твой путь — отношения, выбор и единство противоположностей.' },
+  { card:'Колесница',       desc:'Победа через силу воли и решимость.' },
+  { card:'Сила',            desc:'Внутренняя мощь и терпение — твоя суперсила.' },
+  { card:'Отшельник',       desc:'Мудрость рождается в уединении и поиске истины.' },
+  { card:'Колесо Фортуны',  desc:'Ты связан с циклами судьбы и переменами.' },
+  { card:'Справедливость',  desc:'Баланс и карма играют ключевую роль в твоей жизни.' },
+  { card:'Повешенный',      desc:'Жертва ради роста и новый взгляд на мир — твой урок.' },
+  { card:'Смерть',          desc:'Трансформация и перерождение — двигатель твоего пути.' },
+  { card:'Умеренность',     desc:'Равновесие и терпение приведут тебя к цели.' },
+  { card:'Дьявол',          desc:'Ты учишься освобождаться от оков и иллюзий.' },
+  { card:'Башня',           desc:'Внезапные откровения разрушают старое, открывая новое.' },
+  { card:'Звезда',          desc:'Надежда и вдохновение — маяки твоего пути.' },
+  { card:'Луна',            desc:'Тайны подсознания и интуиция ведут тебя вперёд.' },
+  { card:'Солнце',          desc:'Радость, успех и жизненная сила — суть твоей природы.' },
+  { card:'Суд',             desc:'Ты рождён для пробуждения и нового начала.' },
+  { card:'Мир',             desc:'Завершение цикла и единство со вселенной.' },
+];
 
-  function authHeaders() {
-    return { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' };
+/* ── Auth ── */
+const token = localStorage.getItem('tg_token');
+if (!token) window.location.href = '/agreement';
+function authH() { return { Authorization:'Bearer '+token, 'Content-Type':'application/json' }; }
+
+/* ── Helpers ── */
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('ru-RU', { day:'numeric', month:'long', year:'numeric' });
+}
+function fmtShort(d) {
+  if (!d) return '';
+  const dt = new Date(d);
+  return dt.toLocaleDateString('ru-RU', { day:'numeric', month:'short' });
+}
+function logout() { localStorage.removeItem('tg_token'); window.location.href = '/'; }
+
+/* ── Zodiac ── */
+function selectZodiac(sign, save) {
+  document.querySelectorAll('.zodiac-btn').forEach(b => b.classList.toggle('active', b.dataset.sign === sign));
+  const a = ZODIAC_ARCHETYPES[sign]; if (!a) return;
+  document.getElementById('archSym').textContent = a.sym;
+  document.getElementById('archName').textContent = a.card + ' — ' + a.ru;
+  document.getElementById('archDesc').textContent = a.desc;
+  document.getElementById('archetypeCard').classList.add('visible');
+  if (save) {
+    fetch('/api/profile/zodiac', { method:'PUT', headers:authH(), body:JSON.stringify({zodiac:sign}) })
+      .then(r=>r.json()).then(d=>{ if(d.ok) toast('Знак зодиака сохранён'); });
   }
+}
+document.getElementById('zodiacGrid').addEventListener('click', e => {
+  const btn = e.target.closest('.zodiac-btn');
+  if (btn) selectZodiac(btn.dataset.sign, true);
+});
 
-  function toast(msg) {
-    const el = document.getElementById('toast');
-    el.textContent = msg; el.classList.add('show');
-    setTimeout(() => el.classList.remove('show'), 2500);
+/* ── Numerology ── */
+function calcLifePath(dateStr) {
+  const digits = dateStr.replace(/-/g,'').split('').map(Number);
+  let sum = digits.reduce((a,b) => a+b, 0);
+  while (sum > 22) { sum = String(sum).split('').map(Number).reduce((a,b)=>a+b,0); }
+  return sum;
+}
+function showNumerology(dateStr) {
+  const num = calcLifePath(dateStr);
+  const data = NUMEROLOGY[num] || NUMEROLOGY[num % 22] || NUMEROLOGY[1];
+  document.getElementById('numNumber').textContent = num;
+  document.getElementById('numCard').textContent   = 'Карта жизни: ' + data.card;
+  document.getElementById('numDesc').textContent   = data.desc;
+  document.getElementById('numResult').classList.add('visible');
+}
+async function saveBirthDate() {
+  const val = document.getElementById('birthInput').value;
+  if (!val) return;
+  const resp = await fetch('/api/profile/birthdate', { method:'PUT', headers:authH(), body:JSON.stringify({birth_date:val}) });
+  const data = await resp.json();
+  if (data.ok) { showNumerology(val); toast('Дата рождения сохранена'); }
+}
+
+/* ── Card of day ── */
+let cardLoaded = false, cardRevealed = false;
+document.getElementById('cardOfDay').addEventListener('click', async () => {
+  if (cardLoaded && !cardRevealed) {
+    cardRevealed = true;
+    document.getElementById('cardOfDay').classList.add('revealed');
+    return;
   }
-
-  function fmtDate(d) {
-    if (!d) return '—';
-    return new Date(d).toLocaleDateString('ru-RU', { day:'numeric', month:'long', year:'numeric' });
-  }
-
-  function logout() {
-    localStorage.removeItem('tg_token');
-    window.location.href = '/';
-  }
-
-  /* ── Zodiac ── */
-  let currentZodiac = null;
-
-  function selectZodiac(sign, save) {
-    currentZodiac = sign;
-    document.querySelectorAll('.zodiac-btn').forEach(b => b.classList.toggle('active', b.dataset.sign === sign));
-    const a = ZODIAC_ARCHETYPES[sign];
-    if (!a) return;
-    document.getElementById('archSymbol').textContent  = a.sym;
-    document.getElementById('archCardName').textContent = a.card + ' — ' + a.ru;
-    document.getElementById('archDesc').textContent     = a.desc;
-    document.getElementById('archetypeCard').classList.add('visible');
-
-    if (save) {
-      fetch('/api/profile/zodiac', { method:'PUT', headers: authHeaders(), body: JSON.stringify({ zodiac: sign }) })
-        .then(r => r.json()).then(d => { if (d.ok) toast('Знак зодиака сохранён'); });
-    }
-  }
-
-  document.getElementById('zodiacGrid').addEventListener('click', e => {
-    const btn = e.target.closest('.zodiac-btn');
-    if (btn) selectZodiac(btn.dataset.sign, true);
-  });
-
-  /* ── Card of day ── */
-  let cardRevealed = false;
-  let cardLoaded   = false;
-
-  document.getElementById('cardOfDay').addEventListener('click', async () => {
-    if (cardLoaded && !cardRevealed) {
-      cardRevealed = true;
+  if (!cardLoaded) {
+    const resp = await fetch('/api/profile/card-of-day', { method:'POST', headers:authH() }).catch(()=>null);
+    if (!resp) return;
+    const data = await resp.json();
+    if (data.card_name) {
+      document.getElementById('cardName').textContent    = data.card_name;
+      document.getElementById('cardMeaning').textContent = data.card_meaning;
+      cardLoaded = true; cardRevealed = true;
       document.getElementById('cardOfDay').classList.add('revealed');
-      return;
+      document.getElementById('cardHint').textContent = data.card_name + ' — нажми на карту, чтобы увидеть послание снова';
     }
-    if (!cardLoaded) {
-      try {
-        const resp = await fetch('/api/profile/card-of-day', { method:'POST', headers: authHeaders() });
-        const data = await resp.json();
-        if (data.card_name) {
-          document.getElementById('cardName').textContent    = data.card_name;
-          document.getElementById('cardMeaning').textContent = data.card_meaning;
-          cardLoaded = true;
-          if (data.id) {
-            document.getElementById('cardAlready').textContent = '';
-          }
-          cardRevealed = true;
-          document.getElementById('cardOfDay').classList.add('revealed');
-        }
-      } catch {}
-    }
-  });
+  }
+});
 
-  /* ── My reviews ── */
-  function renderReviews(reviews) {
-    const list = document.getElementById('reviewsList');
-    if (!reviews.length) {
-      list.innerHTML = '<div class="no-reviews">Ты ещё не оставлял отзывов</div>';
-      return;
-    }
-    list.innerHTML = reviews.map(r => `
-      <div class="review-card${r.approved === false ? ' hidden-rev' : ''}" id="rev-${r.id}">
-        <div class="review-body">
-          <div class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
-          <div class="review-text">${r.body}</div>
-          <div class="review-date">${fmtDate(r.created_at)}${r.approved === false ? ' &nbsp;<span class="review-status">скрыт</span>' : ''}</div>
-        </div>
-        <button class="btn-del-review" onclick="deleteReview(${r.id})">удалить</button>
+/* ── Card history ── */
+function renderHistory(history) {
+  if (!history || !history.length) return;
+  document.getElementById('historySection').style.display = '';
+  const today = new Date().toISOString().slice(0,10);
+  document.getElementById('historyGrid').innerHTML = history.map(h => {
+    const dateStr = h.date.slice(0,10);
+    const isToday = dateStr === today;
+    return `<div class="hist-item${isToday?' hist-today':''}">
+      <div class="hist-date">${isToday ? 'Сегодня' : fmtShort(h.date)}</div>
+      <div class="hist-name">${h.card_name}</div>
+      <div class="hist-meaning">${h.card_meaning}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ── Achievements ── */
+function renderAchievements(data) {
+  const { streak, card_history, reviews, user } = data;
+  const totalCards = card_history ? card_history.length : 0;
+  const days = Math.floor((Date.now() - new Date(user.created_at)) / 86400000);
+  const approvedReviews = reviews.filter(r => r.approved !== false).length;
+
+  const ACH = [
+    { icon:'☽', name:'Первый шаг',    desc:'Зарегистрировался на сайте',           earned: true },
+    { icon:'✦', name:'Голос оракула', desc:'Оставил первый отзыв',                  earned: approvedReviews >= 1 },
+    { icon:'🌙', name:'Ночной страж',  desc:'Открыл карту дня',                     earned: totalCards >= 1 },
+    { icon:'🔥', name:'3 дня подряд',  desc:'Открывал карту 3 дня подряд',          earned: streak >= 3 },
+    { icon:'⭐', name:'Неделя силы',   desc:'Открывал карту 7 дней подряд',         earned: streak >= 7 },
+    { icon:'♈', name:'Знаток себя',   desc:'Выбрал знак зодиака',                  earned: !!user.zodiac },
+    { icon:'🔢', name:'Числа судьбы',  desc:'Рассчитал число жизненного пути',      earned: !!user.birth_date },
+    { icon:'🌟', name:'Старожил',      desc:'С нами больше 30 дней',                earned: days >= 30 },
+    { icon:'📜', name:'Хранитель',     desc:'Принял пользовательское соглашение',   earned: !!user.agreed_at },
+    { icon:'💫', name:'Коллекционер',  desc:'Открыл 10 разных карт дня',            earned: totalCards >= 10 },
+  ];
+
+  document.getElementById('achGrid').innerHTML = ACH.map(a =>
+    `<div class="ach-item ${a.earned ? 'earned' : 'locked'}">
+      <div class="ach-icon">${a.icon}</div>
+      <div>
+        <div class="ach-name">${a.name}</div>
+        <div class="ach-desc">${a.desc}</div>
       </div>
-    `).join('');
-  }
+    </div>`
+  ).join('');
+}
 
-  async function deleteReview(id) {
-    if (!confirm('Удалить этот отзыв?')) return;
-    const resp = await fetch('/api/profile/reviews/' + id, { method:'DELETE', headers: authHeaders() });
+/* ── Reviews ── */
+function renderReviews(reviews) {
+  const list = document.getElementById('reviewsList');
+  if (!reviews.length) { list.innerHTML = '<div class="no-items">Ты ещё не оставлял отзывов</div>'; return; }
+  list.innerHTML = reviews.map(r => `
+    <div class="review-card${r.approved===false?' hidden-rev':''}" id="rev-${r.id}">
+      <div class="review-body">
+        <div class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
+        <div class="review-text">${r.body}</div>
+        <div class="review-date">${fmtDate(r.created_at)}${r.approved===false?'<span class="review-status">скрыт</span>':''}</div>
+      </div>
+      <button class="btn-del" onclick="deleteReview(${r.id})">удалить</button>
+    </div>
+  `).join('');
+}
+async function deleteReview(id) {
+  if (!confirm('Удалить этот отзыв?')) return;
+  const resp = await fetch('/api/profile/reviews/'+id, { method:'DELETE', headers:authH() });
+  if ((await resp.json()).ok) { document.getElementById('rev-'+id)?.remove(); toast('Отзыв удалён'); }
+}
+
+/* ── Delete account ── */
+async function deleteAccount() {
+  if (!confirm('Удалить аккаунт? Это необратимо.')) return;
+  if (!confirm('Вы уверены? Все данные будут удалены.')) return;
+  const resp = await fetch('/api/profile', { method:'DELETE', headers:authH() });
+  if ((await resp.json()).ok) { localStorage.removeItem('tg_token'); window.location.href = '/'; }
+}
+
+/* ── Init ── */
+async function init() {
+  document.getElementById('birthInput').max = new Date().toISOString().slice(0,10);
+  try {
+    const resp = await fetch('/api/profile', { headers: authH() });
+    if (resp.status === 401) { window.location.href = '/agreement'; return; }
     const data = await resp.json();
-    if (data.ok) {
-      document.getElementById('rev-' + id)?.remove();
-      toast('Отзыв удалён');
-      const stat = document.getElementById('statReviews');
-      stat.textContent = Math.max(0, (parseInt(stat.textContent) || 1) - 1);
+    const { user, reviews, card_today, card_history, streak } = data;
+
+    /* Hero */
+    document.getElementById('profileName').textContent = user.first_name || 'Пользователь';
+    document.getElementById('profileUsername').textContent = user.username ? '@'+user.username : '';
+    if (user.photo_url) { const img=document.getElementById('avatarImg'); img.src=user.photo_url; img.style.display=''; document.getElementById('avatarPlaceholder').style.display='none'; }
+    const badges = [];
+    if (user.agreed_at) badges.push('<span class="badge badge-green">✦ ВЕРИФИЦИРОВАН</span>');
+    if (streak >= 7)    badges.push('<span class="badge badge-gold">🔥 '+streak+'-ДНЕВНЫЙ СТРИК</span>');
+    else if (streak >= 3) badges.push('<span class="badge badge-gold">🔥 СТРИК '+streak+' ДНЯ</span>');
+    if (user.zodiac && ZODIAC_ARCHETYPES[user.zodiac]) badges.push('<span class="badge badge-gold">'+ZODIAC_ARCHETYPES[user.zodiac].sym+' '+ZODIAC_ARCHETYPES[user.zodiac].ru.toUpperCase()+'</span>');
+    document.getElementById('profileBadges').innerHTML = badges.join('');
+
+    /* Stats */
+    const days = Math.max(0, Math.floor((Date.now()-new Date(user.created_at))/86400000));
+    document.getElementById('statDays').textContent    = days;
+    document.getElementById('statStreak').textContent  = streak;
+    document.getElementById('streakFire').textContent  = streak >= 3 ? '🔥' : '';
+    document.getElementById('statCards').textContent   = card_history ? card_history.length : 0;
+    document.getElementById('statReviews').textContent = reviews.filter(r=>r.approved!==false).length;
+
+    /* Card of day — prefill if already drawn today */
+    if (card_today) {
+      document.getElementById('cardName').textContent    = card_today.card_name;
+      document.getElementById('cardMeaning').textContent = card_today.card_meaning;
+      document.getElementById('cardHint').textContent    = 'Уже открыта сегодня — нажми, чтобы посмотреть';
+      cardLoaded = true;
     }
-  }
 
-  /* ── Delete account ── */
-  async function deleteAccount() {
-    if (!confirm('Удалить аккаунт? Это действие необратимо.')) return;
-    if (!confirm('Вы уверены? Все данные профиля будут удалены.')) return;
-    const resp = await fetch('/api/profile', { method:'DELETE', headers: authHeaders() });
-    const data = await resp.json();
-    if (data.ok) {
-      localStorage.removeItem('tg_token');
-      window.location.href = '/';
+    /* History */
+    renderHistory(card_history);
+
+    /* Zodiac */
+    if (user.zodiac) selectZodiac(user.zodiac, false);
+
+    /* Numerology */
+    if (user.birth_date) {
+      document.getElementById('birthInput').value = user.birth_date.slice(0,10);
+      showNumerology(user.birth_date.slice(0,10));
     }
+
+    /* Achievements */
+    renderAchievements(data);
+
+    /* Reviews */
+    renderReviews(reviews);
+
+    document.getElementById('loadingView').style.display = 'none';
+    document.getElementById('mainView').style.display    = '';
+  } catch(err) {
+    console.error(err);
+    document.getElementById('loadingView').innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted)">Ошибка загрузки. <a href="/" style="color:var(--gold)">На сайт</a></div>';
   }
+}
 
-  /* ── Init ── */
-  async function init() {
-    try {
-      const resp = await fetch('/api/profile', { headers: authHeaders() });
-      if (resp.status === 401) { window.location.href = '/agreement'; return; }
-      const { user, reviews, card_today } = await resp.json();
-
-      /* Profile hero */
-      document.getElementById('profileName').textContent = user.first_name || 'Пользователь';
-      document.getElementById('profileUsername').textContent = user.username ? '@' + user.username : '';
-      if (user.photo_url) {
-        const img = document.getElementById('avatarImg');
-        img.src = user.photo_url; img.style.display = '';
-        document.getElementById('avatarPlaceholder').style.display = 'none';
-      }
-      document.getElementById('metaCreated').textContent = fmtDate(user.created_at);
-      if (user.agreed_at) {
-        document.getElementById('metaAgreed').textContent = fmtDate(user.agreed_at);
-        document.getElementById('metaBadge').style.display = '';
-      } else {
-        document.getElementById('metaAgreedWrap').style.display = 'none';
-      }
-
-      /* Zodiac */
-      if (user.zodiac) selectZodiac(user.zodiac, false);
-
-      /* Card of day — prefill if already drawn */
-      if (card_today) {
-        document.getElementById('cardName').textContent    = card_today.card_name;
-        document.getElementById('cardMeaning').textContent = card_today.card_meaning;
-        document.getElementById('cardAlready').textContent = 'Уже открыта сегодня — нажми чтобы увидеть';
-        cardLoaded = true;
-      }
-
-      /* Stats */
-      const approved = reviews.filter(r => r.approved !== false).length;
-      document.getElementById('statReviews').textContent = approved;
-      const days = Math.max(0, Math.floor((Date.now() - new Date(user.created_at)) / 86400000));
-      document.getElementById('statDays').textContent    = days;
-
-      /* Cards count — fetch separately or estimate */
-      fetch('/api/profile', { headers: authHeaders() })
-        .then(r => r.json()).then(() => {
-          document.getElementById('statCards').textContent = card_today ? '1+' : '0';
-        }).catch(() => {
-          document.getElementById('statCards').textContent = card_today ? '1+' : '0';
-        });
-
-      /* Reviews */
-      renderReviews(reviews);
-
-      document.getElementById('loadingView').style.display = 'none';
-      document.getElementById('mainView').style.display    = '';
-
-    } catch (err) {
-      console.error(err);
-      document.getElementById('loadingView').innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted)">Ошибка загрузки профиля. <a href="/" style="color:var(--gold)">На сайт</a></div>';
-    }
-  }
-
-  init();
+init();
 </script>
 </body>
 </html>

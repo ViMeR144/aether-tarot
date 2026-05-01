@@ -132,7 +132,8 @@ async function initDb() {
       created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
     )
   `);
-  await pool.query('ALTER TABLE tg_users ADD COLUMN IF NOT EXISTS zodiac TEXT');
+  await pool.query('ALTER TABLE tg_users ADD COLUMN IF NOT EXISTS zodiac       TEXT');
+  await pool.query('ALTER TABLE tg_users ADD COLUMN IF NOT EXISTS birth_date  DATE');
 
   await pool.query('ALTER TABLE reviews ADD COLUMN IF NOT EXISTS telegram_id BIGINT');
 
@@ -603,13 +604,32 @@ app.get('/api/auth/me', requireUser, async (req, res) => {
 app.get('/api/profile', requireUser, async (req, res) => {
   try {
     const id = req.tgUser.tg_id;
-    const [userRow, reviews, cardRow] = await Promise.all([
+    const [userRow, reviews, cardRow, historyRow] = await Promise.all([
       pool.query('SELECT * FROM tg_users WHERE telegram_id = $1', [id]),
       pool.query('SELECT id, name, rating, body, approved, created_at FROM reviews WHERE telegram_id = $1 ORDER BY created_at DESC', [id]),
       pool.query('SELECT * FROM card_pulls WHERE telegram_id = $1 AND date = CURRENT_DATE', [id]),
+      pool.query('SELECT card_name, card_meaning, date FROM card_pulls WHERE telegram_id = $1 ORDER BY date DESC LIMIT 30', [id]),
     ]);
     if (!userRow.rows.length) return res.status(404).json({ error: 'Пользователь не найден' });
-    res.json({ user: userRow.rows[0], reviews: reviews.rows, card_today: cardRow.rows[0] || null });
+
+    /* Calculate streak */
+    const history = historyRow.rows;
+    let streak = 0;
+    const today = new Date(); today.setHours(0,0,0,0);
+    for (let i = 0; i < history.length; i++) {
+      const d = new Date(history[i].date); d.setHours(0,0,0,0);
+      const expected = new Date(today); expected.setDate(today.getDate() - i);
+      if (d.getTime() === expected.getTime()) streak++;
+      else break;
+    }
+
+    res.json({
+      user:       userRow.rows[0],
+      reviews:    reviews.rows,
+      card_today: cardRow.rows[0] || null,
+      card_history: history,
+      streak,
+    });
   } catch (err) { res.status(500).json({ error: 'Ошибка сервера' }); }
 });
 
@@ -619,6 +639,17 @@ app.put('/api/profile/zodiac', requireUser, async (req, res) => {
   if (!VALID.includes(zodiac)) return res.status(400).json({ error: 'Неверный знак зодиака' });
   await pool.query('UPDATE tg_users SET zodiac = $1 WHERE telegram_id = $2', [zodiac, req.tgUser.tg_id]);
   res.json({ ok: true });
+});
+
+app.put('/api/profile/birthdate', requireUser, async (req, res) => {
+  try {
+    const { birth_date } = req.body;
+    if (!birth_date || !/^\d{4}-\d{2}-\d{2}$/.test(birth_date)) return res.status(400).json({ error: 'Неверный формат даты' });
+    const d = new Date(birth_date);
+    if (isNaN(d) || d > new Date()) return res.status(400).json({ error: 'Неверная дата' });
+    await pool.query('UPDATE tg_users SET birth_date = $1 WHERE telegram_id = $2', [birth_date, req.tgUser.tg_id]);
+    res.json({ ok: true });
+  } catch (err) { res.status(500).json({ error: 'Ошибка сервера' }); }
 });
 
 app.post('/api/profile/card-of-day', requireUser, async (req, res) => {
