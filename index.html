@@ -1234,61 +1234,148 @@
     /* ══════════════════════════════════
        ФОРМА ОТЗЫВОВ
     ══════════════════════════════════ */
-    .review-form-wrap {
-      max-width: 620px; margin: 48px auto 0;
+    /* ── Сводка рейтинга ── */
+    .rev-summary {
+      display: flex; align-items: center; justify-content: center; gap: 20px;
+      margin-bottom: 40px; flex-wrap: wrap;
+    }
+    .rev-big-score {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 4rem; font-weight: 300; color: var(--gold); line-height: 1;
+    }
+    .rev-summary-right { display: flex; flex-direction: column; gap: 6px; }
+    .rev-summary-stars { display: flex; gap: 4px; }
+    .rev-summary-stars span { font-size: 1.1rem; color: var(--gold); }
+    .rev-summary-stars span.empty { color: rgba(201,168,76,.2); }
+    .rev-count { font-size: .68rem; letter-spacing: .12em; color: var(--muted); }
+
+    /* ── Скелетон загрузки ── */
+    .rev-skeleton {
+      grid-column: 1/-1; display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;
+    }
+    .rev-skel-card {
       background: var(--bg3); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 36px 32px;
+      border-radius: var(--radius); padding: 24px; height: 140px;
+      position: relative; overflow: hidden;
+    }
+    .rev-skel-card::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(201,168,76,.06) 50%, transparent 100%);
+      animation: skel-shine 1.4s infinite;
+    }
+    @keyframes skel-shine { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+    /* ── Карточка отзыва ── */
+    .rev-card {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px 22px;
+      position: relative; overflow: hidden;
+      transition: border-color .3s, transform .25s;
+      animation: rev-appear .45s ease both;
+    }
+    @keyframes rev-appear { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+    .rev-card:hover { border-color: rgba(201,168,76,.35); transform: translateY(-2px); }
+    .rev-card-quote {
+      position: absolute; top: 14px; right: 16px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 4rem; line-height: 1; color: rgba(201,168,76,.08);
+      pointer-events: none; user-select: none;
+    }
+    .rev-card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .rev-avatar {
+      width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--gold-d), var(--gold));
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', serif; font-size: 1rem;
+      color: var(--bg); font-weight: 600;
+    }
+    .rev-meta { flex: 1; min-width: 0; }
+    .rev-name { font-size: .82rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .rev-date { font-size: .6rem; color: var(--muted); margin-top: 2px; }
+    .rev-stars { display: flex; gap: 3px; }
+    .rev-stars span { font-size: .85rem; color: var(--gold); }
+    .rev-stars span.e { color: rgba(201,168,76,.18); }
+    .rev-body { font-size: .78rem; line-height: 1.75; color: var(--muted); }
+
+    .rev-empty {
+      text-align: center; color: var(--muted);
+      font-size: .8rem; padding: 48px 0; grid-column: 1/-1;
+      letter-spacing: .06em;
+    }
+
+    /* ── Форма ── */
+    .review-form-wrap {
+      max-width: 640px; margin: 52px auto 0;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 40px 36px;
+      position: relative; overflow: hidden;
+    }
+    .review-form-wrap::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: .5;
     }
     .rform-title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 1.25rem; color: var(--gold-l);
-      text-align: center; margin-bottom: 24px; letter-spacing: .06em;
+      font-size: 1.4rem; color: var(--gold-l);
+      text-align: center; margin-bottom: 6px; letter-spacing: .05em;
     }
+    .rform-sub { text-align: center; font-size: .7rem; color: var(--muted); margin-bottom: 28px; letter-spacing: .08em; }
+
+    .rform-stars-wrap { text-align: center; margin-bottom: 24px; }
+    .rform-stars-label { font-size: .6rem; letter-spacing: .16em; color: var(--muted); margin-bottom: 10px; }
     .rform-stars {
-      display: flex; justify-content: center; gap: 10px;
-      margin-bottom: 20px; cursor: pointer;
+      display: inline-flex; gap: 8px; cursor: pointer;
     }
     .rform-stars span {
-      font-size: 1.6rem; color: rgba(201,168,76,.25);
-      transition: color .15s, transform .15s;
-      user-select: none;
+      font-size: 2rem; color: rgba(201,168,76,.2);
+      transition: color .12s, transform .12s;
+      user-select: none; line-height: 1;
     }
     .rform-stars span.filled { color: var(--gold); }
-    .rform-stars span:hover  { transform: scale(1.15); }
+    .rform-stars span:hover  { transform: scale(1.2); }
+    .rform-star-hint {
+      font-size: .62rem; color: var(--gold); margin-top: 8px;
+      min-height: 16px; letter-spacing: .1em; transition: opacity .2s;
+    }
+
+    .rform-field { margin-bottom: 16px; position: relative; }
+    .rform-field label { display: block; font-size: .62rem; letter-spacing: .14em; color: var(--muted); margin-bottom: 7px; }
     .rform-input {
       width: 100%; background: var(--bg4);
       border: 1px solid var(--border); border-radius: 8px;
-      padding: 12px 16px; margin-bottom: 14px;
-      font-family: 'Montserrat', sans-serif; font-size: .78rem;
+      padding: 13px 16px;
+      font-family: 'Montserrat', sans-serif; font-size: .79rem;
       color: var(--text); outline: none; resize: none;
-      transition: border-color .2s;
+      transition: border-color .2s, box-shadow .2s;
     }
-    .rform-input::placeholder { color: var(--muted); }
-    .rform-input:focus { border-color: rgba(201,168,76,.45); }
+    .rform-input::placeholder { color: rgba(122,120,112,.5); }
+    .rform-input:focus { border-color: rgba(201,168,76,.5); box-shadow: 0 0 0 3px rgba(201,168,76,.07); }
+    .rform-input.err { border-color: rgba(235,87,87,.5); }
+    .rform-char { position: absolute; bottom: 10px; right: 12px; font-size: .58rem; color: var(--muted); pointer-events: none; }
+
     .rform-btn {
-      width: 100%; padding: 14px;
-      background: transparent; border: 1px solid var(--gold);
-      border-radius: 4px; color: var(--gold);
+      width: 100%; padding: 15px;
+      background: linear-gradient(135deg, var(--gold-d) 0%, var(--gold) 100%);
+      border: none; border-radius: 4px; color: var(--bg);
       font-family: 'Montserrat', sans-serif;
-      font-size: .7rem; letter-spacing: .18em; font-weight: 600;
-      cursor: pointer; transition: background .2s, color .2s;
+      font-size: .72rem; letter-spacing: .2em; font-weight: 700;
+      cursor: pointer; transition: opacity .2s, transform .15s, box-shadow .2s;
+      box-shadow: 0 4px 20px rgba(201,168,76,.25);
     }
-    .rform-btn:hover { background: var(--gold); color: var(--bg); }
-    .rform-btn:disabled { opacity: .5; cursor: not-allowed; }
+    .rform-btn:hover:not(:disabled) { opacity: .9; transform: translateY(-1px); box-shadow: 0 8px 28px rgba(201,168,76,.35); }
+    .rform-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
     .rform-status {
-      text-align: center; margin-top: 12px;
-      font-size: .72rem; min-height: 20px;
+      text-align: center; margin-top: 14px;
+      font-size: .73rem; min-height: 20px; letter-spacing: .05em;
     }
     .rform-status.ok  { color: #6fcf97; }
     .rform-status.err { color: #eb5757; }
 
-    /* Карточки отзывов (динамические) */
-    .rev-empty {
-      text-align: center; color: var(--muted);
-      font-size: .78rem; padding: 32px 0; grid-column: 1/-1;
-    }
     @media (max-width: 640px) {
       .review-form-wrap { padding: 28px 20px; }
+      .rev-big-score { font-size: 3rem; }
     }
   </style>
 </head>
@@ -1961,23 +2048,53 @@
       <div class="testimonials-label-line"></div>
     </div>
 
+    <!-- Сводка рейтинга -->
+    <div class="rev-summary fade-in" id="revSummary" style="display:none">
+      <div class="rev-big-score" id="revScore">—</div>
+      <div class="rev-summary-right">
+        <div class="rev-summary-stars" id="revSummaryStars"></div>
+        <div class="rev-count" id="revCount"></div>
+      </div>
+    </div>
+
+    <!-- Список -->
     <div class="testimonials-grid" id="reviewsList">
-      <div class="rev-empty">Загрузка отзывов...</div>
+      <div class="rev-skeleton">
+        <div class="rev-skel-card"></div>
+        <div class="rev-skel-card"></div>
+        <div class="rev-skel-card"></div>
+      </div>
     </div>
 
     <!-- Форма нового отзыва -->
     <div class="review-form-wrap fade-in">
-      <div class="rform-title">✦ &nbsp; Оставить отзыв</div>
-      <div class="rform-stars" id="rStars">
-        <span data-v="1">☆</span>
-        <span data-v="2">☆</span>
-        <span data-v="3">☆</span>
-        <span data-v="4">☆</span>
-        <span data-v="5">☆</span>
+      <div class="rform-title">Оставить отзыв</div>
+      <div class="rform-sub">ПОДЕЛИСЬ СВОИМ ОПЫТОМ С ОРАКУЛОМ</div>
+
+      <div class="rform-stars-wrap">
+        <div class="rform-stars-label">ТВОЯ ОЦЕНКА</div>
+        <div class="rform-stars" id="rStars">
+          <span data-v="1">★</span>
+          <span data-v="2">★</span>
+          <span data-v="3">★</span>
+          <span data-v="4">★</span>
+          <span data-v="5">★</span>
+        </div>
+        <div class="rform-star-hint" id="rStarHint">&nbsp;</div>
       </div>
-      <input  id="rName"   class="rform-input" placeholder="Твоё имя" maxlength="60"/>
-      <textarea id="rText" class="rform-input" rows="3" placeholder="Поделись впечатлением..." maxlength="500"></textarea>
-      <button  id="rSubmit" class="rform-btn">ОТПРАВИТЬ ОТЗЫВ ✦</button>
+
+      <div class="rform-field">
+        <label>ИМЯ</label>
+        <input id="rName" class="rform-input" placeholder="Как тебя зовут?" maxlength="60"/>
+      </div>
+
+      <div class="rform-field">
+        <label>ОТЗЫВ</label>
+        <textarea id="rText" class="rform-input" rows="4" placeholder="Расскажи о своём опыте с ботом..." maxlength="500"></textarea>
+        <span class="rform-char" id="rChar">0 / 500</span>
+      </div>
+
+      <button id="rSubmit" class="rform-btn">ОТПРАВИТЬ ОТЗЫВ ✦</button>
       <div id="rStatus" class="rform-status"></div>
     </div>
   </div>
@@ -2488,121 +2605,186 @@
      ОТЗЫВЫ — API
   ══════════════════════════════════ */
   (function initReviews() {
-    var list    = document.getElementById('reviewsList');
-    var starsEl = document.getElementById('rStars');
-    var nameEl  = document.getElementById('rName');
-    var textEl  = document.getElementById('rText');
-    var btnEl   = document.getElementById('rSubmit');
-    var statusEl= document.getElementById('rStatus');
+    var list      = document.getElementById('reviewsList');
+    var starsEl   = document.getElementById('rStars');
+    var hintEl    = document.getElementById('rStarHint');
+    var nameEl    = document.getElementById('rName');
+    var textEl    = document.getElementById('rText');
+    var charEl    = document.getElementById('rChar');
+    var btnEl     = document.getElementById('rSubmit');
+    var statusEl  = document.getElementById('rStatus');
+    var summaryEl = document.getElementById('revSummary');
+    var scoreEl   = document.getElementById('revScore');
+    var sumStarsEl= document.getElementById('revSummaryStars');
+    var countEl   = document.getElementById('revCount');
     if (!list) return;
 
     var selectedRating = 0;
+    var starHints = ['', 'Ужасно', 'Плохо', 'Нормально', 'Хорошо', 'Отлично!'];
 
-    /* Звёздный пикер */
-    if (starsEl) {
-      starsEl.querySelectorAll('span').forEach(function(s) {
-        s.addEventListener('click', function() {
-          selectedRating = parseInt(s.getAttribute('data-v'));
-          starsEl.querySelectorAll('span').forEach(function(x) {
-            var v = parseInt(x.getAttribute('data-v'));
-            x.textContent = v <= selectedRating ? '★' : '☆';
-            x.classList.toggle('filled', v <= selectedRating);
-          });
-        });
-        s.addEventListener('mouseenter', function() {
-          var hover = parseInt(s.getAttribute('data-v'));
-          starsEl.querySelectorAll('span').forEach(function(x) {
-            x.classList.toggle('filled', parseInt(x.getAttribute('data-v')) <= hover);
-          });
-        });
-      });
-      starsEl.addEventListener('mouseleave', function() {
-        starsEl.querySelectorAll('span').forEach(function(x) {
-          var v = parseInt(x.getAttribute('data-v'));
-          x.classList.toggle('filled', v <= selectedRating);
-        });
+    function esc(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    /* ── Счётчик символов ── */
+    if (textEl && charEl) {
+      textEl.addEventListener('input', function() {
+        var len = textEl.value.length;
+        charEl.textContent = len + ' / 500';
+        charEl.style.color = len > 450 ? '#eb5757' : '';
       });
     }
 
-    /* Рендер отзывов */
+    /* ── Звёздный пикер ── */
+    var starSpans = starsEl ? starsEl.querySelectorAll('span') : [];
+    function paintStars(upTo) {
+      starSpans.forEach(function(x) {
+        x.classList.toggle('filled', parseInt(x.getAttribute('data-v')) <= upTo);
+      });
+    }
+    starSpans.forEach(function(s) {
+      s.addEventListener('mouseenter', function() {
+        var v = parseInt(s.getAttribute('data-v'));
+        paintStars(v);
+        if (hintEl) hintEl.textContent = starHints[v];
+      });
+      s.addEventListener('click', function() {
+        selectedRating = parseInt(s.getAttribute('data-v'));
+        paintStars(selectedRating);
+        if (hintEl) hintEl.textContent = starHints[selectedRating];
+        nameEl && nameEl.classList.remove('err');
+      });
+    });
+    if (starsEl) {
+      starsEl.addEventListener('mouseleave', function() {
+        paintStars(selectedRating);
+        if (hintEl) hintEl.textContent = selectedRating ? starHints[selectedRating] : ' ';
+      });
+    }
+
+    /* ── Сводка рейтинга ── */
+    function renderSummary(rows) {
+      if (!summaryEl || !rows.length) return;
+      var avg = rows.reduce(function(s, r) { return s + r.rating; }, 0) / rows.length;
+      var rounded = Math.round(avg * 10) / 10;
+      scoreEl.textContent = rounded.toFixed(1);
+      var fullStars = Math.round(avg);
+      sumStarsEl.innerHTML = [1,2,3,4,5].map(function(i) {
+        return '<span class="' + (i > fullStars ? 'empty' : '') + '">★</span>';
+      }).join('');
+      var word = rows.length === 1 ? 'отзыв' : rows.length < 5 ? 'отзыва' : 'отзывов';
+      countEl.textContent = rows.length + ' ' + word;
+      summaryEl.style.display = 'flex';
+    }
+
+    /* ── Рендер карточек ── */
     function renderReviews(rows) {
-      if (!rows || rows.length === 0) {
-        list.innerHTML = '<div class="rev-empty">Будь первым — оставь отзыв ниже ✦</div>';
+      renderSummary(rows);
+      if (!rows.length) {
+        list.innerHTML = '<div class="rev-empty">✦ Будь первым — оставь отзыв ниже</div>';
         return;
       }
-      list.innerHTML = rows.map(function(r) {
-        var stars = '';
-        for (var i = 1; i <= 5; i++) stars += '<span class="star' + (i > r.rating ? ' empty' : '') + '">★</span>';
+      list.innerHTML = rows.map(function(r, i) {
+        var stars = [1,2,3,4,5].map(function(n) {
+          return '<span class="' + (n > r.rating ? 'e' : '') + '">★</span>';
+        }).join('');
         var letter = r.name ? r.name[0].toUpperCase() : '?';
-        var date = new Date(r.created_at).toLocaleDateString('ru-RU', {day:'numeric', month:'long'});
-        return '<div class="testi-card fade-in">'
-          + '<div class="testi-header">'
-          + '<div class="testi-avatar">' + letter + '</div>'
-          + '<div class="testi-info">'
-          + '<div class="testi-name">' + escHtml(r.name) + '</div>'
-          + '<div class="stars">' + stars + '</div>'
+        var d = new Date(r.created_at);
+        var date = d.toLocaleDateString('ru-RU', {day:'numeric', month:'long', year:'numeric'});
+        return '<div class="rev-card" style="animation-delay:' + (i * 0.06) + 's">'
+          + '<div class="rev-card-quote">"</div>'
+          + '<div class="rev-card-head">'
+          +   '<div class="rev-avatar">' + esc(letter) + '</div>'
+          +   '<div class="rev-meta">'
+          +     '<div class="rev-name">' + esc(r.name) + '</div>'
+          +     '<div class="rev-date">' + date + '</div>'
+          +   '</div>'
+          +   '<div class="rev-stars">' + stars + '</div>'
           + '</div>'
-          + '<span style="font-size:.6rem;color:var(--muted);margin-left:auto;align-self:flex-start">' + date + '</span>'
-          + '</div>'
-          + '<p class="testi-quote">«' + escHtml(r.body) + '»</p>'
+          + '<div class="rev-body">' + esc(r.body) + '</div>'
           + '</div>';
       }).join('');
     }
 
-    function escHtml(s) {
-      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
-
-    /* Загрузить отзывы */
+    /* ── Загрузка ── */
     function loadReviews() {
-      fetch('/api/reviews')
+      return fetch('/api/reviews')
         .then(function(r) { return r.json(); })
         .then(renderReviews)
-        .catch(function() { list.innerHTML = '<div class="rev-empty">Не удалось загрузить отзывы</div>'; });
+        .catch(function() {
+          list.innerHTML = '<div class="rev-empty">Не удалось загрузить отзывы</div>';
+        });
     }
 
     loadReviews();
 
-    /* Отправить отзыв */
+    /* ── Отправка ── */
     if (btnEl) {
       btnEl.addEventListener('click', function() {
-        var name   = nameEl.value.trim();
-        var body   = textEl.value.trim();
-        var rating = selectedRating;
+        var name = nameEl ? nameEl.value.trim() : '';
+        var body = textEl ? textEl.value.trim() : '';
+        var ok = true;
 
-        if (!rating) { showStatus('Выбери оценку в звёздах', 'err'); return; }
-        if (!name)   { showStatus('Напиши своё имя', 'err'); return; }
-        if (!body)   { showStatus('Напиши текст отзыва', 'err'); return; }
+        if (!selectedRating) {
+          showStatus('Выбери оценку звёздами', 'err');
+          starsEl && (starsEl.style.animation = 'tap-pulse .4s');
+          setTimeout(function() { starsEl && (starsEl.style.animation = ''); }, 400);
+          ok = false;
+        }
+        if (!name) {
+          nameEl && nameEl.classList.add('err');
+          if (ok) { showStatus('Напиши своё имя', 'err'); nameEl && nameEl.focus(); }
+          ok = false;
+        }
+        if (!body) {
+          textEl && textEl.classList.add('err');
+          if (ok) { showStatus('Напиши текст отзыва', 'err'); textEl && textEl.focus(); }
+          ok = false;
+        }
+        if (!ok) return;
 
+        nameEl.classList.remove('err');
+        textEl.classList.remove('err');
         btnEl.disabled = true;
-        showStatus('Отправляем...', '');
+        btnEl.textContent = 'ОТПРАВЛЯЕМ...';
+        showStatus('', '');
 
         fetch('/api/reviews', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: name, rating: rating, body: body })
+          body: JSON.stringify({ name: name, rating: selectedRating, body: body })
         })
         .then(function(r) { return r.json(); })
         .then(function(data) {
           if (data.ok) {
-            showStatus('✦ Отзыв опубликован, благодарим!', 'ok');
+            showStatus('✦ Отзыв опубликован — благодарим!', 'ok');
             nameEl.value = '';
             textEl.value = '';
+            if (charEl) charEl.textContent = '0 / 500';
             selectedRating = 0;
-            starsEl.querySelectorAll('span').forEach(function(x) {
-              x.textContent = '☆'; x.classList.remove('filled');
+            paintStars(0);
+            if (hintEl) hintEl.textContent = ' ';
+            loadReviews().then(function() {
+              list.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             });
-            loadReviews();
           } else {
             showStatus('Ошибка: ' + (data.error || 'попробуй ещё раз'), 'err');
           }
         })
-        .catch(function() { showStatus('Ошибка соединения', 'err'); })
-        .finally(function() { btnEl.disabled = false; });
+        .catch(function() { showStatus('Ошибка соединения с сервером', 'err'); })
+        .finally(function() {
+          btnEl.disabled = false;
+          btnEl.textContent = 'ОТПРАВИТЬ ОТЗЫВ ✦';
+        });
       });
+
+      /* Убираем err при вводе */
+      nameEl && nameEl.addEventListener('input', function() { nameEl.classList.remove('err'); });
+      textEl && textEl.addEventListener('input', function() { textEl.classList.remove('err'); });
     }
 
     function showStatus(msg, type) {
+      if (!statusEl) return;
       statusEl.textContent = msg;
       statusEl.className = 'rform-status ' + type;
     }
