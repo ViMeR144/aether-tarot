@@ -15,6 +15,46 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 const USER_SECRET    = process.env.USER_SECRET    || (ADMIN_SECRET + '_user');
 const BOT_USERNAME   = process.env.BOT_USERNAME   || '';
 
+const MAJOR_ARCANA = [
+  { name: 'Дурак',           meaning: 'Новые начала, спонтанность, свобода духа' },
+  { name: 'Маг',             meaning: 'Сила воли, мастерство, проявление желаний' },
+  { name: 'Верховная Жрица', meaning: 'Интуиция, тайное знание, внутренний голос' },
+  { name: 'Императрица',     meaning: 'Плодородие, красота, изобилие' },
+  { name: 'Император',       meaning: 'Власть, стабильность, структура' },
+  { name: 'Иерофант',        meaning: 'Традиции, духовное руководство, мудрость' },
+  { name: 'Влюблённые',      meaning: 'Выбор, гармония, единство душ' },
+  { name: 'Колесница',       meaning: 'Победа, решимость, движение вперёд' },
+  { name: 'Сила',            meaning: 'Внутренняя мощь, смелость, терпение' },
+  { name: 'Отшельник',       meaning: 'Уединение, поиск истины, мудрость пути' },
+  { name: 'Колесо Фортуны',  meaning: 'Судьба, перемены, циклы жизни' },
+  { name: 'Справедливость',  meaning: 'Баланс, истина, карма' },
+  { name: 'Повешенный',      meaning: 'Пауза, новый взгляд, жертва ради роста' },
+  { name: 'Смерть',          meaning: 'Трансформация, завершение, перерождение' },
+  { name: 'Умеренность',     meaning: 'Терпение, равновесие, исцеление' },
+  { name: 'Дьявол',          meaning: 'Оковы, соблазн, скрытые силы' },
+  { name: 'Башня',           meaning: 'Внезапные перемены, откровение, разрушение старого' },
+  { name: 'Звезда',          meaning: 'Надежда, вдохновение, обновление' },
+  { name: 'Луна',            meaning: 'Иллюзии, подсознание, тайные страхи' },
+  { name: 'Солнце',          meaning: 'Радость, успех, жизненная сила' },
+  { name: 'Суд',             meaning: 'Пробуждение, возрождение, новый этап' },
+  { name: 'Мир',             meaning: 'Завершение, достижение, единство' },
+];
+
+const ZODIAC_ARCHETYPES = {
+  aries:       { ru:'Овен',     symbol:'♈', card:'Император',      desc:'Ты воплощаешь волю и власть. Твой путь — лидерство и созидание.' },
+  taurus:      { ru:'Телец',    symbol:'♉', card:'Иерофант',       desc:'Мудрость традиций течёт сквозь тебя. Ты хранитель вечных истин.' },
+  gemini:      { ru:'Близнецы', symbol:'♊', card:'Дурак',          desc:'Свобода и любопытство — твои крылья. Каждый день — новое приключение.' },
+  cancer:      { ru:'Рак',      symbol:'♋', card:'Луна',           desc:'Интуиция — твой фонарь в темноте. Ты чувствуешь то, чего не видят другие.' },
+  leo:         { ru:'Лев',      symbol:'♌', card:'Солнце',         desc:'Ты свет среди теней. Твоя энергия согревает всех вокруг.' },
+  virgo:       { ru:'Дева',     symbol:'♍', card:'Отшельник',      desc:'Поиск истины — смысл твоего пути. Мудрость рождается в тишине.' },
+  libra:       { ru:'Весы',     symbol:'♎', card:'Справедливость', desc:'Гармония и баланс — твоя природа. Ты видишь все стороны бытия.' },
+  scorpio:     { ru:'Скорпион', symbol:'♏', card:'Смерть',         desc:'Трансформация — твой дар. Из пепла ты рождаешься заново.' },
+  sagittarius: { ru:'Стрелец',  symbol:'♐', card:'Колесо Фортуны', desc:'Судьба благосклонна к искателям. Твоя стрела всегда летит вперёд.' },
+  capricorn:   { ru:'Козерог',  symbol:'♑', card:'Мир',            desc:'Настойчивость — твоя суперсила. Ты достигаешь вершин, которые другим не по силам.' },
+  aquarius:    { ru:'Водолей',  symbol:'♒', card:'Звезда',         desc:'Ты видишь будущее. Твой взгляд озаряет дорогу для всего человечества.' },
+  pisces:      { ru:'Рыбы',     symbol:'♓', card:'Верховная Жрица',desc:'Мистика и глубина — твоя стихия. Ты слышишь голос вселенной.' },
+};
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
@@ -87,8 +127,23 @@ async function initDb() {
       username    TEXT,
       first_name  TEXT,
       photo_url   TEXT,
+      zodiac      TEXT,
       agreed_at   TIMESTAMPTZ,
       created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+    )
+  `);
+  await pool.query('ALTER TABLE tg_users ADD COLUMN IF NOT EXISTS zodiac TEXT');
+
+  await pool.query('ALTER TABLE reviews ADD COLUMN IF NOT EXISTS telegram_id BIGINT');
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS card_pulls (
+      id          SERIAL PRIMARY KEY,
+      telegram_id BIGINT NOT NULL,
+      date        DATE   NOT NULL DEFAULT CURRENT_DATE,
+      card_name   TEXT   NOT NULL,
+      card_meaning TEXT  NOT NULL,
+      UNIQUE (telegram_id, date)
     )
   `);
 }
@@ -198,6 +253,15 @@ app.get('/api/reviews', async (req, res) => {
 
 app.post('/api/reviews', async (req, res) => {
   try {
+    // Require Telegram login
+    const auth = req.headers.authorization || '';
+    const tok  = auth.startsWith('Bearer ') ? auth.slice(7) : null;
+    let telegramId = null;
+    if (tok) {
+      try { telegramId = jwt.verify(tok, USER_SECRET).tg_id; } catch {}
+    }
+    if (!telegramId) return res.status(401).json({ error: 'Войди через Telegram, чтобы оставить отзыв', needAuth: true });
+
     const { name, rating, body } = req.body;
     if (!name || !rating || !body) return res.status(400).json({ error: 'Заполни все поля' });
 
@@ -223,13 +287,13 @@ app.post('/api/reviews', async (req, res) => {
     if (banned.length > 0) return res.status(403).json({ error: 'Возможность оставлять отзывы ограничена' });
 
     const { rows: recent } = await pool.query(
-      "SELECT id FROM reviews WHERE ip_hash = $1 AND created_at > NOW() - INTERVAL '24 hours' LIMIT 1", [ipHash]
+      "SELECT id FROM reviews WHERE telegram_id = $1 AND created_at > NOW() - INTERVAL '24 hours' LIMIT 1", [telegramId]
     );
     if (recent.length > 0) return res.status(429).json({ error: 'Можно оставить только один отзыв в 24 часа' });
 
     const { rows: inserted } = await pool.query(
-      'INSERT INTO reviews (name, rating, body, ip_hash) VALUES ($1, $2, $3, $4) RETURNING *',
-      [cleanName, cleanRating, cleanBody, ipHash]
+      'INSERT INTO reviews (name, rating, body, ip_hash, telegram_id) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [cleanName, cleanRating, cleanBody, ipHash, telegramId]
     );
 
     sendTgNotification(inserted[0]);
@@ -533,10 +597,69 @@ app.get('/api/auth/me', requireUser, async (req, res) => {
 });
 
 /* ══════════════════════════════════════
+   ПРОФИЛЬ
+══════════════════════════════════════ */
+
+app.get('/api/profile', requireUser, async (req, res) => {
+  try {
+    const id = req.tgUser.tg_id;
+    const [userRow, reviews, cardRow] = await Promise.all([
+      pool.query('SELECT * FROM tg_users WHERE telegram_id = $1', [id]),
+      pool.query('SELECT id, name, rating, body, approved, created_at FROM reviews WHERE telegram_id = $1 ORDER BY created_at DESC', [id]),
+      pool.query('SELECT * FROM card_pulls WHERE telegram_id = $1 AND date = CURRENT_DATE', [id]),
+    ]);
+    if (!userRow.rows.length) return res.status(404).json({ error: 'Пользователь не найден' });
+    res.json({ user: userRow.rows[0], reviews: reviews.rows, card_today: cardRow.rows[0] || null });
+  } catch (err) { res.status(500).json({ error: 'Ошибка сервера' }); }
+});
+
+app.put('/api/profile/zodiac', requireUser, async (req, res) => {
+  const VALID = ['aries','taurus','gemini','cancer','leo','virgo','libra','scorpio','sagittarius','capricorn','aquarius','pisces'];
+  const { zodiac } = req.body;
+  if (!VALID.includes(zodiac)) return res.status(400).json({ error: 'Неверный знак зодиака' });
+  await pool.query('UPDATE tg_users SET zodiac = $1 WHERE telegram_id = $2', [zodiac, req.tgUser.tg_id]);
+  res.json({ ok: true });
+});
+
+app.post('/api/profile/card-of-day', requireUser, async (req, res) => {
+  try {
+    const id = req.tgUser.tg_id;
+    const { rows: existing } = await pool.query(
+      'SELECT * FROM card_pulls WHERE telegram_id = $1 AND date = CURRENT_DATE', [id]
+    );
+    if (existing.length) return res.json(existing[0]);
+    const card = MAJOR_ARCANA[Math.floor(Math.random() * MAJOR_ARCANA.length)];
+    const { rows } = await pool.query(
+      'INSERT INTO card_pulls (telegram_id, card_name, card_meaning) VALUES ($1, $2, $3) RETURNING *',
+      [id, card.name, card.meaning]
+    );
+    res.json(rows[0]);
+  } catch (err) { res.status(500).json({ error: 'Ошибка сервера' }); }
+});
+
+app.delete('/api/profile/reviews/:id', requireUser, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM reviews WHERE id = $1 AND telegram_id = $2', [parseInt(req.params.id), req.tgUser.tg_id]);
+    res.json({ ok: true });
+  } catch (err) { res.status(500).json({ error: 'Ошибка сервера' }); }
+});
+
+app.delete('/api/profile', requireUser, async (req, res) => {
+  try {
+    const id = req.tgUser.tg_id;
+    await pool.query('DELETE FROM card_pulls WHERE telegram_id = $1', [id]);
+    await pool.query('UPDATE reviews SET telegram_id = NULL WHERE telegram_id = $1', [id]);
+    await pool.query('DELETE FROM tg_users WHERE telegram_id = $1', [id]);
+    res.json({ ok: true });
+  } catch (err) { res.status(500).json({ error: 'Ошибка сервера' }); }
+});
+
+/* ══════════════════════════════════════
    СТРАНИЦЫ
 ══════════════════════════════════════ */
 app.get('/admin',     (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
 app.get('/agreement', (req, res) => res.sendFile(path.join(__dirname, 'agreement.html')));
+app.get('/profile',   (req, res) => res.sendFile(path.join(__dirname, 'profile.html')));
 app.get('*',          (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 
 const PORT = process.env.PORT || 3000;

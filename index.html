@@ -1437,7 +1437,7 @@
     <button id="navLogout" onclick="tgLogout()">ВЫЙТИ</button>
   </div>
   <a href="/agreement" id="navTgBtn" class="nav-tg-btn" style="display:none">☽ ВОЙТИ</a>
-  <a href="https://t.me/Tarologfalse_bot" target="_blank" rel="noopener" class="nav-cta">КОНСУЛЬТАЦИЯ</a>
+  <a href="/profile" id="navProfile" class="nav-cta" style="display:none">МОЙ ПРОФИЛЬ</a>
   <div class="burger" id="burger" aria-label="Menu">
     <span></span><span></span><span></span>
   </div>
@@ -1449,7 +1449,8 @@
   <a href="#quiz" onclick="closeMobile()">КВИЗ</a>
   <a href="#chat-demo" onclick="closeMobile()">БОТ</a>
   <a href="#wisdom" onclick="closeMobile()">ОТЗЫВЫ</a>
-  <a href="https://t.me/@Tarologfalse_bot" target="_blank" rel="noopener" style="color:var(--gold)">КОНСУЛЬТАЦИЯ</a>
+  <a href="/profile" id="navProfileMobile" onclick="closeMobile()" style="color:var(--gold);display:none">МОЙ ПРОФИЛЬ</a>
+  <a href="/agreement" id="navLoginMobile" onclick="closeMobile()" style="color:var(--muted)">☽ ВОЙТИ</a>
 </div>
 
 <!-- ═══════════════════════ HERO ═══════════════════════ -->
@@ -2781,9 +2782,10 @@
         btnEl.textContent = 'ОТПРАВЛЯЕМ...';
         showStatus('', '');
 
+        var tgToken = localStorage.getItem('tg_token');
         fetch('/api/reviews', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: Object.assign({ 'Content-Type': 'application/json' }, tgToken ? { 'Authorization': 'Bearer ' + tgToken } : {}),
           body: JSON.stringify({ name: name, rating: selectedRating, body: body })
         })
         .then(function(r) { return r.json(); })
@@ -2799,6 +2801,8 @@
             loadReviews().then(function() {
               list.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             });
+          } else if (data.needAuth) {
+            showStatus('Войди через Telegram, чтобы оставить отзыв — <a href="/agreement" style="color:var(--gold)">Войти</a>', 'err');
           } else {
             showStatus('Ошибка: ' + (data.error || 'попробуй ещё раз'), 'err');
           }
@@ -3060,26 +3064,45 @@
 
   /* ── Telegram user display ── */
   (async function() {
-    const token = localStorage.getItem('tg_token');
-    const navUser  = document.getElementById('navUser');
-    const navTgBtn = document.getElementById('navTgBtn');
-    if (!token) { navTgBtn.style.display = 'flex'; return; }
-    try {
-      const resp = await fetch('/api/auth/me', { headers: { Authorization: 'Bearer ' + token } });
-      if (!resp.ok) { localStorage.removeItem('tg_token'); navTgBtn.style.display = 'flex'; return; }
-      const user = await resp.json();
-      navUser.style.display = 'flex';
+    const token   = localStorage.getItem('tg_token');
+    const navUser = document.getElementById('navUser');
+    const navTgBtn= document.getElementById('navTgBtn');
+    const navProf = document.getElementById('navProfile');
+    const navProfM= document.getElementById('navProfileMobile');
+    const navLoginM=document.getElementById('navLoginMobile');
+
+    function showLoggedOut() {
+      navTgBtn.style.display  = 'flex';
+      if (navLoginM) navLoginM.style.display = '';
+    }
+    function showLoggedIn(user) {
+      navUser.style.display  = 'flex';
+      navProf.style.display  = '';
+      if (navProfM)  { navProfM.style.display  = ''; }
+      if (navLoginM) { navLoginM.style.display  = 'none'; }
       const avatarEl = document.getElementById('navAvatar');
       if (user.photo_url) avatarEl.src = user.photo_url;
       else avatarEl.style.display = 'none';
       document.getElementById('navName').textContent = user.first_name || user.username || '';
-    } catch { navTgBtn.style.display = 'flex'; }
+    }
+
+    if (!token) { showLoggedOut(); return; }
+    try {
+      const resp = await fetch('/api/auth/me', { headers: { Authorization: 'Bearer ' + token } });
+      if (!resp.ok) { localStorage.removeItem('tg_token'); showLoggedOut(); return; }
+      showLoggedIn(await resp.json());
+    } catch { showLoggedOut(); }
   })();
 
   function tgLogout() {
     localStorage.removeItem('tg_token');
-    document.getElementById('navUser').style.display = 'none';
+    document.getElementById('navUser').style.display  = 'none';
+    document.getElementById('navProfile').style.display = 'none';
     document.getElementById('navTgBtn').style.display = 'flex';
+    const m = document.getElementById('navProfileMobile');
+    const l = document.getElementById('navLoginMobile');
+    if (m) m.style.display = 'none';
+    if (l) l.style.display = '';
   }
 </script>
 </body>
