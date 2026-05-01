@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aether Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#0C0C0F;--bg2:#111116;--bg3:#16161D;--bg4:#1C1C25;
+      --gold:#C9A84C;--gold-l:#E2C97E;--text:#EDE8DC;--muted:#7A7870;
+      --border:rgba(201,168,76,.18);--green:#6fcf97;--red:#eb5757;--orange:#f2994a;
+      --radius:12px;
+    }
+    body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+    /* ── LOGIN ── */
+    #loginScreen{
+      position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+      background:var(--bg);z-index:100;
+    }
+    .login-box{
+      width:360px;background:var(--bg3);border:1px solid var(--border);
+      border-radius:var(--radius);padding:48px 40px;text-align:center;
+    }
+    .login-logo{
+      font-family:'Cormorant Garamond',serif;font-size:1.5rem;
+      color:var(--gold);letter-spacing:.12em;margin-bottom:8px;
+    }
+    .login-sub{font-size:.62rem;letter-spacing:.2em;color:var(--muted);margin-bottom:36px;}
+    .login-input{
+      width:100%;background:var(--bg4);border:1px solid var(--border);
+      border-radius:8px;padding:13px 16px;margin-bottom:14px;
+      font-family:'Montserrat',sans-serif;font-size:.82rem;color:var(--text);outline:none;
+      transition:border-color .2s;
+    }
+    .login-input:focus{border-color:rgba(201,168,76,.5);}
+    .login-btn{
+      width:100%;padding:13px;background:var(--gold);border:none;border-radius:4px;
+      color:var(--bg);font-family:'Montserrat',sans-serif;font-size:.72rem;
+      letter-spacing:.18em;font-weight:700;cursor:pointer;transition:opacity .2s;
+    }
+    .login-btn:hover{opacity:.88;}
+    .login-err{color:var(--red);font-size:.72rem;margin-top:12px;min-height:18px;}
+
+    /* ── SHELL ── */
+    #app{display:none;min-height:100vh;}
+    .topbar{
+      height:60px;background:var(--bg2);border-bottom:1px solid var(--border);
+      display:flex;align-items:center;padding:0 28px;gap:16px;position:sticky;top:0;z-index:50;
+    }
+    .topbar-logo{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--gold);letter-spacing:.1em;}
+    .topbar-badge{
+      font-size:.55rem;letter-spacing:.16em;background:rgba(201,168,76,.12);
+      color:var(--gold);border:1px solid var(--border);border-radius:20px;padding:3px 10px;
+    }
+    .topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px;}
+    .logout-btn{
+      background:none;border:1px solid var(--border);border-radius:6px;
+      color:var(--muted);font-size:.65rem;letter-spacing:.12em;padding:6px 14px;
+      cursor:pointer;transition:color .2s,border-color .2s;font-family:'Montserrat',sans-serif;
+    }
+    .logout-btn:hover{color:var(--text);border-color:var(--muted);}
+
+    .content{padding:32px 28px;max-width:1200px;margin:0 auto;}
+
+    /* ── STATS ── */
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-bottom:32px;}
+    .stat-card{
+      background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);
+      padding:22px 20px;
+    }
+    .stat-label{font-size:.58rem;letter-spacing:.18em;color:var(--muted);margin-bottom:8px;}
+    .stat-value{font-family:'Cormorant Garamond',serif;font-size:2.2rem;color:var(--gold);line-height:1;}
+    .stat-sub{font-size:.62rem;color:var(--muted);margin-top:4px;}
+
+    /* ── RATING BAR ── */
+    .rating-bars{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:22px 20px;margin-bottom:32px;}
+    .rb-title{font-size:.62rem;letter-spacing:.18em;color:var(--muted);margin-bottom:16px;}
+    .rb-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+    .rb-label{font-size:.72rem;color:var(--gold);width:20px;flex-shrink:0;}
+    .rb-track{flex:1;height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;}
+    .rb-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-l));border-radius:3px;transition:width .6s ease;}
+    .rb-count{font-size:.65rem;color:var(--muted);width:28px;text-align:right;flex-shrink:0;}
+
+    /* ── TOOLBAR ── */
+    .toolbar{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;align-items:center;}
+    .search-wrap{position:relative;flex:1;min-width:200px;}
+    .search-input{
+      width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+      padding:10px 16px 10px 38px;font-family:'Montserrat',sans-serif;font-size:.78rem;
+      color:var(--text);outline:none;transition:border-color .2s;
+    }
+    .search-input:focus{border-color:rgba(201,168,76,.4);}
+    .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;}
+    .filter-btn{
+      background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+      color:var(--muted);font-size:.7rem;letter-spacing:.1em;padding:10px 16px;
+      cursor:pointer;transition:color .2s,border-color .2s;font-family:'Montserrat',sans-serif;white-space:nowrap;
+    }
+    .filter-btn.active{color:var(--gold);border-color:rgba(201,168,76,.4);}
+    .filter-btn:hover{color:var(--text);}
+    .del-hidden-btn{
+      background:rgba(235,87,87,.1);border:1px solid rgba(235,87,87,.3);border-radius:8px;
+      color:var(--red);font-size:.7rem;letter-spacing:.1em;padding:10px 16px;
+      cursor:pointer;transition:background .2s;font-family:'Montserrat',sans-serif;white-space:nowrap;
+    }
+    .del-hidden-btn:hover{background:rgba(235,87,87,.2);}
+
+    /* ── TABLE ── */
+    .table-wrap{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+    .rev-table{width:100%;border-collapse:collapse;}
+    .rev-table th{
+      background:var(--bg4);padding:12px 16px;text-align:left;
+      font-size:.6rem;letter-spacing:.16em;color:var(--muted);font-weight:500;
+      border-bottom:1px solid var(--border);
+    }
+    .rev-table td{padding:14px 16px;border-bottom:1px solid rgba(201,168,76,.06);vertical-align:top;}
+    .rev-table tr:last-child td{border-bottom:none;}
+    .rev-table tr.hidden-row td{opacity:.45;}
+    .rev-table tr:hover td{background:rgba(201,168,76,.025);}
+
+    .td-id{color:var(--muted);font-size:.7rem;width:40px;}
+    .td-name{font-size:.8rem;font-weight:600;white-space:nowrap;}
+    .td-rating{white-space:nowrap;}
+    .star{color:var(--gold);font-size:.8rem;}
+    .star.e{color:rgba(201,168,76,.18);}
+    .td-body{font-size:.75rem;color:var(--muted);max-width:340px;line-height:1.6;}
+    .td-date{font-size:.65rem;color:var(--muted);white-space:nowrap;}
+    .td-ip{font-size:.6rem;color:var(--muted);font-family:monospace;}
+    .td-actions{white-space:nowrap;display:flex;gap:8px;align-items:center;}
+
+    .badge{display:inline-block;font-size:.55rem;letter-spacing:.1em;padding:2px 8px;border-radius:20px;}
+    .badge-ok{background:rgba(111,207,151,.12);color:var(--green);border:1px solid rgba(111,207,151,.25);}
+    .badge-hidden{background:rgba(235,87,87,.1);color:var(--red);border:1px solid rgba(235,87,87,.25);}
+
+    .btn-sm{
+      border:none;border-radius:6px;padding:6px 12px;font-size:.65rem;letter-spacing:.08em;
+      cursor:pointer;font-family:'Montserrat',sans-serif;font-weight:600;transition:opacity .2s,transform .1s;
+    }
+    .btn-sm:hover{opacity:.82;transform:translateY(-1px);}
+    .btn-toggle-show{background:rgba(111,207,151,.15);color:var(--green);}
+    .btn-toggle-hide{background:rgba(242,153,74,.12);color:var(--orange);}
+    .btn-del{background:rgba(235,87,87,.12);color:var(--red);}
+
+    .empty-state{text-align:center;padding:48px;color:var(--muted);font-size:.8rem;grid-column:1/-1;}
+
+    .count-badge{
+      font-size:.62rem;background:rgba(201,168,76,.12);color:var(--gold);
+      border-radius:20px;padding:2px 9px;margin-left:8px;
+    }
+
+    /* ── TOAST ── */
+    #toast{
+      position:fixed;bottom:24px;right:24px;z-index:999;
+      background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--gold);
+      border-radius:8px;padding:14px 20px;font-size:.75rem;color:var(--text);
+      transform:translateX(120%);transition:transform .3s ease;pointer-events:none;
+    }
+    #toast.show{transform:none;}
+    #toast.err{border-left-color:var(--red);}
+
+    @media(max-width:768px){
+      .content{padding:20px 16px;}
+      .stats-grid{grid-template-columns:1fr 1fr;}
+      .rev-table th:nth-child(5),.rev-table td:nth-child(5),
+      .rev-table th:nth-child(6),.rev-table td:nth-child(6){display:none;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── ЛОГИН ── -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">✦ AETHER</div>
+    <div class="login-sub">ПАНЕЛЬ УПРАВЛЕНИЯ</div>
+    <input id="passInput" class="login-input" type="password" placeholder="Пароль администратора"/>
+    <button class="login-btn" onclick="doLogin()">ВОЙТИ</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- ── ПРИЛОЖЕНИЕ ── -->
+<div id="app">
+  <div class="topbar">
+    <span class="topbar-logo">AETHER TAROT</span>
+    <span class="topbar-badge">ADMIN</span>
+    <div class="topbar-right">
+      <span id="topbarTime" style="font-size:.65rem;color:var(--muted)"></span>
+      <button class="logout-btn" onclick="doLogout()">ВЫЙТИ</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Статистика -->
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card"><div class="stat-label">ВСЕГО ОТЗЫВОВ</div><div class="stat-value" id="sTotal">—</div></div>
+      <div class="stat-card"><div class="stat-label">ОПУБЛИКОВАНО</div><div class="stat-value" id="sApproved">—</div></div>
+      <div class="stat-card"><div class="stat-label">СКРЫТО</div><div class="stat-value" id="sHidden" style="color:var(--red)">—</div></div>
+      <div class="stat-card"><div class="stat-label">ЗА 24 ЧАСА</div><div class="stat-value" id="sToday">—</div></div>
+      <div class="stat-card"><div class="stat-label">СРЕДНИЙ БАЛЛ</div><div class="stat-value" id="sAvg">—</div><div class="stat-sub">из 5.0</div></div>
+    </div>
+
+    <!-- Распределение по звёздам -->
+    <div class="rating-bars">
+      <div class="rb-title">РАСПРЕДЕЛЕНИЕ ОЦЕНОК</div>
+      <div id="ratingBars"></div>
+    </div>
+
+    <!-- Тулбар -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input id="searchInput" class="search-input" placeholder="Поиск по имени или тексту..." oninput="onSearch()"/>
+      </div>
+      <button class="filter-btn active" id="fAll"     onclick="setFilter('all')">ВСЕ</button>
+      <button class="filter-btn"        id="fVisible" onclick="setFilter('visible')">ВИДИМЫЕ</button>
+      <button class="filter-btn"        id="fHidden"  onclick="setFilter('hidden')">СКРЫТЫЕ</button>
+      <button class="del-hidden-btn"    onclick="deleteAllHidden()">УДАЛИТЬ СКРЫТЫЕ</button>
+    </div>
+
+    <!-- Таблица -->
+    <div class="table-wrap">
+      <table class="rev-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>ИМЯ</th>
+            <th>ОЦЕНКА</th>
+            <th>ОТЗЫВ</th>
+            <th>ДАТА</th>
+            <th>IP (хэш)</th>
+            <th>СТАТУС</th>
+            <th>ДЕЙСТВИЯ</th>
+          </tr>
+        </thead>
+        <tbody id="reviewsBody">
+          <tr><td colspan="8" class="empty-state">Загрузка...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  var token    = localStorage.getItem('admin_token') || '';
+  var allRevs  = [];
+  var filter   = 'all';
+  var searchQ  = '';
+
+  /* ── ЛОГИН ── */
+  document.getElementById('passInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') doLogin();
+  });
+
+  function doLogin() {
+    var pass = document.getElementById('passInput').value;
+    fetch('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pass })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.token) {
+        token = d.token;
+        localStorage.setItem('admin_token', token);
+        showApp();
+      } else {
+        document.getElementById('loginErr').textContent = d.error || 'Неверный пароль';
+      }
+    })
+    .catch(function() {
+      document.getElementById('loginErr').textContent = 'Ошибка соединения';
+    });
+  }
+
+  function doLogout() {
+    localStorage.removeItem('admin_token');
+    token = '';
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+  }
+
+  function showApp() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadStats();
+    loadReviews();
+    updateClock();
+    setInterval(updateClock, 30000);
+  }
+
+  /* Проверить токен при загрузке */
+  if (token) {
+    fetch('/api/admin/stats', { headers: { Authorization: 'Bearer ' + token } })
+      .then(function(r) { if (r.ok) showApp(); else { localStorage.removeItem('admin_token'); token = ''; } })
+      .catch(function() {});
+  }
+
+  function updateClock() {
+    document.getElementById('topbarTime').textContent =
+      new Date().toLocaleString('ru-RU', { day:'numeric', month:'long', hour:'2-digit', minute:'2-digit' });
+  }
+
+  /* ── СТАТИСТИКА ── */
+  function loadStats() {
+    fetch('/api/admin/stats', { headers: { Authorization: 'Bearer ' + token } })
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        document.getElementById('sTotal').textContent    = d.total;
+        document.getElementById('sApproved').textContent = d.approved;
+        document.getElementById('sHidden').textContent   = d.hidden;
+        document.getElementById('sToday').textContent    = d.today;
+        document.getElementById('sAvg').textContent      = d.avg || '—';
+        renderRatingBars(d.byRating, d.approved);
+      });
+  }
+
+  function renderRatingBars(byRating, total) {
+    var map = {};
+    (byRating || []).forEach(function(r) { map[r.rating] = parseInt(r.count); });
+    var html = '';
+    for (var i = 5; i >= 1; i--) {
+      var cnt  = map[i] || 0;
+      var pct  = total > 0 ? Math.round(cnt / total * 100) : 0;
+      html += '<div class="rb-row">'
+        + '<div class="rb-label">' + i + '★</div>'
+        + '<div class="rb-track"><div class="rb-fill" style="width:' + pct + '%"></div></div>'
+        + '<div class="rb-count">' + cnt + '</div>'
+        + '</div>';
+    }
+    document.getElementById('ratingBars').innerHTML = html;
+  }
+
+  /* ── ОТЗЫВЫ ── */
+  function loadReviews() {
+    var url = '/api/admin/reviews' + (searchQ ? '?q=' + encodeURIComponent(searchQ) : '');
+    fetch(url, { headers: { Authorization: 'Bearer ' + token } })
+      .then(function(r) { return r.json(); })
+      .then(function(rows) {
+        allRevs = rows;
+        renderTable();
+      });
+  }
+
+  function renderTable() {
+    var rows = allRevs.filter(function(r) {
+      if (filter === 'visible') return r.approved;
+      if (filter === 'hidden')  return !r.approved;
+      return true;
+    });
+
+    var body = document.getElementById('reviewsBody');
+    if (!rows.length) {
+      body.innerHTML = '<tr><td colspan="8" class="empty-state">Ничего не найдено</td></tr>';
+      return;
+    }
+
+    body.innerHTML = rows.map(function(r) {
+      var stars = [1,2,3,4,5].map(function(n) {
+        return '<span class="star' + (n > r.rating ? ' e' : '') + '">★</span>';
+      }).join('');
+      var date = new Date(r.created_at).toLocaleString('ru-RU', {
+        day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit'
+      });
+      var ipShort = r.ip_hash ? r.ip_hash.slice(0, 12) + '…' : '—';
+      var statusBadge = r.approved
+        ? '<span class="badge badge-ok">ВИДИМЫЙ</span>'
+        : '<span class="badge badge-hidden">СКРЫТ</span>';
+      var toggleBtn = r.approved
+        ? '<button class="btn-sm btn-toggle-hide" onclick="toggleReview(' + r.id + ')">СКРЫТЬ</button>'
+        : '<button class="btn-sm btn-toggle-show" onclick="toggleReview(' + r.id + ')">ПОКАЗАТЬ</button>';
+      return '<tr class="' + (!r.approved ? 'hidden-row' : '') + '" id="row-' + r.id + '">'
+        + '<td class="td-id">' + r.id + '</td>'
+        + '<td class="td-name">' + esc(r.name) + '</td>'
+        + '<td class="td-rating">' + stars + '</td>'
+        + '<td class="td-body">' + esc(r.body.slice(0, 120)) + (r.body.length > 120 ? '…' : '') + '</td>'
+        + '<td class="td-date">' + date + '</td>'
+        + '<td class="td-ip">' + ipShort + '</td>'
+        + '<td>' + statusBadge + '</td>'
+        + '<td class="td-actions">' + toggleBtn
+        +   '<button class="btn-sm btn-del" onclick="deleteReview(' + r.id + ')">УДАЛИТЬ</button>'
+        + '</td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  /* Скрыть / показать */
+  function toggleReview(id) {
+    fetch('/api/admin/reviews/' + id + '/toggle', {
+      method: 'PATCH',
+      headers: { Authorization: 'Bearer ' + token }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      var r = allRevs.find(function(x) { return x.id === id; });
+      if (r) r.approved = d.approved;
+      renderTable();
+      loadStats();
+      showToast(d.approved ? 'Отзыв опубликован' : 'Отзыв скрыт');
+    });
+  }
+
+  /* Удалить один */
+  function deleteReview(id) {
+    if (!confirm('Удалить отзыв #' + id + '? Это действие необратимо.')) return;
+    fetch('/api/admin/reviews/' + id, {
+      method: 'DELETE',
+      headers: { Authorization: 'Bearer ' + token }
+    })
+    .then(function() {
+      allRevs = allRevs.filter(function(r) { return r.id !== id; });
+      renderTable();
+      loadStats();
+      showToast('Отзыв #' + id + ' удалён');
+    });
+  }
+
+  /* Удалить все скрытые */
+  function deleteAllHidden() {
+    var cnt = allRevs.filter(function(r) { return !r.approved; }).length;
+    if (!cnt) { showToast('Нет скрытых отзывов', true); return; }
+    if (!confirm('Удалить все ' + cnt + ' скрытых отзыва? Это необратимо.')) return;
+    fetch('/api/admin/reviews/hidden/all', {
+      method: 'DELETE',
+      headers: { Authorization: 'Bearer ' + token }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      showToast('Удалено: ' + d.deleted);
+      loadReviews();
+      loadStats();
+    });
+  }
+
+  /* Поиск */
+  var searchTimer;
+  function onSearch() {
+    searchQ = document.getElementById('searchInput').value.trim();
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(loadReviews, 350);
+  }
+
+  /* Фильтр */
+  function setFilter(f) {
+    filter = f;
+    ['All','Visible','Hidden'].forEach(function(n) {
+      document.getElementById('f' + n).classList.toggle('active', f === n.toLowerCase());
+    });
+    renderTable();
+  }
+
+  /* ── ТОСТ ── */
+  var toastTimer;
+  function showToast(msg, isErr) {
+    var el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className   = 'show' + (isErr ? ' err' : '');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function() { el.className = ''; }, 2800);
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+</script>
+</body>
+</html>
