@@ -2244,49 +2244,6 @@
 
 <!-- ═══════════════════════ SCRIPTS ═══════════════════════ -->
 <script>
-  /* ── Языки (i18n) ── */
-  const SUPPORTED_LANGS = ['ru', 'uk', 'tr', 'es', 'pt', 'pl'];
-  let currentLang = localStorage.getItem('app_lang') || 'ru';
-  if (!SUPPORTED_LANGS.includes(currentLang)) currentLang = 'ru';
-
-  function changeLanguage(lang) {
-    localStorage.setItem('app_lang', lang);
-    location.reload(); 
-  }
-
-  document.querySelectorAll('.lang-switcher').forEach(el => el.value = currentLang);
-
-  // Перехватчик fetch для отправки текущего языка на бэкенд
-  const originalFetch = window.fetch;
-  window.fetch = async function(...args) {
-    let [resource, config] = args;
-    if (typeof resource === 'string' && resource.startsWith('/api/')) {
-      config = config || {};
-      config.headers = config.headers || {};
-      if (config.headers instanceof Headers) {
-        config.headers.set('x-lang', currentLang);
-      } else {
-        config.headers['x-lang'] = currentLang;
-      }
-    }
-    return originalFetch(resource, config);
-  };
-
-  // Словарь для перевода элементов навигации (как пример)
-  const I18N = {
-    nav_card: { ru: 'КАРТА ДНЯ', uk: 'КАРТА ДНЯ', tr: 'GÜNÜN KARTI', es: 'CARTA DEL DÍA', pt: 'CARTA DO DIA', pl: 'KARTA DNIA' },
-    nav_spreads: { ru: 'РАСКЛАДЫ', uk: 'РОЗКЛАДИ', tr: 'AÇILIMLAR', es: 'TIRADAS', pt: 'TIRAGENS', pl: 'ROZKŁADY' },
-    nav_quiz: { ru: 'КВИЗ', uk: 'КВІЗ', tr: 'TEST', es: 'QUIZ', pt: 'QUIZ', pl: 'QUIZ' },
-    nav_bot: { ru: 'БОТ', uk: 'БОТ', tr: 'BOT', es: 'BOT', pt: 'BOT', pl: 'BOT' },
-    nav_reviews: { ru: 'ОТЗЫВЫ', uk: 'ВІДГУКИ', tr: 'YORUMLAR', es: 'RESEÑAS', pt: 'AVALIAÇÕES', pl: 'OPINIE' },
-    nav_login: { ru: '☽ ВОЙТИ', uk: '☽ УВІЙТИ', tr: '☽ GİRİŞ YAP', es: '☽ ENTRAR', pt: '☽ ENTRAR', pl: '☽ ZALOGUJ' }
-  };
-
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    if (I18N[key] && I18N[key][currentLang]) el.textContent = I18N[key][currentLang];
-  });
-
   /* ── Burger menu ── */
   const burger = document.getElementById('burger');
   const mobileMenu = document.getElementById('mobileMenu');
