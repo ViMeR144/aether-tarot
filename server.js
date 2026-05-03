@@ -113,7 +113,7 @@ async function initDb() {
   `);
   await pool.query(`
     INSERT INTO site_settings (key, value) VALUES
-      ('bot_link',          'https://t.me/Tarologfalse_bot'),
+      ('bot_link',          'https://t.me/AetherTaarot_bot'),
       ('cta_text',          'НАЧАТЬ РАСКЛАД СЕЙЧАС'),
       ('tg_notify_token',   ''),
       ('tg_notify_chat_id', '')
