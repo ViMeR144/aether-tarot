@@ -7,6 +7,7 @@
     pl: { label: 'PL', html: 'pl', title: 'Polski' },
     pt: { label: 'PT', html: 'pt', title: 'Português' },
     es: { label: 'ES', html: 'es', title: 'Español' },
+    tr: { label: 'TR', html: 'tr', title: 'Türkçe' },
   };
 
   const entries = [
@@ -325,10 +326,72 @@
     ['Мир', 'Світ', 'The World'],
   ];
 
-  const DICT = Object.fromEntries(entries.map(([ru, uk, en]) => [ru, { uk, en }]));
+  const DICT = Object.fromEntries(entries.map(([ru, uk, en, pl, pt, es, tr]) => [ru, { uk, en, pl, pt, es, tr }]));
+  Object.assign(DICT, {
+    'Language': { uk: 'Мова', en: 'Language', pl: 'Język', pt: 'Idioma', es: 'Idioma', tr: 'Dil' },
+    'Русский': { uk: 'Російська', en: 'Russian', pl: 'Rosyjski', pt: 'Russo', es: 'Ruso', tr: 'Rusça' },
+    'Українська': { uk: 'Українська', en: 'Ukrainian', pl: 'Ukraiński', pt: 'Ucraniano', es: 'Ucraniano', tr: 'Ukraynaca' },
+    'English': { uk: 'Англійська', en: 'English', pl: 'Angielski', pt: 'Inglês', es: 'Inglés', tr: 'İngilizce' },
+    'Polski': { uk: 'Польська', en: 'Polish', pl: 'Polski', pt: 'Polonês', es: 'Polaco', tr: 'Lehçe' },
+    'Português': { uk: 'Португальська', en: 'Portuguese', pl: 'Portugalski', pt: 'Português', es: 'Portugués', tr: 'Portekizce' },
+    'Español': { uk: 'Іспанська', en: 'Spanish', pl: 'Hiszpański', pt: 'Espanhol', es: 'Español', tr: 'İspanyolca' },
+    'Türkçe': { uk: 'Турецька', en: 'Turkish', pl: 'Turecki', pt: 'Turco', es: 'Turco', tr: 'Türkçe' },
+    'Выбрать язык': { uk: 'Обрати мову', en: 'Choose language', pl: 'Wybierz język', pt: 'Escolher idioma', es: 'Elegir idioma', tr: 'Dil seç' },
+    'Текущий язык': { uk: 'Поточна мова', en: 'Current language', pl: 'Aktualny język', pt: 'Idioma atual', es: 'Idioma actual', tr: 'Geçerli dil' },
+    'Пользовательское соглашение — Aether Tarot': { uk: 'Користувацька угода — Aether Tarot', en: 'User Agreement — Aether Tarot', pl: 'Umowa użytkownika — Aether Tarot', pt: 'Acordo do usuário — Aether Tarot', es: 'Acuerdo de usuario — Aether Tarot', tr: 'Kullanıcı sözleşmesi — Aether Tarot' },
+    'Пользовательское соглашение': { uk: 'Користувацька угода', en: 'User Agreement', pl: 'Umowa użytkownika', pt: 'Acordo do usuário', es: 'Acuerdo de usuario', tr: 'Kullanıcı sözleşmesi' },
+    '1. Общие положения': { uk: '1. Загальні положення', en: '1. General Terms', pl: '1. Postanowienia ogólne', pt: '1. Disposições gerais', es: '1. Disposiciones generales' },
+    'Настоящее Пользовательское соглашение регулирует отношения между сервисом': { uk: 'Ця Користувацька угода регулює відносини між сервісом', en: 'This User Agreement governs the relationship between the service', pl: 'Niniejsza Umowa użytkownika reguluje relacje między serwisem', pt: 'Este Acordo do usuário regula a relação entre o serviço', es: 'Este Acuerdo de usuario regula la relación entre el servicio' },
+    'и пользователем, использующим данный веб-сайт и связанный Telegram-бот.': { uk: 'і користувачем, який використовує цей вебсайт та пов’язаний Telegram-бот.', en: 'and the user who uses this website and the connected Telegram bot.', pl: 'a użytkownikiem korzystającym z tej strony internetowej i powiązanego bota Telegram.', pt: 'e o usuário que utiliza este site e o bot do Telegram conectado.', es: 'y el usuario que utiliza este sitio web y el bot de Telegram vinculado.' },
+    'Используя сервис, вы подтверждаете, что ознакомились с настоящим Соглашением и принимаете его условия в полном объёме.': { uk: 'Користуючись сервісом, ви підтверджуєте, що ознайомилися з цією Угодою та повністю приймаєте її умови.', en: 'By using the service, you confirm that you have read this Agreement and accept its terms in full.', pl: 'Korzystając z serwisu, potwierdzasz, że zapoznałeś się z niniejszą Umową i akceptujesz jej warunki w całości.', pt: 'Ao usar o serviço, você confirma que leu este Acordo e aceita integralmente seus termos.', es: 'Al utilizar el servicio, confirmas que has leído este Acuerdo y aceptas plenamente sus términos.' },
+    '2. Возраст пользователя': { uk: '2. Вік користувача', en: '2. User Age', pl: '2. Wiek użytkownika', pt: '2. Idade do usuário', es: '2. Edad del usuario' },
+    'Сервис предназначен для лиц, достигших': { uk: 'Сервіс призначений для осіб, які досягли', en: 'The service is intended for people who are at least', pl: 'Serwis jest przeznaczony dla osób, które ukończyły', pt: 'O serviço é destinado a pessoas com pelo menos', es: 'El servicio está destinado a personas de al menos' },
+    '18 лет': { uk: '18 років', en: '18 years old', pl: '18 lat', pt: '18 anos', es: '18 años' },
+    'Используя сервис, вы подтверждаете, что соответствуете данному требованию.': { uk: 'Користуючись сервісом, ви підтверджуєте, що відповідаєте цій вимозі.', en: 'By using the service, you confirm that you meet this requirement.', pl: 'Korzystając z serwisu, potwierdzasz, że spełniasz ten wymóg.', pt: 'Ao usar o serviço, você confirma que atende a este requisito.', es: 'Al utilizar el servicio, confirmas que cumples este requisito.' },
+    '. Используя сервис, вы подтверждаете, что соответствуете данному требованию.': { uk: '. Користуючись сервісом, ви підтверджуєте, що відповідаєте цій вимозі.', en: '. By using the service, you confirm that you meet this requirement.', pl: '. Korzystając z serwisu, potwierdzasz, że spełniasz ten wymóg.', pt: '. Ao usar o serviço, você confirma que atende a este requisito.', es: '. Al utilizar el servicio, confirmas que cumples este requisito.' },
+    '3. Характер предоставляемых услуг': { uk: '3. Характер послуг', en: '3. Nature of Services', pl: '3. Charakter świadczonych usług', pt: '3. Natureza dos serviços', es: '3. Naturaleza de los servicios' },
+    'Все предсказания, расклады карт Таро и интерпретации носят исключительно': { uk: 'Усі передбачення, розклади карт Таро та інтерпретації мають виключно', en: 'All predictions, tarot spreads, and interpretations are provided strictly for', pl: 'Wszystkie przepowiednie, rozkłady tarota i interpretacje mają wyłącznie', pt: 'Todas as previsões, tiragens de tarô e interpretações têm caráter exclusivamente', es: 'Todas las predicciones, tiradas de tarot e interpretaciones tienen un carácter exclusivamente' },
+    'развлекательный и ознакомительный характер': { uk: 'розважальний та ознайомчий характер', en: 'entertainment and informational purposes', pl: 'charakter rozrywkowy i informacyjny', pt: 'de entretenimento e informação', es: 'de entretenimiento e información' },
+    'Сервис не является источником медицинских, юридических, финансовых или психологических рекомендаций.': { uk: 'Сервіс не є джерелом медичних, юридичних, фінансових чи психологічних рекомендацій.', en: 'The service is not a source of medical, legal, financial, or psychological advice.', pl: 'Serwis nie stanowi źródła porad medycznych, prawnych, finansowych ani psychologicznych.', pt: 'O serviço não constitui fonte de aconselhamento médico, jurídico, financeiro ou psicológico.', es: 'El servicio no constituye una fuente de asesoramiento médico, legal, financiero o psicológico.' },
+    '. Сервис не является источником медицинских, юридических, финансовых или психологических рекомендаций.': { uk: '. Сервіс не є джерелом медичних, юридичних, фінансових чи психологічних рекомендацій.', en: '. The service is not a source of medical, legal, financial, or psychological advice.', pl: '. Serwis nie stanowi źródła porad medycznych, prawnych, finansowych ani psychologicznych.', pt: '. O serviço não constitui fonte de aconselhamento médico, jurídico, financeiro ou psicológico.', es: '. El servicio no constituye una fuente de asesoramiento médico, legal, financiero o psicológico.' },
+    'Результаты гаданий не следует воспринимать как руководство к принятию важных жизненных решений.': { uk: 'Результати ворожінь не слід сприймати як керівництво для важливих життєвих рішень.', en: 'Reading results should not be treated as guidance for important life decisions.', pl: 'Wyników wróżb nie należy traktować jako wskazówek do podejmowania ważnych życiowych decyzji.', pt: 'Os resultados das leituras não devem ser considerados orientação para decisões importantes da vida.', es: 'Los resultados de las lecturas no deben considerarse una guía para tomar decisiones importantes en la vida.' },
+    '4. Сбор и обработка персональных данных': { uk: '4. Збір та обробка персональних даних', en: '4. Personal Data Collection and Processing', pl: '4. Gromadzenie i przetwarzanie danych osobowych', pt: '4. Coleta e tratamento de dados pessoais', es: '4. Recopilación y tratamiento de datos personales' },
+    'При авторизации через Telegram мы получаем и храним следующие данные: ваш Telegram ID, имя, имя пользователя (username) и фотографию профиля. Эти данные используются исключительно для идентификации в сервисе.': { uk: 'Під час авторизації через Telegram ми отримуємо й зберігаємо такі дані: ваш Telegram ID, ім’я, username і фото профілю. Ці дані використовуються виключно для ідентифікації в сервісі.', en: 'When you sign in through Telegram, we receive and store your Telegram ID, name, username, and profile photo. This data is used only to identify you in the service.', pl: 'Podczas logowania przez Telegram otrzymujemy i przechowujemy następujące dane: Twój Telegram ID, imię, nazwę użytkownika (username) oraz zdjęcie profilowe. Dane te służą wyłącznie do identyfikacji w serwisie.', pt: 'Ao entrar pelo Telegram, recebemos e armazenamos os seguintes dados: seu ID do Telegram, nome, nome de usuário (username) e foto de perfil. Esses dados são usados exclusivamente para identificá-lo no serviço.', es: 'Al iniciar sesión mediante Telegram, recibimos y almacenamos los siguientes datos: tu ID de Telegram, nombre, nombre de usuario (username) y foto de perfil. Estos datos se utilizan exclusivamente para identificarte en el servicio.' },
+    'В целях защиты от злоупотреблений хранится обезличенный хеш IP-адреса — не сам IP-адрес. Хеш не позволяет установить личность пользователя.': { uk: 'Для захисту від зловживань зберігається знеособлений хеш IP-адреси, а не сама IP-адреса. Хеш не дозволяє встановити особу користувача.', en: 'To prevent abuse, we store an anonymized hash of the IP address, not the IP address itself. The hash cannot identify the user.', pl: 'W celu ochrony przed nadużyciami przechowywany jest zanonimizowany hash adresu IP, a nie sam adres IP. Hash nie pozwala ustalić tożsamości użytkownika.', pt: 'Para proteger contra abusos, armazenamos um hash anonimizado do endereço IP, e não o próprio endereço IP. O hash não permite identificar o usuário.', es: 'Para proteger contra abusos, almacenamos un hash anonimizado de la dirección IP, y no la propia dirección IP. El hash no permite identificar al usuario.' },
+    '5. Конфиденциальность': { uk: '5. Конфіденційність', en: '5. Privacy', pl: '5. Prywatność', pt: '5. Privacidade', es: '5. Privacidad' },
+    'Мы не передаём ваши персональные данные третьим лицам, не продаём и не используем в рекламных целях. Данные хранятся на защищённых серверах Railway.': { uk: 'Ми не передаємо ваші персональні дані третім особам, не продаємо їх і не використовуємо в рекламних цілях. Дані зберігаються на захищених серверах Railway.', en: 'We do not share, sell, or use your personal data for advertising. Data is stored on protected Railway servers.', pl: 'Nie przekazujemy Twoich danych osobowych osobom trzecim, nie sprzedajemy ich i nie wykorzystujemy do celów reklamowych. Dane są przechowywane na zabezpieczonych serwerach Railway.', pt: 'Não compartilhamos, vendemos nem usamos seus dados pessoais para fins publicitários. Os dados são armazenados em servidores protegidos da Railway.', es: 'No compartimos, vendemos ni utilizamos tus datos personales con fines publicitarios. Los datos se almacenan en servidores protegidos de Railway.' },
+    '6. Отзывы пользователей': { uk: '6. Відгуки користувачів', en: '6. User Reviews', pl: '6. Opinie użytkowników', pt: '6. Avaliações dos usuários', es: '6. Reseñas de usuarios' },
+    'Публикуя отзыв, вы соглашаетесь с тем, что он может быть виден другим посетителям сайта. Администрация вправе удалять отзывы, содержащие оскорбления, спам или заведомо ложную информацию.': { uk: 'Публікуючи відгук, ви погоджуєтесь, що він може бути видимим іншим відвідувачам сайту. Адміністрація може видаляти відгуки з образами, спамом або свідомо неправдивою інформацією.', en: 'By publishing a review, you agree that it may be visible to other site visitors. The administration may remove reviews containing insults, spam, or knowingly false information.', pl: 'Publikując opinię, zgadzasz się, że może być ona widoczna dla innych odwiedzających stronę. Administracja ma prawo usuwać opinie zawierające obelgi, spam lub świadomie fałszywe informacje.', pt: 'Ao publicar uma avaliação, você concorda que ela pode ficar visível para outros visitantes do site. A administração pode remover avaliações que contenham ofensas, spam ou informações deliberadamente falsas.', es: 'Al publicar una reseña, aceptas que pueda ser visible para otros visitantes del sitio. La administración puede eliminar reseñas que contengan insultos, spam o información deliberadamente falsa.' },
+    '7. Ограничение ответственности': { uk: '7. Обмеження відповідальності', en: '7. Limitation of Liability', pl: '7. Ograniczenie odpowiedzialności', pt: '7. Limitação de responsabilidade', es: '7. Limitación de responsabilidad' },
+    'Сервис предоставляется «как есть». Администрация не несёт ответственности за любой ущерб, возникший вследствие использования или невозможности использования сервиса.': { uk: 'Сервіс надається «як є». Адміністрація не несе відповідальності за будь-яку шкоду, що виникла внаслідок використання або неможливості використання сервісу.', en: 'The service is provided “as is.” The administration is not responsible for any damage arising from use or inability to use the service.', pl: 'Serwis jest udostępniany „w obecnym stanie”. Administracja nie ponosi odpowiedzialności za jakiekolwiek szkody wynikające z korzystania z serwisu lub braku możliwości korzystania z niego.', pt: 'O serviço é fornecido “como está”. A administração não se responsabiliza por quaisquer danos decorrentes do uso ou da impossibilidade de uso do serviço.', es: 'El servicio se proporciona “tal cual”. La administración no se hace responsable de ningún daño derivado del uso o de la imposibilidad de uso del servicio.' },
+    '8. Изменение соглашения': { uk: '8. Зміна угоди', en: '8. Agreement Changes', pl: '8. Zmiany umowy', pt: '8. Alterações do acordo', es: '8. Cambios del acuerdo' },
+    'Мы вправе изменять условия настоящего Соглашения. Продолжение использования сервиса означает принятие новых условий.': { uk: 'Ми маємо право змінювати умови цієї Угоди. Подальше використання сервісу означає прийняття нових умов.', en: 'We may change the terms of this Agreement. Continued use of the service means acceptance of the new terms.', pl: 'Mamy prawo zmieniać warunki niniejszej Umowy. Dalsze korzystanie z serwisu oznacza akceptację nowych warunków.', pt: 'Podemos alterar os termos deste Acordo. O uso continuado do serviço significa aceitação dos novos termos.', es: 'Podemos modificar los términos de este Acuerdo. El uso continuado del servicio implica la aceptación de las nuevas condiciones.' },
+    '9. Контакт': { uk: '9. Контакт', en: '9. Contact', pl: '9. Kontakt', pt: '9. Contato', es: '9. Contacto' },
+    'По вопросам обработки персональных данных обращайтесь через Telegram-бот.': { uk: 'З питань обробки персональних даних звертайтесь через Telegram-бот.', en: 'For questions about personal data processing, contact us through the Telegram bot.', pl: 'W sprawach dotyczących przetwarzania danych osobowych prosimy kontaktować się przez bota Telegram.', pt: 'Para questões sobre o tratamento de dados pessoais, entre em contato pelo bot do Telegram.', es: 'Para cuestiones relacionadas con el tratamiento de datos personales, ponte en contacto a través del bot de Telegram.' },
+    'ПРИНЯТЬ СОГЛАШЕНИЕ ✦': { uk: 'ПРИЙНЯТИ УГОДУ ✦', en: 'ACCEPT AGREEMENT ✦', pl: 'AKCEPTUJ UMOWĘ ✦', pt: 'ACEITAR ACORDO ✦', es: 'ACEPTAR ACUERDO ✦', tr: 'SÖZLEŞMEYİ KABUL ET ✦' },
+    'СОГЛАШЕНИЕ ПРИНЯТО': { uk: 'УГОДУ ПРИЙНЯТО', en: 'AGREEMENT ACCEPTED', pl: 'UMOWA ZAAKCEPTOWANA', pt: 'ACORDO ACEITO', es: 'ACUERDO ACEPTADO', tr: 'SÖZLEŞME KABUL EDİLDİ' },
+    'ПЕРЕЙТИ НА САЙТ': { uk: 'ПЕРЕЙТИ НА САЙТ', en: 'GO TO SITE', pl: 'PRZEJDŹ DO STRONY', pt: 'IR PARA O SITE', es: 'IR AL SITIO', tr: 'SİTEYE GİT' },
+    'Войти через Telegram': { uk: 'Увійти через Telegram', en: 'Sign in with Telegram', pl: 'Zaloguj przez Telegram', pt: 'Entrar com Telegram', es: 'Entrar con Telegram', tr: 'Telegram ile giriş yap' },
+    'Чтобы принять соглашение — войдите через Telegram': { uk: 'Щоб прийняти угоду — увійдіть через Telegram', en: 'To accept the agreement, sign in with Telegram', pl: 'Aby zaakceptować umowę, zaloguj się przez Telegram', pt: 'Para aceitar o acordo, entre pelo Telegram', es: 'Para aceptar el acuerdo, inicia sesión con Telegram', tr: 'Sözleşmeyi kabul etmek için Telegram ile giriş yapın' },
+    'Ошибка авторизации': { uk: 'Помилка авторизації', en: 'Authorization error', pl: 'Błąd autoryzacji', pt: 'Erro de autorização', es: 'Error de autorización', tr: 'Yetkilendirme hatası' },
+    'Ошибка соединения': { uk: 'Помилка з’єднання', en: 'Connection error', pl: 'Błąd połączenia', pt: 'Erro de conexão', es: 'Error de conexión', tr: 'Bağlantı hatası' },
+    'Ошибка': { uk: 'Помилка', en: 'Error', pl: 'Błąd', pt: 'Erro', es: 'Error', tr: 'Hata' },
+    'Пользователь': { uk: 'Користувач', en: 'User', pl: 'Użytkownik', pt: 'Usuário', es: 'Usuario', tr: 'Kullanıcı' },
+    'Вопроси звёзды.': { uk: 'Запитай зорі.', en: 'Ask the stars.', pl: 'Zapytaj gwiazdy.', pt: 'Pergunte às estrelas.', es: 'Pregunta a las estrellas.', tr: 'Yıldızlara sor.' },
+    'ЗАПУСТИТЬ БОТА В TELEGRAM': { uk: 'ЗАПУСТИТИ БОТА В TELEGRAM', en: 'START THE BOT IN TELEGRAM', pl: 'URUCHOM BOTA W TELEGRAMIE', pt: 'INICIAR O BOT NO TELEGRAM', es: 'INICIAR EL BOT EN TELEGRAM', tr: 'BOTU TELEGRAMDA BAŞLAT' },
+    'КАРТА ДНЯ': { uk: 'КАРТА ДНЯ', en: 'CARD OF THE DAY', pl: 'KARTA DNIA', pt: 'CARTA DO DIA', es: 'CARTA DEL DÍA', tr: 'GÜNÜN KARTI' },
+    'РАСКЛАДЫ': { uk: 'РОЗКЛАДИ', en: 'SPREADS', pl: 'ROZKŁADY', pt: 'TIRAGENS', es: 'TIRADAS', tr: 'AÇILIMLAR' },
+    'КВИЗ': { uk: 'КВІЗ', en: 'QUIZ', pl: 'QUIZ', pt: 'QUIZ', es: 'QUIZ', tr: 'TEST' },
+    'БОТ': { uk: 'БОТ', en: 'BOT', pl: 'BOT', pt: 'BOT', es: 'BOT', tr: 'BOT' },
+    'ОТЗЫВЫ': { uk: 'ВІДГУКИ', en: 'REVIEWS', pl: 'OPINIE', pt: 'AVALIAÇÕES', es: 'RESEÑAS', tr: 'YORUMLAR' },
+    'МОЙ ПРОФИЛЬ': { uk: 'МІЙ ПРОФІЛЬ', en: 'MY PROFILE', pl: 'MÓJ PROFIL', pt: 'MEU PERFIL', es: 'MI PERFIL', tr: 'PROFİLİM' },
+    '☽ ВОЙТИ': { uk: '☽ УВІЙТИ', en: '☽ LOGIN', pl: '☽ ZALOGUJ', pt: '☽ ENTRAR', es: '☽ ENTRAR', tr: '☽ GİRİŞ' },
+    'ВЫЙТИ': { uk: 'ВИЙТИ', en: 'LOG OUT', pl: 'WYLOGUJ', pt: 'SAIR', es: 'SALIR', tr: 'ÇIKIŞ' },
+    '← НА САЙТ': { uk: '← НА САЙТ', en: '← TO SITE', pl: '← DO STRONY', pt: '← PARA O SITE', es: '← AL SITIO', tr: '← SİTEYE DÖN' },
+  });
   const PREFIXES = [
-    ['Карта жизни: ', 'Карта життя: ', 'Life card: '],
-    ['Ошибка: ', 'Помилка: ', 'Error: '],
+    ['Карта жизни: ', 'Карта життя: ', 'Life card: ', 'Karta życia: ', 'Carta da vida: ', 'Carta de vida: ', 'Yaşam kartı: '],
+    ['Ошибка: ', 'Помилка: ', 'Error: ', 'Błąd: ', 'Erro: ', 'Error: ', 'Hata: '],
   ];
   const textOriginals = new WeakMap();
   const attrOriginals = new WeakMap();
@@ -362,9 +425,13 @@
 
   function lookup(core, lang) {
     if (lang === 'ru' || !core) return core;
-    if (DICT[core]) return DICT[core][lang] || core;
-    for (const [ru, uk, en] of PREFIXES) {
-      if (core.startsWith(ru)) return (lang === 'uk' ? uk : en) + core.slice(ru.length);
+    if (DICT[core]) return DICT[core][lang] || DICT[core].en || core;
+    for (const prefix of PREFIXES) {
+      const [ru, uk, en, pl, pt, es] = prefix;
+      if (core.startsWith(ru)) {
+        const translated = { uk, en, pl, pt, es }[lang] || en;
+        return translated + core.slice(ru.length);
+      }
     }
     return core;
   }
@@ -420,7 +487,12 @@
   function updateSwitcher(lang) {
     const switcher = document.getElementById('languageSwitcher');
     if (!switcher) return;
-    switcher.querySelectorAll('button[data-lang]').forEach((btn) => {
+    const trigger = switcher.querySelector('.lang-switcher-trigger');
+    if (trigger) {
+      trigger.querySelector('.lang-switcher-current').textContent = LANGS[lang].label;
+      trigger.setAttribute('aria-label', translateString('Текущий язык', lang) + ': ' + LANGS[lang].title);
+    }
+    switcher.querySelectorAll('.lang-option[data-lang]').forEach((btn) => {
       const active = btn.dataset.lang === lang;
       btn.classList.toggle('active', active);
       btn.setAttribute('aria-pressed', active ? 'true' : 'false');
@@ -450,6 +522,7 @@
     lang = normalize(lang);
     localStorage.setItem(STORAGE_KEY, lang);
     translatePage(lang);
+    window.dispatchEvent(new CustomEvent('aether:language-change', { detail: { language: lang } }));
     if (!options || !options.skipSync) syncLanguage(lang);
   }
 
@@ -458,15 +531,26 @@
     const style = document.createElement('style');
     style.id = 'languageSwitcherStyles';
     style.textContent = `
-      .lang-switcher{display:inline-flex;align-items:center;gap:2px;padding:2px;border:1px solid var(--border,rgba(201,168,76,.22));border-radius:999px;background:rgba(12,12,15,.76);backdrop-filter:blur(12px);box-shadow:0 8px 24px rgba(0,0,0,.18);z-index:80}
-      .lang-switcher button{min-width:30px;height:26px;border:0;border-radius:999px;background:transparent;color:var(--muted,#7A7870);font:600 .58rem 'Montserrat',sans-serif;letter-spacing:.08em;cursor:pointer;transition:background .2s,color .2s}
-      .lang-switcher button.active{background:var(--gold,#C9A84C);color:var(--bg,#0C0C0F)}
+      .lang-switcher{position:relative;display:inline-flex;align-items:center;z-index:180}
+      .lang-switcher-trigger{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 11px;border:1px solid var(--border,rgba(201,168,76,.22));border-radius:999px;background:rgba(12,12,15,.76);backdrop-filter:blur(12px);box-shadow:0 8px 24px rgba(0,0,0,.18);color:var(--gold,#C9A84C);font:600 .6rem 'Montserrat',sans-serif;letter-spacing:.08em;cursor:pointer;transition:background .2s,border-color .2s}
+      .lang-switcher-trigger:hover,.lang-switcher.open .lang-switcher-trigger{background:var(--gold-glow,rgba(201,168,76,.12));border-color:var(--gold-d,#8B6B20)}
+      .lang-switcher-chevron{font-size:.62rem;color:var(--muted,#7A7870);transition:transform .2s}
+      .lang-switcher.open .lang-switcher-chevron{transform:rotate(180deg)}
+      .lang-switcher-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:168px;padding:6px;border:1px solid var(--border,rgba(201,168,76,.22));border-radius:10px;background:rgba(17,17,20,.98);box-shadow:0 18px 42px rgba(0,0,0,.42);backdrop-filter:blur(16px);opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .16s,transform .16s,visibility .16s}
+      .lang-switcher.open .lang-switcher-menu{opacity:1;visibility:visible;transform:translateY(0)}
+      .lang-option{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 10px;border:0;border-radius:7px;background:transparent;color:var(--text,#EDE8DC);font:500 .66rem 'Montserrat',sans-serif;letter-spacing:.05em;text-align:left;cursor:pointer;transition:background .16s,color .16s}
+      .lang-option:hover{background:var(--gold-glow,rgba(201,168,76,.12));color:var(--gold-l,#E2C97E)}
+      .lang-option.active{background:var(--gold,#C9A84C);color:var(--bg,#0C0C0F)}
+      .lang-option-code{font-weight:700;color:inherit}
+      .lang-option-name{opacity:.72}
       .lang-switcher button:focus-visible{outline:1px solid var(--gold-l,#E2C97E);outline-offset:2px}
+      .nav-actions{display:flex;align-items:center;gap:10px;margin-left:auto}
       nav .lang-switcher{flex-shrink:0}
-      #nav .lang-switcher{margin-left:8px;margin-right:8px}
+      #nav .lang-switcher{margin-left:0;margin-right:0}
       .nav-right .lang-switcher{margin-right:2px}
       .lang-switcher.i18n-floating{position:fixed;top:18px;right:18px}
-      @media (max-width:700px){.lang-switcher button{min-width:28px;height:24px;font-size:.54rem}.lang-switcher.i18n-floating{top:14px;right:14px}}
+      @media (max-width:960px){.nav-actions{gap:8px}.nav-actions #burger{margin-left:2px}}
+      @media (max-width:700px){.lang-switcher-trigger{height:30px;padding:0 9px;font-size:.56rem}.lang-switcher-menu{right:auto;left:0}.lang-switcher.i18n-floating{top:14px;right:14px}.lang-switcher.i18n-floating .lang-switcher-menu{left:auto;right:0}}
     `;
     document.head.appendChild(style);
   }
@@ -477,22 +561,69 @@
     wrap.className = 'lang-switcher';
     wrap.id = 'languageSwitcher';
     wrap.setAttribute('aria-label', 'Language');
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'lang-switcher-trigger';
+    trigger.setAttribute('aria-haspopup', 'true');
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.innerHTML = '<span class="lang-switcher-current">RU</span><span class="lang-switcher-chevron">▾</span>';
+    trigger.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const open = !wrap.classList.contains('open');
+      wrap.classList.toggle('open', open);
+      trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    wrap.appendChild(trigger);
+
+    const menu = document.createElement('div');
+    menu.className = 'lang-switcher-menu';
+    menu.setAttribute('role', 'menu');
     Object.keys(LANGS).forEach((lang) => {
       const btn = document.createElement('button');
       btn.type = 'button';
+      btn.className = 'lang-option';
       btn.dataset.lang = lang;
-      btn.textContent = LANGS[lang].label;
+      btn.setAttribute('role', 'menuitem');
       btn.title = LANGS[lang].title;
-      btn.addEventListener('click', () => setLang(lang));
-      wrap.appendChild(btn);
+      btn.innerHTML = '<span class="lang-option-code">' + LANGS[lang].label + '</span><span class="lang-option-name">' + LANGS[lang].title + '</span>';
+      btn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        setLang(lang);
+        wrap.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+      });
+      menu.appendChild(btn);
+    });
+    wrap.appendChild(menu);
+    document.addEventListener('click', () => {
+      wrap.classList.remove('open');
+      trigger.setAttribute('aria-expanded', 'false');
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        wrap.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+      }
     });
 
     const nav = document.querySelector('nav');
     const navRight = nav && nav.querySelector('.nav-right');
+    const topbarRight = document.querySelector('.topbar-right');
     if (navRight) {
       navRight.insertBefore(wrap, navRight.firstChild);
+    } else if (topbarRight) {
+      topbarRight.prepend(wrap);
     } else if (nav) {
-      nav.insertBefore(wrap, document.getElementById('burger') || null);
+      const actions = document.createElement('div');
+      actions.className = 'nav-actions';
+      const navUser = document.getElementById('navUser');
+      const navLogin = document.getElementById('navTgBtn');
+      const burger = document.getElementById('burger');
+      nav.appendChild(actions);
+      actions.appendChild(wrap);
+      if (navLogin) actions.appendChild(navLogin);
+      if (navUser) actions.appendChild(navUser);
+      if (burger) actions.appendChild(burger);
     } else {
       wrap.classList.add('i18n-floating');
       document.body.appendChild(wrap);

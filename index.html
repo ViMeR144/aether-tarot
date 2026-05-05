@@ -58,7 +58,9 @@
       color: var(--gold); text-decoration: none;
     }
     .nav-links {
+      position: absolute; left: 50%; transform: translateX(-50%);
       display: flex; gap: 36px; list-style: none;
+      justify-content: center;
     }
     .nav-links a {
       font-size: .7rem; letter-spacing: .14em; font-weight: 500;
@@ -715,7 +717,7 @@
     /* ── Планшет / узкий ноутбук ── */
     @media (max-width: 960px) {
       nav { padding: 0 24px; }
-      .nav-links { display: none; }
+      .nav-links { display: none; position: static; transform: none; }
       .nav-cta { display: none; }
       .burger { display: flex; }
 
@@ -930,7 +932,8 @@
       cursor: pointer; flex-shrink: 0;
       transition: transform .15s;
     }
-    .card-flip:hover:not(.flipped) { transform: translateY(-8px); }
+    .card-flip:hover:not(.flipped):not(.focusing) { transform: translateY(-8px); }
+    .card-flip.focusing { pointer-events: none; }
     .card-flip-inner {
       position: relative; width: 100%; height: 100%;
       transition: transform .75s cubic-bezier(.4,0,.2,1);
@@ -952,6 +955,27 @@
       font-size: .53rem; letter-spacing: .18em;
       color: rgba(201,168,76,.45); margin-top: 14px;
     }
+    .mini-focus-card {
+      position: absolute; inset: 0; z-index: 4;
+      border-radius: 13px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 14px; padding: 20px 18px;
+      background: linear-gradient(155deg, rgba(13,14,28,.96) 0%, rgba(20,18,42,.98) 68%, rgba(10,10,18,.96) 100%);
+      border: 1px solid rgba(201,168,76,.52);
+      box-shadow: 0 0 42px rgba(201,168,76,.32), inset 0 0 40px rgba(201,168,76,.04);
+      opacity: 0; transform: scale(.96);
+      pointer-events: none;
+      transition: opacity .35s ease, transform .35s ease;
+    }
+    .card-flip.focusing .mini-focus-card { opacity: 1; transform: scale(1); }
+    .mini-focus-star { color: var(--gold); font-size: 1.25rem; animation: tap-pulse 1.2s ease-in-out infinite; }
+    .mini-focus-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: .78rem; letter-spacing: .2em; line-height: 1.75;
+      color: var(--gold-l); text-align: center;
+    }
+    .mini-focus-line { width: 0; height: 2px; background: var(--gold); border-radius: 2px; animation: mini-focus-line 2.1s ease forwards; }
+    @keyframes mini-focus-line { to { width: 82px; } }
     .card-back-f {
       transform: rotateY(180deg);
       background: linear-gradient(155deg, #0E1020 0%, #151530 65%, #0C0C18 100%);
@@ -1192,7 +1216,7 @@
     .cfm-text  { font-family: 'Cormorant Garamond', serif; font-size: .8rem; letter-spacing: .22em;
                  color: var(--gold-l); text-align: center; line-height: 1.7; }
     .cfm-bar   { width: 0; height: 2px; background: var(--gold); border-radius: 2px;
-                 animation: cfm-bar 1.5s ease forwards; }
+                 animation: cfm-bar 2.1s ease forwards; }
     @keyframes cfm-bar { to { width: 80px; } }
 
     /* Вспышка при раскрытии */
@@ -2431,35 +2455,134 @@
   /* ══════════════════════════════════
      КАРТЫ ТАРО — данные
   ══════════════════════════════════ */
-  const TAROT = [
-    {num:'0',    name:'Шут',             meaning:'Начало нового пути. Доверяй интуиции и делай первый шаг без страха.'},
-    {num:'I',    name:'Маг',             meaning:'Сила воли и мастерство. Все инструменты уже у тебя в руках.'},
-    {num:'II',   name:'Верховная Жрица', meaning:'Прислушайся к внутреннему голосу. Ответы уже внутри тебя.'},
-    {num:'III',  name:'Императрица',     meaning:'Изобилие и творчество. Время расцвета и щедрого плодородия.'},
-    {num:'IV',   name:'Император',       meaning:'Стабильность и власть. Возьми ситуацию под контроль.'},
-    {num:'VI',   name:'Влюблённые',      meaning:'Выбор и единение. Следуй зову сердца, а не разума.'},
-    {num:'VII',  name:'Колесница',       meaning:'Победа через настойчивость. Двигайся вперёд несмотря ни на что.'},
-    {num:'VIII', name:'Сила',            meaning:'Внутренняя мощь побеждает внешнее давление. Ты сильнее, чем думаешь.'},
-    {num:'IX',   name:'Отшельник',       meaning:'Время уединения и мудрости. Ищи ответы внутри себя.'},
-    {num:'X',    name:'Колесо Фортуны',  meaning:'Судьба делает поворот. Будь готов к переменам — используй момент.'},
-    {num:'XI',   name:'Справедливость',  meaning:'Баланс и истина. Каждое действие получит своё справедливое отражение.'},
-    {num:'XII',  name:'Повешенный',      meaning:'Пауза и новая перспектива. Смени угол зрения — и всё прояснится.'},
-    {num:'XIII', name:'Смерть',          meaning:'Трансформация и обновление. Старое уходит, открывая путь новому.'},
-    {num:'XIV',  name:'Умеренность',     meaning:'Гармония и терпение. Всему своё время — не торопи события.'},
-    {num:'XVII', name:'Звезда',          meaning:'Надежда и вдохновение. Свет появляется после самой тёмной ночи.'},
-    {num:'XVIII',name:'Луна',            meaning:'Иллюзии и скрытые страхи. Не всё то, чем кажется на первый взгляд.'},
-    {num:'XIX',  name:'Солнце',          meaning:'Радость и победа. Ясность и успех уже у твоего порога.'},
-    {num:'XX',   name:'Суд',             meaning:'Пробуждение и трансформация. Новая глава жизни уже открывается.'},
-    {num:'XXI',  name:'Мир',             meaning:'Завершение цикла. Полнота и достижение цели — всё сложилось.'},
+  const TAROT_NAMES = {
+    fool: { ru:'Шут', uk:'Блазень', en:'The Fool', pl:'Głupiec', pt:'O Louco', es:'El Loco' },
+    magician: { ru:'Маг', uk:'Маг', en:'The Magician', pl:'Mag', pt:'O Mago', es:'El Mago' },
+    priestess: { ru:'Верховная Жрица', uk:'Верховна Жриця', en:'The High Priestess', pl:'Kapłanka', pt:'A Sacerdotisa', es:'La Sacerdotisa' },
+    empress: { ru:'Императрица', uk:'Імператриця', en:'The Empress', pl:'Cesarzowa', pt:'A Imperatriz', es:'La Emperatriz' },
+    emperor: { ru:'Император', uk:'Імператор', en:'The Emperor', pl:'Cesarz', pt:'O Imperador', es:'El Emperador' },
+    hierophant: { ru:'Иерофант', uk:'Ієрофант', en:'The Hierophant', pl:'Kapłan', pt:'O Hierofante', es:'El Hierofante' },
+    lovers: { ru:'Влюблённые', uk:'Закохані', en:'The Lovers', pl:'Kochankowie', pt:'Os Enamorados', es:'Los Enamorados' },
+    chariot: { ru:'Колесница', uk:'Колісниця', en:'The Chariot', pl:'Rydwan', pt:'O Carro', es:'El Carro' },
+    strength: { ru:'Сила', uk:'Сила', en:'Strength', pl:'Siła', pt:'A Força', es:'La Fuerza' },
+    hermit: { ru:'Отшельник', uk:'Відлюдник', en:'The Hermit', pl:'Pustelnik', pt:'O Eremita', es:'El Ermitaño' },
+    fortune: { ru:'Колесо Фортуны', uk:'Колесо Фортуни', en:'Wheel of Fortune', pl:'Koło Fortuny', pt:'A Roda da Fortuna', es:'La Rueda de la Fortuna' },
+    justice: { ru:'Справедливость', uk:'Справедливість', en:'Justice', pl:'Sprawiedliwość', pt:'A Justiça', es:'La Justicia' },
+    hanged: { ru:'Повешенный', uk:'Повішений', en:'The Hanged Man', pl:'Wisielec', pt:'O Enforcado', es:'El Colgado' },
+    death: { ru:'Смерть', uk:'Смерть', en:'Death', pl:'Śmierć', pt:'A Morte', es:'La Muerte' },
+    temperance: { ru:'Умеренность', uk:'Помірність', en:'Temperance', pl:'Umiarkowanie', pt:'A Temperança', es:'La Templanza' },
+    devil: { ru:'Дьявол', uk:'Диявол', en:'The Devil', pl:'Diabeł', pt:'O Diabo', es:'El Diablo' },
+    tower: { ru:'Башня', uk:'Вежа', en:'The Tower', pl:'Wieża', pt:'A Torre', es:'La Torre' },
+    star: { ru:'Звезда', uk:'Зірка', en:'The Star', pl:'Gwiazda', pt:'A Estrela', es:'La Estrella' },
+    moon: { ru:'Луна', uk:'Місяць', en:'The Moon', pl:'Księżyc', pt:'A Lua', es:'La Luna' },
+    sun: { ru:'Солнце', uk:'Сонце', en:'The Sun', pl:'Słońce', pt:'O Sol', es:'El Sol' },
+    judgement: { ru:'Суд', uk:'Суд', en:'Judgement', pl:'Sąd', pt:'O Julgamento', es:'El Juicio' },
+    world: { ru:'Мир', uk:'Світ', en:'The World', pl:'Świat', pt:'O Mundo', es:'El Mundo' }
+  };
+
+  const TAROT_MESSAGES = {
+    fool: {
+      ru:['Начало нового пути. Доверяй интуиции и делай первый шаг без страха.','Не пытайся увидеть всю дорогу сразу. Сегодня важен первый честный шаг.','Свобода приходит, когда ты позволяешь себе начать без идеального плана.'],
+      uk:['Початок нового шляху. Довіряй інтуїції й зроби перший крок без страху.','Не намагайся побачити всю дорогу одразу. Сьогодні важливий перший чесний крок.','Свобода приходить, коли ти дозволяєш собі почати без ідеального плану.'],
+      en:['A new path begins. Trust your intuition and take the first step without fear.','Do not try to see the whole road at once. Today, the first honest step matters.','Freedom arrives when you allow yourself to begin without a perfect plan.'],
+      pl:['Zaczyna się nowa droga. Zaufaj intuicji i zrób pierwszy krok bez lęku.','Nie próbuj zobaczyć całej drogi naraz. Dziś liczy się pierwszy szczery krok.','Wolność przychodzi, gdy pozwalasz sobie zacząć bez idealnego planu.'],
+      pt:['Um novo caminho começa. Confie na intuição e dê o primeiro passo sem medo.','Não tente ver a estrada inteira de uma vez. Hoje importa o primeiro passo honesto.','A liberdade chega quando você se permite começar sem um plano perfeito.'],
+      es:['Comienza un nuevo camino. Confía en tu intuición y da el primer paso sin miedo.','No intentes ver todo el camino de una vez. Hoy importa el primer paso sincero.','La libertad llega cuando te permites empezar sin un plan perfecto.']
+    },
+    magician: {
+      ru:['Сила воли и мастерство. Все инструменты уже у тебя в руках.','Твоя мысль просит формы. Назови желание точнее — и оно начнёт собираться.','Не жди знака извне: сегодня ты сам становишься проводником перемен.'],
+      uk:['Сила волі й майстерність. Усі інструменти вже у твоїх руках.','Твоя думка просить форми. Назви бажання точніше — і воно почне збиратися.','Не чекай знаку ззовні: сьогодні ти сам стаєш провідником змін.'],
+      en:['Willpower and mastery. Every tool is already in your hands.','Your thought is asking for form. Name the desire more clearly and it will begin to gather.','Do not wait for an outside sign: today you become the channel of change.'],
+      pl:['Siła woli i mistrzostwo. Wszystkie narzędzia masz już w rękach.','Twoja myśl prosi o formę. Nazwij pragnienie dokładniej, a zacznie się składać.','Nie czekaj na znak z zewnątrz: dziś to ty stajesz się przewodnikiem zmiany.'],
+      pt:['Força de vontade e domínio. Todas as ferramentas já estão em suas mãos.','Seu pensamento pede forma. Nomeie o desejo com mais clareza e ele começará a se reunir.','Não espere um sinal externo: hoje você é o canal da mudança.'],
+      es:['Voluntad y maestría. Todas las herramientas ya están en tus manos.','Tu pensamiento pide forma. Nombra el deseo con más claridad y empezará a reunirse.','No esperes una señal externa: hoy tú eres el canal del cambio.']
+    },
+    priestess: {
+      ru:['Прислушайся к внутреннему голосу. Ответы уже внутри тебя.','Не вся истина говорит громко. Самое важное сегодня звучит почти шёпотом.','Пауза откроет больше, чем спешка. Дай тайному проявиться.'],
+      uk:['Прислухайся до внутрішнього голосу. Відповіді вже всередині тебе.','Не вся істина говорить голосно. Найважливіше сьогодні звучить майже пошепки.','Пауза відкриє більше, ніж поспіх. Дай таємному проявитися.'],
+      en:['Listen to the inner voice. The answers are already within you.','Not every truth speaks loudly. The most important thing today sounds almost like a whisper.','A pause will reveal more than haste. Let the hidden show itself.'],
+      pl:['Wsłuchaj się w wewnętrzny głos. Odpowiedzi są już w tobie.','Nie każda prawda mówi głośno. Najważniejsze dziś brzmi prawie jak szept.','Pauza pokaże więcej niż pośpiech. Pozwól ukrytemu się ujawnić.'],
+      pt:['Ouça a voz interior. As respostas já estão dentro de você.','Nem toda verdade fala alto. O mais importante hoje soa quase como um sussurro.','Uma pausa revelará mais que a pressa. Deixe o oculto aparecer.'],
+      es:['Escucha la voz interior. Las respuestas ya están dentro de ti.','No toda verdad habla fuerte. Lo más importante hoy suena casi como un susurro.','Una pausa revelará más que la prisa. Deja que lo oculto aparezca.']
+    },
+    empress: {
+      ru:['Изобилие и творчество. Время расцвета и щедрого плодородия.','То, что ты заботливо питаешь, начинает отвечать ростом.','Выбери мягкость: через неё сегодня приходит настоящая сила.'],
+      uk:['Достаток і творчість. Час розквіту та щедрої родючості.','Те, що ти турботливо живиш, починає відповідати зростанням.','Обери м’якість: через неї сьогодні приходить справжня сила.'],
+      en:['Abundance and creativity. A time of blooming and generous fertility.','What you nourish with care begins to answer with growth.','Choose softness: through it, true strength arrives today.'],
+      pl:['Obfitość i twórczość. Czas rozkwitu i hojnej płodności.','To, co karmisz troską, zaczyna odpowiadać wzrostem.','Wybierz łagodność: przez nią dziś przychodzi prawdziwa siła.'],
+      pt:['Abundância e criatividade. Tempo de florescimento e fertilidade generosa.','Aquilo que você nutre com cuidado começa a responder com crescimento.','Escolha a suavidade: por ela chega hoje a verdadeira força.'],
+      es:['Abundancia y creatividad. Tiempo de florecimiento y fertilidad generosa.','Lo que nutres con cuidado empieza a responder con crecimiento.','Elige la suavidad: a través de ella llega hoy la verdadera fuerza.']
+    },
+    emperor: {
+      ru:['Стабильность и власть. Возьми ситуацию под контроль.','Границы не закрывают сердце — они защищают твой путь.','Наведи порядок там, где энергия давно утекает без ответа.'],
+      uk:['Стабільність і влада. Візьми ситуацію під контроль.','Межі не закривають серце — вони захищають твій шлях.','Наведи лад там, де енергія давно витікає без відповіді.'],
+      en:['Stability and authority. Bring the situation under control.','Boundaries do not close the heart; they protect your path.','Restore order where energy has been leaking without return.'],
+      pl:['Stabilność i autorytet. Weź sytuację pod kontrolę.','Granice nie zamykają serca; chronią twoją drogę.','Przywróć porządek tam, gdzie energia od dawna odpływa bez odpowiedzi.'],
+      pt:['Estabilidade e autoridade. Coloque a situação sob controle.','Limites não fecham o coração; eles protegem seu caminho.','Restaure a ordem onde a energia vem escapando sem retorno.'],
+      es:['Estabilidad y autoridad. Pon la situación bajo control.','Los límites no cierran el corazón; protegen tu camino.','Restaura el orden donde la energía se escapa sin respuesta.']
+    }
+  };
+
+  const TAROT_DECK = [
+    {num:'0', key:'fool'}, {num:'I', key:'magician'}, {num:'II', key:'priestess'}, {num:'III', key:'empress'}, {num:'IV', key:'emperor'},
+    {num:'V', key:'hierophant'}, {num:'VI', key:'lovers'}, {num:'VII', key:'chariot'}, {num:'VIII', key:'strength'}, {num:'IX', key:'hermit'},
+    {num:'X', key:'fortune'}, {num:'XI', key:'justice'}, {num:'XII', key:'hanged'}, {num:'XIII', key:'death'}, {num:'XIV', key:'temperance'},
+    {num:'XV', key:'devil'}, {num:'XVI', key:'tower'}, {num:'XVII', key:'star'}, {num:'XVIII', key:'moon'}, {num:'XIX', key:'sun'},
+    {num:'XX', key:'judgement'}, {num:'XXI', key:'world'}
   ];
 
+  const FALLBACK_MESSAGES = {
+    ru:['Твой ответ уже рядом. Смотри не на страх, а на направление движения.','Энергия дня просит ясности: выбери главное и отпусти шум.','Ситуация меняется мягче, чем кажется. Доверься процессу, но действуй честно.','Не торопи развязку. Сейчас важнее заметить знак, который повторяется.','То, что казалось препятствием, может оказаться границей перед новым этапом.','Сделай шаг тише, но точнее. Сегодня сила в собранности.','Старый вопрос просит нового взгляда. Перестань отвечать из прошлого опыта.','Сохрани внимание к деталям: именно там спрятан ключ к следующему решению.'],
+    uk:['Твоя відповідь уже поруч. Дивися не на страх, а на напрям руху.','Енергія дня просить ясності: обери головне й відпусти шум.','Ситуація змінюється м’якше, ніж здається. Довірся процесу, але дій чесно.','Не квап розв’язку. Зараз важливіше помітити знак, що повторюється.','Те, що здавалося перешкодою, може бути межею перед новим етапом.','Зроби крок тихіше, але точніше. Сьогодні сила в зібраності.','Старе питання просить нового погляду. Перестань відповідати з минулого досвіду.','Збережи увагу до деталей: саме там схований ключ до наступного рішення.'],
+    en:['Your answer is already near. Look not at fear, but at the direction of movement.','The day asks for clarity: choose what matters and release the noise.','The situation is changing more gently than it seems. Trust the process, but act honestly.','Do not rush the outcome. It matters more now to notice the sign that keeps repeating.','What looked like an obstacle may be the boundary before a new stage.','Take a quieter, more precise step. Today, strength lives in composure.','An old question asks for a new view. Stop answering from past experience.','Stay attentive to details: the key to the next decision is hidden there.'],
+    pl:['Twoja odpowiedź jest już blisko. Patrz nie na lęk, lecz na kierunek ruchu.','Energia dnia prosi o jasność: wybierz to, co ważne, i puść szum.','Sytuacja zmienia się łagodniej, niż się wydaje. Zaufaj procesowi, ale działaj uczciwie.','Nie przyspieszaj rozwiązania. Teraz ważniej zauważyć znak, który się powtarza.','To, co wyglądało jak przeszkoda, może być granicą przed nowym etapem.','Zrób krok ciszej, ale precyzyjniej. Dziś siła mieszka w skupieniu.','Stare pytanie prosi o nowe spojrzenie. Przestań odpowiadać z dawnego doświadczenia.','Zachowaj uwagę na szczegółach: tam ukryty jest klucz do następnej decyzji.'],
+    pt:['Sua resposta já está perto. Olhe não para o medo, mas para a direção do movimento.','A energia do dia pede clareza: escolha o essencial e solte o ruído.','A situação muda com mais suavidade do que parece. Confie no processo, mas aja com honestidade.','Não apresse o desfecho. Agora importa mais notar o sinal que se repete.','O que parecia obstáculo pode ser o limite antes de uma nova etapa.','Dê um passo mais silencioso, porém mais preciso. Hoje a força vive na presença.','Uma pergunta antiga pede um novo olhar. Pare de responder a partir do passado.','Preste atenção aos detalhes: é ali que está a chave da próxima decisão.'],
+    es:['Tu respuesta ya está cerca. Mira no al miedo, sino a la dirección del movimiento.','La energía del día pide claridad: elige lo esencial y suelta el ruido.','La situación cambia con más suavidad de lo que parece. Confía en el proceso, pero actúa con honestidad.','No apresures el desenlace. Ahora importa más notar la señal que se repite.','Lo que parecía un obstáculo puede ser el límite antes de una nueva etapa.','Da un paso más silencioso, pero más preciso. Hoy la fuerza vive en la compostura.','Una pregunta antigua pide una mirada nueva. Deja de responder desde el pasado.','Presta atención a los detalles: allí se esconde la clave de la próxima decisión.']
+  };
+
+  function currentLang() {
+    var lang = window.AetherI18n && window.AetherI18n.getLang ? window.AetherI18n.getLang() : (localStorage.getItem('aether_lang') || 'ru');
+    return ['ru','uk','en','pl','pt','es'].includes(lang) ? lang : 'ru';
+  }
+
+  function localizeCard(card, lang) {
+    var names = TAROT_NAMES[card.key] || TAROT_NAMES.fool;
+    var messages = (TAROT_MESSAGES[card.key] && TAROT_MESSAGES[card.key][lang]) || FALLBACK_MESSAGES[lang] || FALLBACK_MESSAGES.en;
+    return {
+      num: card.num,
+      name: names[lang] || names.en || names.ru,
+      meaning: messages[Math.floor(Math.random() * messages.length)]
+    };
+  }
+
+  function tarotList(lang) {
+    return TAROT_DECK.map(function(card) { return localizeCard(card, lang || currentLang()); });
+  }
+
+  const CARD_UI = {
+    hint: { ru:'НАЖМИ', uk:'НАТИСНИ', en:'TAP', pl:'KLIKNIJ', pt:'TOQUE', es:'TOCA' },
+    focus: {
+      ru:'Сосредоточься<br>на своём вопросе',
+      uk:'Зосередься<br>на своєму питанні',
+      en:'Focus<br>on your question',
+      pl:'Skup się<br>na swoim pytaniu',
+      pt:'Concentre-se<br>na sua pergunta',
+      es:'Concéntrate<br>en tu pregunta'
+    }
+  };
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
   /* ── Инициализация карт ── */
-  (function initCards() {
+  function renderMiniCards() {
     var row = document.getElementById('cardsRow');
     if (!row) return;
-    var picked = TAROT.slice().sort(function(){ return Math.random() - 0.5; }).slice(0, 5);
+    var lang = currentLang();
+    var picked = tarotList(lang).sort(function(){ return Math.random() - 0.5; }).slice(0, 5);
     row.innerHTML = picked.map(function(c) {
-      return '<div class="card-flip" onclick="this.classList.add(\'flipped\')">' +
+      return '<div class="card-flip" tabindex="0">' +
         '<div class="card-flip-inner">' +
           '<div class="card-face card-front">' +
             '<svg width="72" height="72" viewBox="0 0 100 100" fill="none">' +
@@ -2469,24 +2592,49 @@
                 ' fill="rgba(201,168,76,.1)" stroke="rgba(201,168,76,.22)" stroke-width="1"/>' +
               '<circle cx="50" cy="50" r="5" fill="rgba(201,168,76,.35)"/>' +
             '</svg>' +
-            '<span class="card-hint">НАЖМИ</span>' +
+            '<span class="card-hint">' + escHtml(CARD_UI.hint[lang] || CARD_UI.hint.en) + '</span>' +
+            '<div class="mini-focus-card">' +
+              '<div class="mini-focus-star">✦</div>' +
+              '<div class="mini-focus-text">' + (CARD_UI.focus[lang] || CARD_UI.focus.en) + '</div>' +
+              '<div class="mini-focus-line"></div>' +
+            '</div>' +
           '</div>' +
           '<div class="card-face card-back-f">' +
-            '<span class="crd-num">' + c.num + '</span>' +
+            '<span class="crd-num">' + escHtml(c.num) + '</span>' +
             '<div class="crd-icon">' +
               '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">' +
                 '<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>' +
               '</svg>' +
             '</div>' +
             '<div>' +
-              '<div class="crd-name">' + c.name + '</div>' +
-              '<div class="crd-meaning">' + c.meaning + '</div>' +
+              '<div class="crd-name">' + escHtml(c.name) + '</div>' +
+              '<div class="crd-meaning">' + escHtml(c.meaning) + '</div>' +
             '</div>' +
           '</div>' +
         '</div>' +
       '</div>';
     }).join('');
-  })();
+    row.querySelectorAll('.card-flip').forEach(function(card) {
+      function reveal() {
+        if (card.classList.contains('flipped') || card.classList.contains('focusing')) return;
+        card.classList.add('focusing');
+        setTimeout(function() {
+          card.classList.remove('focusing');
+          card.classList.add('flipped');
+        }, 2200);
+      }
+      card.addEventListener('click', reveal);
+      card.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          reveal();
+        }
+      });
+    });
+  }
+
+  renderMiniCards();
+  window.addEventListener('aether:language-change', renderMiniCards);
 
   /* ══════════════════════════════════
      ЧАТ ДЕМО — анимация
@@ -3035,17 +3183,19 @@
       /* 2. Оверлей "сосредоточься" */
       var overlay = document.createElement('div');
       overlay.className = 'card-focus-msg';
+      var lang = currentLang();
       overlay.innerHTML = '<div class="cfm-icon">✦</div>'
-        + '<div class="cfm-text">Сосредоточься<br>на своём вопросе</div>'
+        + '<div class="cfm-text">' + (CARD_UI.focus[lang] || CARD_UI.focus.en) + '</div>'
         + '<div class="cfm-bar"></div>';
       card.querySelector('.card-face-front').appendChild(overlay);
 
-      /* 3. Через 1.6 сек — переворот + частицы */
+      /* 3. Через 2.2 сек — переворот + частицы */
       setTimeout(function() {
         card.classList.remove('is-charging');
 
         /* Выбрать аркан */
-        var pick = TAROT[Math.floor(Math.random() * TAROT.length)];
+        var deck = tarotList(currentLang());
+        var pick = deck[Math.floor(Math.random() * deck.length)];
         backRoman.textContent = pick.num;
         backName.textContent  = pick.name;
         backText.textContent  = '';
@@ -3076,7 +3226,7 @@
           canClick = true;
         }, 900);
 
-      }, 1650);
+      }, 2200);
     });
   })();
 

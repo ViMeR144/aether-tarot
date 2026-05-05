@@ -17,7 +17,7 @@
       --text: #EDE8DC; --muted: #7A7870; --border: rgba(201,168,76,.18);
     }
     html, body { min-height: 100vh; font-family: 'Montserrat', sans-serif; background: var(--bg); color: var(--text); }
-    body { display: flex; flex-direction: column; align-items: center; padding: 40px 20px 80px; }
+    body { display: flex; flex-direction: column; align-items: center; padding: 104px 20px 80px; }
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: var(--bg2); }
     ::-webkit-scrollbar-thumb { background: var(--gold-d); border-radius: 3px; }
@@ -29,6 +29,18 @@
       margin-bottom: 48px; opacity: .8; transition: opacity .2s;
     }
     .site-logo:hover { opacity: 1; }
+
+    .topbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 120;
+      height: 68px; display: flex; align-items: center; justify-content: center;
+      padding: 0 24px; background: rgba(12,12,15,.88);
+      backdrop-filter: blur(18px); border-bottom: 1px solid var(--border);
+    }
+    .topbar-inner {
+      width: 100%; max-width: 1120px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .topbar-right { display:flex; align-items:center; gap:10px; min-width:120px; justify-content:flex-end; }
+    .site-logo.topbar-logo { margin-bottom: 0; }
 
     /* ── Main agreement card (always visible) ── */
     .main-card {
@@ -106,13 +118,14 @@
     @media (max-width: 600px) {
       .card-header, .agreement-body, .action-area { padding-left: 24px; padding-right: 24px; }
       .done-card { padding: 40px 24px; }
-      body { padding: 28px 16px 60px; }
+      body { padding: 92px 16px 60px; }
+      .topbar { height: 60px; padding: 0 16px; }
     }
   </style>
 </head>
 <body>
 
-<a href="/" class="site-logo">AETHER TAROT</a>
+<div class="topbar"><div class="topbar-inner"><a href="/" class="site-logo topbar-logo">AETHER TAROT</a><div class="topbar-right"></div></div></div>
 
 <!-- Main card: agreement text always visible -->
 <div class="main-card" id="mainCard">
@@ -164,6 +177,7 @@
 <script src="/i18n.js"></script>
 <script>
   const TOKEN_KEY = 'tg_token';
+  const t = (value) => window.AetherI18n?.t?.(value) || value;
 
   function switchAccount() {
     localStorage.removeItem(TOKEN_KEY);
@@ -173,56 +187,48 @@
   function showAlreadyAgreed() {
     document.getElementById('actionArea').innerHTML = `
       <div class="status-badge">
-        <span style="font-size:1.2rem">✦</span>
-        <span>СОГЛАШЕНИЕ ПРИНЯТО</span>
+        <span style="font-size:1.2rem">?</span>
+        <span>${t('СОГЛАШЕНИЕ ПРИНЯТО')}</span>
       </div>
-      <a href="/" class="btn-go">ПЕРЕЙТИ НА САЙТ</a>
-      <button class="btn-switch" onclick="switchAccount()">Сменить аккаунт</button>
+      <a href="/" class="btn-go">${t('ПЕРЕЙТИ НА САЙТ')}</a>
+      <button class="btn-switch" onclick="switchAccount()">${t('Сменить аккаунт')}</button>
     `;
   }
 
   function showJustAccepted() {
     document.getElementById('actionArea').innerHTML = `
       <div class="status-badge">
-        <span style="font-size:1.2rem">✦</span>
-        <span>СОГЛАШЕНИЕ ПРИНЯТО</span>
+        <span style="font-size:1.2rem">?</span>
+        <span>${t('СОГЛАШЕНИЕ ПРИНЯТО')}</span>
       </div>
-      <p style="font-size:.72rem;color:var(--muted);text-align:center">Добро пожаловать в Aether Tarot.<br>Вселенная раскрывает свои карты...</p>
-      <a href="/" class="btn-go">ПЕРЕЙТИ НА САЙТ</a>
+      <p style="font-size:.72rem;color:var(--muted);text-align:center">${t('Добро пожаловать в Aether Tarot.')}<br>${t('Вселенная раскрывает свои карты...')}</p>
+      <a href="/" class="btn-go">${t('ПЕРЕЙТИ НА САЙТ')}</a>
     `;
   }
 
-  function showErr(msg) {
-    const el = document.getElementById('errGlobal');
-    el.textContent = msg; el.style.display = 'block';
-  }
-
-  /* ── State: not logged in — show Telegram widget ── */
   async function showLoginState() {
     const area = document.getElementById('actionArea');
-
-    /* Detect Telegram in-app browser */
     const isTelegram = /Telegram/i.test(navigator.userAgent) || !!window.Telegram?.WebApp?.initData;
+
     if (isTelegram) {
       area.innerHTML = `
-        <p class="login-label">Войти через Telegram</p>
-        <p class="note" style="opacity:1;color:var(--muted)">Виджет входа не работает внутри Telegram.<br>Открой страницу в браузере телефона.</p>
-        <a href="${location.href}" target="_blank" class="btn-accept" style="text-decoration:none;text-align:center;margin-top:4px">
-          ОТКРЫТЬ В БРАУЗЕРЕ
-        </a>
-        <p class="note">После входа вернись в Telegram.</p>
+        <p class="login-label">${t('Войти через Telegram')}</p>
+        <p class="note" style="opacity:1;color:var(--muted)">${t('Виджет входа не работает внутри Telegram.')}<br>${t('Открой страницу в браузере телефона.')}</p>
+        <a href="${location.href}" target="_blank" class="btn-accept" style="text-decoration:none;text-align:center;margin-top:4px">${t('ОТКРЫТЬ В БРАУЗЕРЕ')}</a>
+        <p class="note">${t('После входа вернись в Telegram.')}</p>
       `;
       return;
     }
 
     area.innerHTML = `
-      <p class="login-label">Чтобы принять соглашение — войдите через Telegram</p>
+      <p class="login-label">${t('Чтобы принять соглашение — войдите через Telegram')}</p>
       <div id="tgWidgetContainer"></div>
-      <p class="note">Мы получим только ваше имя и аватар. Пароль и переписка не передаются.</p>
+      <p class="note">${t('Мы получим только ваше имя и аватар. Пароль и переписка не передаются.')}</p>
       <div class="err" id="err1"></div>
     `;
+
     try {
-      const cfg = await fetch('/api/config').then(r => r.json());
+      const cfg = await fetch('/api/config').then((r) => r.json());
       if (cfg.bot_username) {
         const s = document.createElement('script');
         s.async = true;
@@ -234,30 +240,28 @@
         document.getElementById('tgWidgetContainer').appendChild(s);
       } else {
         document.getElementById('tgWidgetContainer').innerHTML =
-          '<p style="color:var(--gold-d);font-size:.72rem;text-align:center">Добавьте переменную <strong>BOT_USERNAME</strong> в Railway Variables.</p>';
+          '<p style="color:var(--gold-d);font-size:.72rem;text-align:center">' + t('Добавьте переменную') + ' <strong>BOT_USERNAME</strong> ' + t('в Railway Variables.') + '</p>';
       }
     } catch {
       document.getElementById('tgWidgetContainer').innerHTML =
-        '<p style="color:#e07070;font-size:.72rem">Ошибка загрузки виджета. Обновите страницу.</p>';
+        '<p style="color:#e07070;font-size:.72rem">' + t('Ошибка загрузки виджета. Обновите страницу.') + '</p>';
     }
   }
 
-  /* ── State: logged in, not agreed — show accept button ── */
   function showAcceptState(userData) {
     const area = document.getElementById('actionArea');
     area.innerHTML = `
       <div class="user-line">
         ${userData.photo_url ? `<img src="${userData.photo_url}" alt="">` : ''}
-        <span>${userData.first_name || userData.username || 'Пользователь'}</span>
+        <span>${userData.first_name || userData.username || t('Пользователь')}</span>
       </div>
-      <button class="btn-accept" id="btnAccept">ПРИНЯТЬ СОГЛАШЕНИЕ ✦</button>
-      <a href="/" class="btn-decline">Отклонить и вернуться на сайт</a>
+      <button class="btn-accept" id="btnAccept">${t('ПРИНЯТЬ СОГЛАШЕНИЕ ✦')}</button>
+      <a href="/" class="btn-decline">${t('Отклонить и вернуться на сайт')}</a>
       <div class="err" id="err2"></div>
     `;
     document.getElementById('btnAccept').addEventListener('click', acceptAgreement);
   }
 
-  /* ── Telegram widget callback ── */
   window.onTelegramAuth = async function(user) {
     try {
       const resp = await fetch('/api/auth/telegram', {
@@ -268,27 +272,30 @@
       const data = await resp.json();
       if (!resp.ok) {
         const errEl = document.getElementById('err1');
-        if (errEl) { errEl.textContent = data.error || 'Ошибка авторизации'; errEl.style.display = 'block'; }
+        if (errEl) {
+          errEl.textContent = data.error || t('Ошибка авторизации');
+          errEl.style.display = 'block';
+        }
         return;
       }
       localStorage.setItem(TOKEN_KEY, data.token);
       if (!localStorage.getItem('aether_lang') && data.user?.language) window.AetherI18n?.setLang?.(data.user.language, { skipSync: true });
       window.AetherI18n?.syncLanguage?.();
-      if (data.agreed) {
-        showAlreadyAgreed();
-      } else {
-        showAcceptState(data.user);
-      }
+      if (data.agreed) showAlreadyAgreed();
+      else showAcceptState(data.user);
     } catch {
       const errEl = document.getElementById('err1');
-      if (errEl) { errEl.textContent = 'Ошибка соединения. Попробуй ещё раз.'; errEl.style.display = 'block'; }
+      if (errEl) {
+        errEl.textContent = t('Ошибка соединения. Попробуй ещё раз.');
+        errEl.style.display = 'block';
+      }
     }
   };
 
-  /* ── Accept agreement ── */
   async function acceptAgreement() {
     const btn = document.getElementById('btnAccept');
-    btn.disabled = true; btn.textContent = '...';
+    btn.disabled = true;
+    btn.textContent = '...';
     const token = localStorage.getItem(TOKEN_KEY);
     try {
       const resp = await fetch('/api/auth/agree', {
@@ -302,17 +309,24 @@
         showJustAccepted();
       } else {
         const errEl = document.getElementById('err2');
-        if (errEl) { errEl.textContent = data.error || 'Ошибка'; errEl.style.display = 'block'; }
-        btn.disabled = false; btn.textContent = 'ПРИНЯТЬ СОГЛАШЕНИЕ ✦';
+        if (errEl) {
+          errEl.textContent = data.error || t('Ошибка');
+          errEl.style.display = 'block';
+        }
+        btn.disabled = false;
+        btn.textContent = t('ПРИНЯТЬ СОГЛАШЕНИЕ ✦');
       }
     } catch {
       const errEl = document.getElementById('err2');
-      if (errEl) { errEl.textContent = 'Ошибка соединения'; errEl.style.display = 'block'; }
-      btn.disabled = false; btn.textContent = 'ПРИНЯТЬ СОГЛАШЕНИЕ ✦';
+      if (errEl) {
+        errEl.textContent = t('Ошибка соединения');
+        errEl.style.display = 'block';
+      }
+      btn.disabled = false;
+      btn.textContent = t('ПРИНЯТЬ СОГЛАШЕНИЕ ✦');
     }
   }
 
-  /* ── Init ── */
   async function init() {
     const token = localStorage.getItem(TOKEN_KEY);
     if (token) {

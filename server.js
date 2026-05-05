@@ -205,7 +205,7 @@ function requireBot(req, res, next) {
 function normalizeLanguage(value) {
   const lang = String(value || '').trim().toLowerCase();
   if (lang === 'ua') return 'uk';
-  return ['ru', 'uk', 'en'].includes(lang) ? lang : null;
+  return ['ru', 'uk', 'en', 'pl', 'pt', 'es', 'tr'].includes(lang) ? lang : null;
 }
 
 function parseTelegramId(value) {
