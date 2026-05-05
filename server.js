@@ -14,6 +14,7 @@ const ADMIN_SECRET   = process.env.ADMIN_SECRET   || 'aether_dev_secret_change_m
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 const USER_SECRET    = process.env.USER_SECRET    || (ADMIN_SECRET + '_user');
 const BOT_USERNAME   = process.env.BOT_USERNAME   || '';
+const BOT_API_SECRET = process.env.BOT_API_SECRET || process.env.TELEGRAM_BOT_TOKEN || '';
 
 const MAJOR_ARCANA = [
   { name: 'Дурак',           meaning: 'Новые начала, спонтанность, свобода духа' },
@@ -128,12 +129,16 @@ async function initDb() {
       first_name  TEXT,
       photo_url   TEXT,
       zodiac      TEXT,
+      language    TEXT        NOT NULL DEFAULT 'ru',
       agreed_at   TIMESTAMPTZ,
+      agreement_source TEXT,
       created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
     )
   `);
   await pool.query('ALTER TABLE tg_users ADD COLUMN IF NOT EXISTS zodiac       TEXT');
   await pool.query('ALTER TABLE tg_users ADD COLUMN IF NOT EXISTS birth_date  DATE');
+  await pool.query("ALTER TABLE tg_users ADD COLUMN IF NOT EXISTS language    TEXT NOT NULL DEFAULT 'ru'");
+  await pool.query('ALTER TABLE tg_users ADD COLUMN IF NOT EXISTS agreement_source TEXT');
 
   await pool.query('ALTER TABLE reviews ADD COLUMN IF NOT EXISTS telegram_id BIGINT');
 
@@ -187,6 +192,25 @@ function requireUser(req, res, next) {
   if (!token) return res.status(401).json({ error: 'Нет токена' });
   try { req.tgUser = jwt.verify(token, USER_SECRET); next(); }
   catch { res.status(401).json({ error: 'Токен недействителен' }); }
+}
+
+function requireBot(req, res, next) {
+  const auth = req.headers.authorization || '';
+  const token = auth.startsWith('Bearer ') ? auth.slice(7) : req.headers['x-bot-secret'];
+  if (!BOT_API_SECRET) return res.status(503).json({ error: 'BOT_API_SECRET is not configured' });
+  if (!token || token !== BOT_API_SECRET) return res.status(401).json({ error: 'bot auth failed' });
+  next();
+}
+
+function normalizeLanguage(value) {
+  const lang = String(value || '').trim().toLowerCase();
+  if (lang === 'ua') return 'uk';
+  return ['ru', 'uk', 'en'].includes(lang) ? lang : null;
+}
+
+function parseTelegramId(value) {
+  const id = Number(value);
+  return Number.isSafeInteger(id) && id > 0 ? id : null;
 }
 
 function verifyTelegramAuth(data) {
@@ -567,7 +591,16 @@ app.post('/api/auth/telegram', async (req, res) => {
       USER_SECRET,
       { expiresIn: '30d' }
     );
-    res.json({ token, agreed: !!user.agreed_at, user: { first_name: user.first_name, photo_url: user.photo_url } });
+    res.json({
+      token,
+      agreed: !!user.agreed_at,
+      user: {
+        first_name: user.first_name,
+        username: user.username,
+        photo_url: user.photo_url,
+        language: user.language || 'ru'
+      }
+    });
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ error: 'Ошибка сервера' });
@@ -576,24 +609,103 @@ app.post('/api/auth/telegram', async (req, res) => {
 
 app.post('/api/auth/agree', requireUser, async (req, res) => {
   try {
-    await pool.query('UPDATE tg_users SET agreed_at = NOW() WHERE telegram_id = $1', [req.tgUser.tg_id]);
+    const language = normalizeLanguage(req.body?.language);
+    const { rows } = await pool.query(
+      `UPDATE tg_users
+       SET agreed_at = COALESCE(agreed_at, NOW()),
+           language = COALESCE($2, language),
+           agreement_source = COALESCE(agreement_source, 'site')
+       WHERE telegram_id = $1
+       RETURNING first_name, language`,
+      [req.tgUser.tg_id, language]
+    );
+    const user = rows[0] || {};
     const token = jwt.sign(
-      { tg_id: req.tgUser.tg_id, name: req.tgUser.name, agreed: true },
+      { tg_id: req.tgUser.tg_id, name: user.first_name || req.tgUser.name, agreed: true },
       USER_SECRET,
       { expiresIn: '30d' }
     );
-    res.json({ ok: true, token });
+    res.json({ ok: true, token, language: user.language || language || 'ru' });
   } catch (err) { res.status(500).json({ error: 'Ошибка сервера' }); }
 });
 
 app.get('/api/auth/me', requireUser, async (req, res) => {
   try {
     const { rows } = await pool.query(
-      'SELECT telegram_id, first_name, username, photo_url, agreed_at FROM tg_users WHERE telegram_id = $1',
+      'SELECT telegram_id, first_name, username, photo_url, agreed_at, language FROM tg_users WHERE telegram_id = $1',
       [req.tgUser.tg_id]
     );
     if (!rows.length) return res.status(404).json({ error: 'Пользователь не найден' });
     res.json(rows[0]);
+  } catch (err) { res.status(500).json({ error: 'Ошибка сервера' }); }
+});
+
+app.put('/api/profile/language', requireUser, async (req, res) => {
+  try {
+    const language = normalizeLanguage(req.body?.language);
+    if (!language) return res.status(400).json({ error: 'Unsupported language' });
+    await pool.query('UPDATE tg_users SET language = $1 WHERE telegram_id = $2', [language, req.tgUser.tg_id]);
+    res.json({ ok: true, language });
+  } catch (err) { res.status(500).json({ error: 'Ошибка сервера' }); }
+});
+
+app.get('/api/bot/users/:telegramId/agreement', requireBot, async (req, res) => {
+  try {
+    const telegramId = parseTelegramId(req.params.telegramId);
+    if (!telegramId) return res.status(400).json({ error: 'invalid telegram id' });
+
+    const { rows } = await pool.query(
+      'SELECT telegram_id, agreed_at, language FROM tg_users WHERE telegram_id = $1',
+      [telegramId]
+    );
+    const user = rows[0];
+    res.json({
+      telegram_id: telegramId,
+      agreed: !!user?.agreed_at,
+      agreed_at: user?.agreed_at || null,
+      language: user?.language || 'ru'
+    });
+  } catch (err) { res.status(500).json({ error: 'Ошибка сервера' }); }
+});
+
+app.post('/api/bot/users/:telegramId/agreement', requireBot, async (req, res) => {
+  try {
+    const telegramId = parseTelegramId(req.params.telegramId);
+    if (!telegramId) return res.status(400).json({ error: 'invalid telegram id' });
+
+    const language = normalizeLanguage(req.body?.language);
+    const accepted = req.body?.agreed !== false;
+    const username = req.body?.username ? String(req.body.username).trim().slice(0, 64) : null;
+    const firstName = req.body?.first_name ? String(req.body.first_name).trim().slice(0, 128) : null;
+    const photoUrl = req.body?.photo_url ? String(req.body.photo_url).trim().slice(0, 500) : null;
+    const { rows } = await pool.query(`
+      INSERT INTO tg_users (telegram_id, username, first_name, photo_url, language, agreed_at, agreement_source)
+      VALUES ($1, $2, $3, $4, COALESCE($5::text, 'ru'), CASE WHEN $6 THEN NOW() ELSE NULL END, CASE WHEN $6 THEN 'bot' ELSE NULL END)
+      ON CONFLICT (telegram_id) DO UPDATE SET
+        username = COALESCE(EXCLUDED.username, tg_users.username),
+        first_name = COALESCE(EXCLUDED.first_name, tg_users.first_name),
+        photo_url = COALESCE(EXCLUDED.photo_url, tg_users.photo_url),
+        language = COALESCE($5::text, tg_users.language),
+        agreed_at = CASE WHEN $6 THEN COALESCE(tg_users.agreed_at, NOW()) ELSE tg_users.agreed_at END,
+        agreement_source = CASE WHEN $6 THEN COALESCE(tg_users.agreement_source, 'bot') ELSE tg_users.agreement_source END
+      RETURNING telegram_id, agreed_at, language
+    `, [
+      telegramId,
+      username,
+      firstName,
+      photoUrl,
+      language,
+      accepted
+    ]);
+
+    const user = rows[0];
+    res.json({
+      ok: true,
+      telegram_id: user.telegram_id,
+      agreed: !!user.agreed_at,
+      agreed_at: user.agreed_at,
+      language: user.language || 'ru'
+    });
   } catch (err) { res.status(500).json({ error: 'Ошибка сервера' }); }
 });
 

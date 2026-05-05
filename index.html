@@ -2242,6 +2242,8 @@
   <a href="/admin" style="font-size:.72rem;color:rgba(122,120,112,.35);text-decoration:none;letter-spacing:.2em;transition:color .3s;padding:4px 8px" onmouseover="this.style.color='rgba(201,168,76,.7)'" onmouseout="this.style.color='rgba(122,120,112,.35)'">✦ ADMIN</a>
 </footer>
 
+<script src="/i18n.js"></script>
+
 <!-- ═══════════════════════ SCRIPTS ═══════════════════════ -->
 <script>
   /* ── Burger menu ── */
@@ -3108,7 +3110,9 @@
     try {
       const resp = await fetch('/api/auth/me', { headers: { Authorization: 'Bearer ' + token } });
       if (!resp.ok) { localStorage.removeItem('tg_token'); showLoggedOut(); return; }
-      showLoggedIn(await resp.json());
+      const user = await resp.json();
+      if (!localStorage.getItem('aether_lang') && user.language) window.AetherI18n?.setLang?.(user.language, { skipSync: true });
+      showLoggedIn(user);
     } catch { showLoggedOut(); }
   })();
 

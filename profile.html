@@ -229,7 +229,7 @@
   </div>
 
   <!-- Bot link -->
-  <a href="https://t.me/Tarologfalse_bot" target="_blank" class="bot-btn">
+  <a href="https://t.me/AetherTaarot_bot" target="_blank" class="bot-btn">
     <span>✦</span> НАЧАТЬ РАСКЛАД В БОТЕ
   </a>
 
@@ -356,6 +356,7 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="/i18n.js"></script>
 <script>
 /* ── Constants ── */
 const ZODIAC_ARCHETYPES = {
@@ -602,6 +603,7 @@ async function init() {
     if (resp.status === 401) { window.location.href = '/agreement'; return; }
     const data = await resp.json();
     const { user, reviews, card_today, card_history, streak } = data;
+    if (!localStorage.getItem('aether_lang') && user.language) window.AetherI18n?.setLang?.(user.language, { skipSync: true });
 
     /* Hero */
     document.getElementById('profileName').textContent = user.first_name || 'Пользователь';
