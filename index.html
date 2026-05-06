@@ -697,201 +697,6 @@
     }
     .mobile-menu a:hover { opacity: 1; color: var(--gold); }
 
-    /* ═══════════════════════════════════════
-       АДАПТИВ — все устройства
-       1200px  широкий ноутбук
-        960px  планшет / узкий ноутбук
-        768px  маленький планшет
-        640px  большой телефон
-        480px  стандартный телефон
-        375px  маленький телефон (iPhone SE)
-    ═══════════════════════════════════════ */
-
-    /* ── Широкий ноутбук ── */
-    @media (max-width: 1200px) {
-      #home { padding: calc(var(--nav-h) + 40px) 60px 80px; }
-      #readings, #process, #gallery, #wisdom { padding: 90px 60px; }
-      #card-demo, #chat-demo, #quiz { padding: 90px 60px; }
-    }
-
-    /* ── Планшет / узкий ноутбук ── */
-    @media (max-width: 960px) {
-      nav { padding: 0 24px; }
-      .nav-links { display: none; position: static; transform: none; }
-      .nav-cta { display: none; }
-      .burger { display: flex; }
-
-      #home {
-        grid-template-columns: 1fr;
-        padding: calc(var(--nav-h) + 48px) 40px 64px;
-        text-align: center;
-      }
-      .hero-left { display: flex; flex-direction: column; align-items: center; }
-      .hero-desc { max-width: 560px; }
-      .hero-right { margin-top: 48px; }
-      .tarot-card { width: 230px; height: 378px; }
-
-      #readings, #process, #gallery, #wisdom { padding: 72px 32px; }
-      #card-demo, #chat-demo, #quiz { padding: 72px 32px; }
-
-      .features-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
-      .spreads-grid  { grid-template-columns: 1fr 1fr; gap: 16px; }
-      .testimonials-grid { grid-template-columns: 1fr; }
-
-      .step-row {
-        grid-template-columns: 1fr;
-        min-height: auto; gap: 0;
-      }
-      .step-row.reverse .step-card   { order: 1; }
-      .step-row.reverse .step-image  { order: 2; }
-      .step-row.reverse .step-timeline { display: none; }
-      .step-timeline { display: none; }
-      .step-image    { margin: 16px 0; }
-      .step-img-box  { max-width: 100%; aspect-ratio: 16/9; }
-
-      .chat-cols { grid-template-columns: 1fr; gap: 40px; }
-      .chat-phone { max-width: 420px; margin: 0 auto; }
-      .chat-right .section-title,
-      .chat-right .section-divider,
-      .chat-right .section-desc { text-align: center; margin-left: auto; margin-right: auto; }
-      .chat-right .section-title { text-align: center; }
-      .chat-feats { max-width: 420px; margin: 0 auto; }
-
-      .quiz-opts { grid-template-columns: 1fr 1fr; }
-
-      footer {
-        padding: 32px 28px;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-      }
-      .footer-links { flex-wrap: wrap; gap: 16px; }
-    }
-
-    /* ── Маленький планшет ── */
-    @media (max-width: 768px) {
-      #home { padding: calc(var(--nav-h) + 40px) 28px 56px; }
-      .hero-title { font-size: clamp(2.4rem, 7vw, 3.2rem); }
-      .tarot-card { width: 210px; height: 345px; }
-
-      #readings, #process, #gallery, #wisdom { padding: 64px 24px; }
-      #card-demo, #chat-demo, #quiz { padding: 64px 24px; }
-
-      .features-grid { grid-template-columns: 1fr; }
-      .spreads-grid  { grid-template-columns: 1fr; }
-
-      .quiz-opts { grid-template-columns: 1fr; }
-
-      .section-title { font-size: clamp(1.65rem, 5vw, 2.2rem); }
-      .section-desc  { font-size: .78rem; }
-
-      .cards-row { gap: 12px; }
-      .card-flip { width: 110px; min-height: 160px; }
-    }
-
-    /* ── Большой телефон ── */
-    @media (max-width: 640px) {
-      #home {
-        padding: calc(var(--nav-h) + 32px) 20px 48px;
-        gap: 0;
-      }
-      .hero-badge { font-size: .6rem; padding: 5px 12px; }
-      .hero-title { font-size: 2.2rem; margin-bottom: 16px; }
-      .hero-desc  { font-size: .79rem; margin-bottom: 32px; }
-      .btn-tg     { padding: 13px 26px; font-size: .65rem; width: 100%; justify-content: center; max-width: 320px; }
-      .hero-right { margin-top: 40px; }
-      .tarot-card { width: 192px; height: 315px; }
-
-      #readings, #process, #gallery, #wisdom { padding: 56px 20px; }
-      #card-demo, #chat-demo, #quiz { padding: 56px 20px; }
-
-      .section-title { font-size: 1.75rem; }
-
-      .feature-card { padding: 28px 22px; }
-      .spread-card  { padding: 24px 20px; }
-
-      .cards-row { gap: 10px; margin-top: 36px; }
-      .card-flip { width: 100px; }
-
-      .tg-float { bottom: 20px; right: 16px; width: 52px; height: 52px; }
-
-      .proof-toast { left: 12px; max-width: calc(100vw - 24px); }
-      .moon-widget { gap: 10px; padding: 12px 16px; }
-      .moon-sep    { display: none; }
-
-      .chat-phone { max-width: 92%; margin: 0 auto; }
-      .chat-messages { min-height: 220px; }
-      .chat-send { width: 38px; height: 38px; }
-      .chat-send svg { width: 15px; height: 15px; }
-      .chat-inp-f { font-size: .82rem; padding: 9px 14px; }
-      .cmsg-b { font-size: .82rem; padding: 10px 14px; }
-
-      footer { padding: 28px 20px; }
-      .footer-copy { font-size: .58rem; }
-    }
-
-    /* ── Стандартный телефон (≤480px) ── */
-    @media (max-width: 480px) {
-      :root { --nav-h: 56px; }
-      nav { height: 56px; }
-
-      #home { padding: calc(var(--nav-h) + 24px) 16px 40px; }
-      .hero-title { font-size: 1.95rem; line-height: 1.12; }
-      .hero-desc  { font-size: .76rem; }
-      .tarot-card { width: 175px; height: 287px; }
-      .card-label-top  { font-size: .55rem; top: 14px; }
-      .card-label-bottom { font-size: .45rem; bottom: 18px; }
-      .card-tap-hint   { font-size: .48rem; bottom: 22px; }
-      .cback-name { font-size: 1.25rem; }
-      .cback-text { font-size: .67rem; }
-
-      #readings, #process, #gallery, #wisdom { padding: 48px 16px; }
-      #card-demo, #chat-demo, #quiz { padding: 48px 16px; }
-
-      .section-title { font-size: 1.55rem; }
-      .section-desc  { font-size: .75rem; }
-
-      .feature-card { padding: 24px 18px; }
-      .feature-title { font-size: 1.15rem; }
-
-      .cards-row { gap: 8px; margin-top: 28px; }
-      .card-flip { width: 88px; min-height: 136px; }
-
-      .quiz-wrap { padding: 28px 20px; }
-      .qopt { padding: 14px 16px; font-size: .74rem; }
-
-      .chat-phone { max-width: 100%; border-radius: 14px; }
-      .chat-messages { min-height: 190px; padding: 12px 10px; }
-      .chat-inp { padding: 10px 12px; }
-      .chat-inp-f { font-size: .8rem; }
-      .cmsg { font-size: .77rem; }
-
-      .tg-float { bottom: 16px; right: 12px; width: 48px; height: 48px; }
-      .tg-float svg { width: 22px; height: 22px; }
-
-      footer { padding: 24px 16px; gap: 12px; }
-      .footer-links { gap: 12px; }
-    }
-
-    /* ── Маленький телефон (≤375px, iPhone SE) ── */
-    @media (max-width: 375px) {
-      .hero-title { font-size: 1.75rem; }
-      .tarot-card { width: 158px; height: 260px; }
-      .btn-tg     { padding: 12px 20px; }
-      .section-title { font-size: 1.4rem; }
-
-      #readings, #process, #gallery, #wisdom { padding: 40px 14px; }
-      #card-demo, #chat-demo, #quiz { padding: 40px 14px; }
-
-      .card-flip { width: 78px; }
-      .cards-row { gap: 6px; }
-
-      .chat-messages { min-height: 170px; }
-      .chat-bot-name { font-size: .78rem; }
-      .cmsg-card-name { font-size: .88rem; }
-      .cmsg-card-txt { font-size: .68rem; }
-    }
-
     /* ───── STAR PARTICLES ───── */
     .star-particle {
       position: absolute;
@@ -1453,6 +1258,201 @@
     }
     .rform-status.ok  { color: #6fcf97; }
     .rform-status.err { color: #eb5757; }
+
+    /* ═══════════════════════════════════════
+       АДАПТИВ — все устройства
+       1200px  широкий ноутбук
+        960px  планшет / узкий ноутбук
+        768px  маленький планшет
+        640px  большой телефон
+        480px  стандартный телефон
+        375px  маленький телефон (iPhone SE)
+    ═══════════════════════════════════════ */
+
+    /* ── Широкий ноутбук ── */
+    @media (max-width: 1200px) {
+      #home { padding: calc(var(--nav-h) + 40px) 60px 80px; }
+      #readings, #process, #gallery, #wisdom { padding: 90px 60px; }
+      #card-demo, #chat-demo, #quiz { padding: 90px 60px; }
+    }
+
+    /* ── Планшет / узкий ноутбук ── */
+    @media (max-width: 960px) {
+      nav { padding: 0 24px; }
+      .nav-links { display: none; position: static; transform: none; }
+      .nav-cta { display: none; }
+      .burger { display: flex; }
+
+      #home {
+        grid-template-columns: 1fr;
+        padding: calc(var(--nav-h) + 48px) 40px 64px;
+        text-align: center;
+      }
+      .hero-left { display: flex; flex-direction: column; align-items: center; }
+      .hero-desc { max-width: 560px; }
+      .hero-right { margin-top: 48px; }
+      .tarot-card { width: 230px; height: 378px; }
+
+      #readings, #process, #gallery, #wisdom { padding: 72px 32px; }
+      #card-demo, #chat-demo, #quiz { padding: 72px 32px; }
+
+      .features-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+      .spreads-grid  { grid-template-columns: 1fr 1fr; gap: 16px; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+
+      .step-row {
+        grid-template-columns: 1fr;
+        min-height: auto; gap: 0;
+      }
+      .step-row.reverse .step-card   { order: 1; }
+      .step-row.reverse .step-image  { order: 2; }
+      .step-row.reverse .step-timeline { display: none; }
+      .step-timeline { display: none; }
+      .step-image    { margin: 16px 0; }
+      .step-img-box  { max-width: 100%; aspect-ratio: 16/9; }
+
+      .chat-cols { grid-template-columns: 1fr; gap: 40px; }
+      .chat-phone { max-width: 420px; margin: 0 auto; }
+      .chat-right .section-title,
+      .chat-right .section-divider,
+      .chat-right .section-desc { text-align: center; margin-left: auto; margin-right: auto; }
+      .chat-right .section-title { text-align: center; }
+      .chat-feats { max-width: 420px; margin: 0 auto; }
+
+      .quiz-opts { grid-template-columns: 1fr 1fr; }
+
+      footer {
+        padding: 32px 28px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      .footer-links { flex-wrap: wrap; gap: 16px; }
+    }
+
+    /* ── Маленький планшет ── */
+    @media (max-width: 768px) {
+      #home { padding: calc(var(--nav-h) + 40px) 28px 56px; }
+      .hero-title { font-size: clamp(2.4rem, 7vw, 3.2rem); }
+      .tarot-card { width: 210px; height: 345px; }
+
+      #readings, #process, #gallery, #wisdom { padding: 64px 24px; }
+      #card-demo, #chat-demo, #quiz { padding: 64px 24px; }
+
+      .features-grid { grid-template-columns: 1fr; }
+      .spreads-grid  { grid-template-columns: 1fr; }
+
+      .quiz-opts { grid-template-columns: 1fr; }
+
+      .section-title { font-size: clamp(1.65rem, 5vw, 2.2rem); }
+      .section-desc  { font-size: .78rem; }
+
+      .cards-row { gap: 12px; }
+      .card-flip { width: 110px; min-height: 160px; }
+    }
+
+    /* ── Большой телефон ── */
+    @media (max-width: 640px) {
+      #home {
+        padding: calc(var(--nav-h) + 32px) 20px 48px;
+        gap: 0;
+      }
+      .hero-badge { font-size: .6rem; padding: 5px 12px; }
+      .hero-title { font-size: 2.2rem; margin-bottom: 16px; }
+      .hero-desc  { font-size: .79rem; margin-bottom: 32px; }
+      .btn-tg     { padding: 13px 26px; font-size: .65rem; width: 100%; justify-content: center; max-width: 320px; }
+      .hero-right { margin-top: 40px; }
+      .tarot-card { width: 192px; height: 315px; }
+
+      #readings, #process, #gallery, #wisdom { padding: 56px 20px; }
+      #card-demo, #chat-demo, #quiz { padding: 56px 20px; }
+
+      .section-title { font-size: 1.75rem; }
+
+      .feature-card { padding: 28px 22px; }
+      .spread-card  { padding: 24px 20px; }
+
+      .cards-row { gap: 10px; margin-top: 36px; }
+      .card-flip { width: 100px; }
+
+      .tg-float { bottom: 20px; right: 16px; width: 52px; height: 52px; }
+
+      .proof-toast { left: 12px; max-width: calc(100vw - 24px); }
+      .moon-widget { gap: 10px; padding: 12px 16px; }
+      .moon-sep    { display: none; }
+
+      .chat-phone { max-width: 92%; margin: 0 auto; }
+      .chat-messages { min-height: 220px; }
+      .chat-send { width: 38px; height: 38px; }
+      .chat-send svg { width: 15px; height: 15px; }
+      .chat-inp-f { font-size: .82rem; padding: 9px 14px; }
+      .cmsg-b { font-size: .82rem; padding: 10px 14px; }
+
+      footer { padding: 28px 20px; }
+      .footer-copy { font-size: .58rem; }
+    }
+
+    /* ── Стандартный телефон (≤480px) ── */
+    @media (max-width: 480px) {
+      :root { --nav-h: 56px; }
+      nav { height: 56px; }
+
+      #home { padding: calc(var(--nav-h) + 24px) 16px 40px; }
+      .hero-title { font-size: 1.95rem; line-height: 1.12; }
+      .hero-desc  { font-size: .76rem; }
+      .tarot-card { width: 175px; height: 287px; }
+      .card-label-top  { font-size: .55rem; top: 14px; }
+      .card-label-bottom { font-size: .45rem; bottom: 18px; }
+      .card-tap-hint   { font-size: .48rem; bottom: 22px; }
+      .cback-name { font-size: 1.25rem; }
+      .cback-text { font-size: .67rem; }
+
+      #readings, #process, #gallery, #wisdom { padding: 48px 16px; }
+      #card-demo, #chat-demo, #quiz { padding: 48px 16px; }
+
+      .section-title { font-size: 1.55rem; }
+      .section-desc  { font-size: .75rem; }
+
+      .feature-card { padding: 24px 18px; }
+      .feature-title { font-size: 1.15rem; }
+
+      .cards-row { gap: 8px; margin-top: 28px; }
+      .card-flip { width: 88px; min-height: 136px; }
+
+      .quiz-wrap { padding: 28px 20px; }
+      .qopt { padding: 14px 16px; font-size: .74rem; }
+
+      .chat-phone { max-width: 100%; border-radius: 14px; }
+      .chat-messages { min-height: 190px; padding: 12px 10px; }
+      .chat-inp { padding: 10px 12px; }
+      .chat-inp-f { font-size: .8rem; }
+      .cmsg { font-size: .77rem; }
+
+      .tg-float { bottom: 16px; right: 12px; width: 48px; height: 48px; }
+      .tg-float svg { width: 22px; height: 22px; }
+
+      footer { padding: 24px 16px; gap: 12px; }
+      .footer-links { gap: 12px; }
+    }
+
+    /* ── Маленький телефон (≤375px, iPhone SE) ── */
+    @media (max-width: 375px) {
+      .hero-title { font-size: 1.75rem; }
+      .tarot-card { width: 158px; height: 260px; }
+      .btn-tg     { padding: 12px 20px; }
+      .section-title { font-size: 1.4rem; }
+
+      #readings, #process, #gallery, #wisdom { padding: 40px 14px; }
+      #card-demo, #chat-demo, #quiz { padding: 40px 14px; }
+
+      .card-flip { width: 78px; }
+      .cards-row { gap: 6px; }
+
+      .chat-messages { min-height: 170px; }
+      .chat-bot-name { font-size: .78rem; }
+      .cmsg-card-name { font-size: .88rem; }
+      .cmsg-card-txt { font-size: .68rem; }
+    }
 
     @media (max-width: 640px) {
       .review-form-wrap { padding: 28px 20px; }
